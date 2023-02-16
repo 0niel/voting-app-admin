@@ -32,7 +32,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
           className='drawer-toggle'
           onChange={(event) => setOpen(event.target.checked)}
         />
-        <div className='fixed drawer-content flex flex-col'>
+        <div className='drawer-content flex flex-col'>
           <Navbar sections={sections} />
           <div className='mx-auto px-4 sm:px-6 lg:px-8 pt-16 max-w-7xl'>{props.children}</div>
         </div>
