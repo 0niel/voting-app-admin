@@ -6,6 +6,15 @@ const nextConfig = {
     domains: ['cdn.cms.mirea.ninja'],
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/voting',
+        permanent: false,
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig
