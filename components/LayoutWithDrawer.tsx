@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar'
 import Section from '@/components/Section'
 import AdminPanelHead from '@/components/Head'
 import { useOnClickOutside } from 'usehooks-ts'
+import { XCircleIcon } from '@heroicons/react/20/solid'
 
 export interface LayoutProps {
   children: React.ReactNode
@@ -37,7 +38,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
           <div className='mx-auto px-4 sm:px-6 lg:px-8 pt-16 max-w-7xl'>{props.children}</div>
         </div>
         <div className='drawer-side'>
-          <label htmlFor='my-drawer-3' className='drawer-overlay' />
+          <label className='drawer-overlay' />
           <ul className='menu p-4 w-80 bg-base-100' ref={sidebarRef}>
             {/*Sidebar content here*/}
             {sections.map((section, index) => (
