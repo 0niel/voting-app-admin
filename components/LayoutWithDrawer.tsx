@@ -1,10 +1,9 @@
-import React, { useRef, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Section from '@/components/Section'
 import AdminPanelHead from '@/components/Head'
 import { useOnClickOutside } from 'usehooks-ts'
-import { XCircleIcon } from '@heroicons/react/20/solid'
 
 export interface LayoutProps {
   children: React.ReactNode
@@ -13,8 +12,8 @@ export interface LayoutProps {
 export const hamburgerMenuId = 'hamburger-menu'
 
 const sections: Section[] = [
-  { name: 'Голосование', path: '/voting' },
-  { name: 'Настройки', path: '/settings' },
+  { name: 'Голосование', path: '/admin/voting' },
+  { name: 'Настройки', path: '/admin/settings' },
 ]
 export default function LayoutWithDrawer(props: LayoutProps) {
   const sidebarRef = useRef(null)
@@ -39,7 +38,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
         </div>
         <div className='drawer-side'>
           <label className='drawer-overlay' />
-          <ul className='menu p-4 w-80 bg-base-100' ref={sidebarRef}>
+          <ul className='menu p-4 w-2/3 md:w-80 bg-base-100' ref={sidebarRef}>
             {/*Sidebar content here*/}
             {sections.map((section, index) => (
               <li key={index} onClick={() => setOpen(false)}>

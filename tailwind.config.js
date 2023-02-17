@@ -8,5 +8,6 @@ module.exports = {
   daisyui: {
     themes: ['cupcake'],
     darkTheme: 'cupcake',
+    logs: false,
   },
 }
