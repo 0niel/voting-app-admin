@@ -1,10 +1,16 @@
 import NinjaXUnion from '@/components/NinjaXUnion'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from "react";
 import { useRecoilState } from 'recoil'
 import { appwrite, userState } from '@/store/global'
 import { useRouter } from 'next/router'
 import { toast, Toaster } from 'react-hot-toast'
 import LayoutWithoutDrawer from '@/components/LayoutWithoutDrawer'
+
+const alerts: { [englishAlert: string]: string } = {
+  'Invalid credentials. Please check the email and password.': 'Неверные почта или пароль.',
+  'Rate limit for the current endpoint has been exceeded. Please try again after some time.':
+    'Превышен лимит попыток входа. Повторите попытку через некоторое время.',
+}
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -12,11 +18,15 @@ export default function Login() {
   const [user, setUser] = useRecoilState(userState)
   const router = useRouter()
 
-  const alerts: { [englishAlert: string]: string } = {
-    'Invalid credentials. Please check the email and password.': 'Неверные почта или пароль.',
-    'Rate limit for the current endpoint has been exceeded. Please try again after some time.':
-      'Превышен лимит попыток входа. Повторите попытку через некоторое время.',
-  }
+  useEffect(() => {
+    const pushVoting = async () => {
+      await router.push('/admin/voting')
+    }
+    if (user != null) {
+      pushVoting().catch(console.error)
+    }
+  }, [])
+
   async function login(event: FormEvent<EventTarget>) {
     event.preventDefault()
     try {
@@ -72,7 +82,7 @@ export default function Login() {
               </div>
               <div className='form-control mt-6'>
                 <button className='btn btn-primary' onClick={login} disabled={!email || !password}>
-                  Login
+                  Войти
                 </button>
               </div>
             </div>

@@ -5,6 +5,15 @@ const nextConfig = {
   images: {
     domains: ['cdn.cms.mirea.ninja'],
   },
+  async redirects() {
+    return [
+      {
+        source: '/admin',
+        destination: '/admin/voting',
+        permanent: false,
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig

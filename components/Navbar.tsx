@@ -1,6 +1,6 @@
 import { appName } from '@/constants/constants'
 import Link from 'next/link'
-import { ArrowRightOnRectangleIcon, Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
+import { ArrowLeftOnRectangleIcon, Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import React from 'react'
 import Section from '@/components/Section'
 import { hamburgerMenuId } from '@/components/LayoutWithDrawer'
@@ -68,7 +68,7 @@ export default function Navbar(props: NavbarProps) {
           >
             <li>
               <button className='text-red-600' onClick={logout}>
-                <ArrowRightOnRectangleIcon className='w-6 h-6' />
+                <ArrowLeftOnRectangleIcon className='w-6 h-6' />
                 <span>Выйти</span>
               </button>
             </li>
