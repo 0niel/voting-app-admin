@@ -1,12 +1,13 @@
-import { appName, shortAppName } from '@/constants/constants'
+import { appName } from '@/constants/constants'
 import Link from 'next/link'
-import { Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
+import { ArrowRightOnRectangleIcon, Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import React from 'react'
 import Section from '@/components/Section'
 import { hamburgerMenuId } from '@/components/LayoutWithDrawer'
 import NinjaXUnion from '@/components/NinjaXUnion'
 import { useRecoilState } from 'recoil'
 import { appwrite, userState } from '@/store/global'
+import { useRouter } from 'next/router'
 
 interface NavbarProps {
   sections?: Section[]
@@ -14,6 +15,14 @@ interface NavbarProps {
 
 export default function Navbar(props: NavbarProps) {
   const [user, setUser] = useRecoilState(userState)
+  const router = useRouter()
+
+  async function logout() {
+    await appwrite.account.deleteSession('current')
+    window.localStorage.removeItem('jwt')
+    window.localStorage.removeItem('jwt_expire')
+    await router.push('/')
+  }
 
   return (
     <div className='fixed w-full navbar bg-base-200 border-b border-base-300'>
@@ -29,7 +38,7 @@ export default function Navbar(props: NavbarProps) {
           <Link href='/'>
             <div className='flex items-center text-xl'>
               <NinjaXUnion />
-              <div className='visible md:invisible md:w-0 md:h-0'>{shortAppName}</div>
+              {/*<div className='visible md:invisible md:w-0 md:h-0'>{shortAppName}</div>*/}
               <div className='invisible w-0 h-0 md:visible md:w-fit md:h-fit'>{appName}</div>
             </div>
           </Link>
@@ -49,16 +58,19 @@ export default function Navbar(props: NavbarProps) {
       </div>
       <div className='navbar-end'>
         <div className='dropdown dropdown-end dropdown-hover'>
-          <label tabIndex={0} className='m-1 flex inline-block items-center'>
-            {user?.name ?? 'Пользователь'}
-            <ChevronDownIcon className='w-6 h-6 pt-1' />
+          <label tabIndex={0} className='m-1 flex inline-block items-center font-medium'>
+            {user?.name || 'Пользователь'}
+            <ChevronDownIcon className='w-5 h-5 pt-0.5 stroke-2' />
           </label>
           <ul
             tabIndex={0}
             className='dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40'
           >
             <li>
-              <button className='btn btn-outline btn-error'>Выйти</button>
+              <button className='text-red-600' onClick={logout}>
+                <ArrowRightOnRectangleIcon className='w-6 h-6' />
+                <span>Выйти</span>
+              </button>
             </li>
           </ul>
         </div>

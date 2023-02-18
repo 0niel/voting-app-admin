@@ -1,9 +1,10 @@
-import React, { FormEvent, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Section from '@/components/Section'
 import AdminPanelHead from '@/components/Head'
 import { useOnClickOutside } from 'usehooks-ts'
+import { ChartBarIcon, Cog8ToothIcon } from '@heroicons/react/24/outline'
 
 export interface LayoutProps {
   children: React.ReactNode
@@ -12,8 +13,8 @@ export interface LayoutProps {
 export const hamburgerMenuId = 'hamburger-menu'
 
 const sections: Section[] = [
-  { name: 'Голосование', path: '/admin/voting' },
-  { name: 'Настройки', path: '/admin/settings' },
+  { name: 'Голосование', path: '/admin/voting', icon: <ChartBarIcon className='w-6 h-6' /> },
+  { name: 'Настройки', path: '/admin/settings', icon: <Cog8ToothIcon className='w-6 h-6' /> },
 ]
 export default function LayoutWithDrawer(props: LayoutProps) {
   const sidebarRef = useRef(null)
@@ -42,7 +43,10 @@ export default function LayoutWithDrawer(props: LayoutProps) {
             {/*Sidebar content here*/}
             {sections.map((section, index) => (
               <li key={index} onClick={() => setOpen(false)}>
-                <Link href={section.path}>{section.name}</Link>
+                <Link href={section.path}>
+                  {section.icon}
+                  {section.name}
+                </Link>
               </li>
             ))}
           </ul>
