@@ -37,14 +37,14 @@ export default function Navbar(props: NavbarProps) {
           </div>
         )}
         <div className='flex-1 mx-2'>
-          <Link href='/'>
-            <div className='flex items-center text-xl'>
+          <Link href='/' className='btn btn-ghost'>
+            <div className='flex items-center text-xl normal-case'>
               <Image
                 src={'/assets/logo.svg'}
                 alt={'Логотип ОВК'}
                 width={10}
                 height={10}
-                className='w-10 h-10 mr-2'
+                className='w-6 h-6 mr-2'
               />
               <div className='whitespace-nowrap hidden lg:block'>{appName}</div>
               <div className='whitespace-nowrap lg:hidden'>{shortAppName}</div>
@@ -54,19 +54,25 @@ export default function Navbar(props: NavbarProps) {
       </div>
       <div className='navbar-center'>
         <div className='flex-none hidden lg:block'>
-          <ul className='menu menu-horizontal rounded-box'>
-            {props.sections &&
-              props.sections.map((section, index) => (
+          {props.sections && (
+            <ul className='tabs tabs-boxed'>
+              {props.sections.map((section, index) => (
                 <li key={index}>
-                  <Link href={section.path}>{section.name}</Link>
+                  <Link
+                    href={section.path}
+                    className={`tab ${section.path === router.pathname && 'tab-active'}`}
+                  >
+                    {section.name}
+                  </Link>
                 </li>
               ))}
-          </ul>
+            </ul>
+          )}
         </div>
       </div>
       <div className='navbar-end'>
         <div className='dropdown dropdown-end dropdown-hover'>
-          <label tabIndex={0} className='m-1 flex inline-block items-center font-medium'>
+          <label tabIndex={0} className='flex inline-block items-center btn btn-ghost normal-case'>
             {user?.userData?.name || 'Пользователь'}
             <ChevronDownIcon className='w-5 h-5 pt-0.5 stroke-2' />
           </label>
