@@ -1,10 +1,13 @@
 import NinjaXUnion from '@/components/NinjaXUnion'
-import { FormEvent, useEffect, useState } from "react";
-import { useRecoilState } from 'recoil'
-import { appwrite, userState } from '@/store/global'
+import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/router'
 import { toast, Toaster } from 'react-hot-toast'
 import LayoutWithoutDrawer from '@/components/LayoutWithoutDrawer'
+import useUser from '@/lib/useUser'
+import fetchJson from '@/lib/fetchJson'
+import { Account, Client, Databases } from 'appwrite'
+import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
+import { useAppwrite } from '@/context/AppwriteContext'
 
 const alerts: { [englishAlert: string]: string } = {
   'Invalid credentials. Please check the email and password.': 'Неверные почта или пароль.',
@@ -15,26 +18,34 @@ const alerts: { [englishAlert: string]: string } = {
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useRecoilState(userState)
+  const { setUser } = useAppwrite()
   const router = useRouter()
 
-  useEffect(() => {
-    const pushVoting = async () => {
-      await router.push('/admin/voting')
-    }
-    if (user != null) {
-      pushVoting().catch(console.error)
-    }
-  }, [])
+  const { mutateUser } = useUser({
+    redirectTo: '/admin/voting',
+    redirectIfFound: true,
+  })
 
   async function login(event: FormEvent<EventTarget>) {
     event.preventDefault()
     try {
-      await appwrite.account.createEmailSession(email, password)
-      setUser(await appwrite.account.get())
+      const client = new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
+      const account = new Account(client)
+      await account.createEmailSession(email, password)
+      const userData = await account.get()
+      const databases = new Databases(client)
+      setUser(account, databases)
+      await mutateUser(
+        await fetchJson('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userData }),
+        }),
+        false,
+      )
       await router.push('/admin/voting')
     } catch (error: any) {
-      toast.error(alerts[error.message] || error.message)
+      toast.error(error.data.message)
     }
   }
 

@@ -1,27 +1,29 @@
 import { appName } from '@/constants/constants'
 import Link from 'next/link'
 import { ArrowLeftOnRectangleIcon, Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
-import React from 'react'
+import React, { FormEvent } from 'react'
 import Section from '@/components/Section'
 import { hamburgerMenuId } from '@/components/LayoutWithDrawer'
 import NinjaXUnion from '@/components/NinjaXUnion'
-import { useRecoilState } from 'recoil'
-import { appwrite, userState } from '@/store/global'
 import { useRouter } from 'next/router'
+import fetchJson from '@/lib/fetchJson'
+import useUser from '@/lib/useUser'
+import { useAppwrite } from '@/context/AppwriteContext'
 
 interface NavbarProps {
   sections?: Section[]
 }
 
 export default function Navbar(props: NavbarProps) {
-  const [user, setUser] = useRecoilState(userState)
   const router = useRouter()
+  const { user, mutateUser } = useUser()
+  const { account } = useAppwrite()
 
-  async function logout() {
-    await appwrite.account.deleteSession('current')
-    window.localStorage.removeItem('jwt')
-    window.localStorage.removeItem('jwt_expire')
-    await router.push('/')
+  async function logout(event: FormEvent) {
+    event.preventDefault()
+    await account?.deleteSession('current')
+    await mutateUser(await fetchJson('/api/logout', { method: 'POST' }), false)
+    await router.push('/login')
   }
 
   return (
@@ -59,7 +61,7 @@ export default function Navbar(props: NavbarProps) {
       <div className='navbar-end'>
         <div className='dropdown dropdown-end dropdown-hover'>
           <label tabIndex={0} className='m-1 flex inline-block items-center font-medium'>
-            {user?.name || 'Пользователь'}
+            {user?.userData?.name || 'Пользователь'}
             <ChevronDownIcon className='w-5 h-5 pt-0.5 stroke-2' />
           </label>
           <ul
