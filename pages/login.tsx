@@ -13,6 +13,7 @@ const alerts: { [englishAlert: string]: string } = {
   'Invalid credentials. Please check the email and password.': 'Неверные почта или пароль.',
   'Rate limit for the current endpoint has been exceeded. Please try again after some time.':
     'Превышен лимит попыток входа. Повторите попытку через некоторое время.',
+  'Network request failed': 'Проверьте подключение к Интернету',
 }
 
 export default function Login() {

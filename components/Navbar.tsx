@@ -1,14 +1,14 @@
-import { appName } from '@/constants/constants'
+import { appName, shortAppName } from '@/constants/constants'
 import Link from 'next/link'
 import { ArrowLeftOnRectangleIcon, Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import React, { FormEvent } from 'react'
 import Section from '@/components/Section'
 import { hamburgerMenuId } from '@/components/LayoutWithDrawer'
-import NinjaXUnion from '@/components/NinjaXUnion'
 import { useRouter } from 'next/router'
 import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
 import { useAppwrite } from '@/context/AppwriteContext'
+import Image from 'next/image'
 
 interface NavbarProps {
   sections?: Section[]
@@ -36,12 +36,18 @@ export default function Navbar(props: NavbarProps) {
             </label>
           </div>
         )}
-        <div className='flex-1 px-2 mx-2'>
+        <div className='flex-1 mx-2'>
           <Link href='/'>
             <div className='flex items-center text-xl'>
-              <NinjaXUnion />
-              {/*<div className='visible md:invisible md:w-0 md:h-0'>{shortAppName}</div>*/}
-              <div className='invisible w-0 h-0 md:visible md:w-fit md:h-fit'>{appName}</div>
+              <Image
+                src={'/assets/logo.svg'}
+                alt={'Логотип ОВК'}
+                width={10}
+                height={10}
+                className='w-10 h-10 mr-2'
+              />
+              <div className='whitespace-nowrap hidden lg:block'>{appName}</div>
+              <div className='whitespace-nowrap lg:hidden'>{shortAppName}</div>
             </div>
           </Link>
         </div>
