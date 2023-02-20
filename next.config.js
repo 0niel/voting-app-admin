@@ -4,13 +4,12 @@ const nextConfig = {
   output: 'standalone',
   images: {
     domains: ['cdn.cms.mirea.ninja'],
-    unoptimized: true,
   },
   async redirects() {
     return [
       {
-        source: '/',
-        destination: '/voting',
+        source: '/admin',
+        destination: '/admin/voting',
         permanent: false,
       },
     ]

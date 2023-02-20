@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar'
 import Section from '@/components/Section'
 import AdminPanelHead from '@/components/Head'
 import { useOnClickOutside } from 'usehooks-ts'
+import { ChartBarIcon, Cog8ToothIcon } from '@heroicons/react/24/outline'
 
 export interface LayoutProps {
   children: React.ReactNode
@@ -12,8 +13,8 @@ export interface LayoutProps {
 export const hamburgerMenuId = 'hamburger-menu'
 
 const sections: Section[] = [
-  { name: 'Голосование', path: '/voting' },
-  { name: 'Настройки', path: '/settings' },
+  { name: 'Голосование', path: '/admin/voting', icon: <ChartBarIcon className='w-6 h-6' /> },
+  { name: 'Настройки', path: '/admin/settings', icon: <Cog8ToothIcon className='w-6 h-6' /> },
 ]
 export default function LayoutWithDrawer(props: LayoutProps) {
   const sidebarRef = useRef(null)
@@ -37,12 +38,15 @@ export default function LayoutWithDrawer(props: LayoutProps) {
           <div className='mx-auto px-4 sm:px-6 lg:px-8 pt-16 max-w-7xl'>{props.children}</div>
         </div>
         <div className='drawer-side'>
-          <label htmlFor='my-drawer-3' className='drawer-overlay' />
-          <ul className='menu p-4 w-80 bg-base-100' ref={sidebarRef}>
+          <label className='drawer-overlay' />
+          <ul className='menu p-4 w-2/3 md:w-80 bg-base-100' ref={sidebarRef}>
             {/*Sidebar content here*/}
             {sections.map((section, index) => (
               <li key={index} onClick={() => setOpen(false)}>
-                <Link href={section.path}>{section.name}</Link>
+                <Link href={section.path}>
+                  {section.icon}
+                  {section.name}
+                </Link>
               </li>
             ))}
           </ul>
