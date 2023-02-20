@@ -45,7 +45,12 @@ export default function Login() {
       )
       await router.push('/admin/voting')
     } catch (error: any) {
-      toast.error(error.data.message)
+      toast.error(
+        alerts[error?.data?.message] ||
+          alerts[error.message] ||
+          error?.data?.message ||
+          error.message,
+      )
     }
   }
 
