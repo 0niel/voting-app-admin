@@ -19,6 +19,7 @@ const alerts: { [englishAlert: string]: string } = {
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loginProgress, setLoginProgress] = useState(false)
   const { setUser } = useAppwrite()
   const router = useRouter()
 
@@ -29,6 +30,7 @@ export default function Login() {
 
   async function login(event: FormEvent<EventTarget>) {
     event.preventDefault()
+    setLoginProgress(true)
     try {
       const client = new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
       const account = new Account(client)
@@ -53,6 +55,7 @@ export default function Login() {
           error.message,
       )
     }
+    setLoginProgress(false)
   }
 
   return (
@@ -98,8 +101,12 @@ export default function Login() {
                 {/*</label>*/}
               </div>
               <div className='form-control mt-6'>
-                <button className='btn btn-primary' onClick={login} disabled={!email || !password}>
-                  Войти
+                <button
+                  className={`btn btn-primary`}
+                  onClick={login}
+                  disabled={!email || !password || loginProgress}
+                >
+                  {!loginProgress ? 'Войти' : <progress className='progress w-20'></progress>}
                 </button>
               </div>
             </div>
