@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Section from '@/components/Section'
@@ -6,9 +6,7 @@ import AdminPanelHead from '@/components/Head'
 import { useOnClickOutside } from 'usehooks-ts'
 import { Cog8ToothIcon, PresentationChartLineIcon } from '@heroicons/react/24/outline'
 import { useRouter } from 'next/router'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { Dialog, Transition } from '@headlessui/react'
-import UndefindedAppwriteContextModal from "@/components/UndefinedAppwriteContextModal";
+import UndefinedAppwriteContextModal from '@/components/UndefinedAppwriteContextModal'
 
 export interface LayoutProps {
   children: React.ReactNode
@@ -28,7 +26,6 @@ export default function LayoutWithDrawer(props: LayoutProps) {
   const sidebarRef = useRef(null)
   const [open, setOpen] = useState(false)
   const router = useRouter()
-  const { account } = useAppwrite()
 
   useOnClickOutside(sidebarRef, () => setOpen(false))
 
@@ -45,7 +42,9 @@ export default function LayoutWithDrawer(props: LayoutProps) {
         />
         <div className='drawer-content flex flex-col'>
           <Navbar sections={sections} />
-          <div className='mx-auto px-4 sm:px-6 lg:px-8 pt-16 max-w-7xl'>{props.children}</div>
+          <div className='lg:mx-auto px-4 sm:px-6 lg:px-8 pt-16 max-w-7xl'>
+            {props.children}
+          </div>
         </div>
         <div className='drawer-side'>
           <label className='drawer-overlay' />
@@ -64,7 +63,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
             ))}
           </ul>
         </div>
-        <UndefindedAppwriteContextModal />
+        <UndefinedAppwriteContextModal />
       </main>
     </>
   )

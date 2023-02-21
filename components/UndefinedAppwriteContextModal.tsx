@@ -4,11 +4,11 @@ import { Dialog, Transition } from '@headlessui/react'
 import { useRouter } from 'next/router'
 
 export default function UndefinedAppwriteContextModal() {
-  const { account } = useAppwrite()
+  const { client } = useAppwrite()
   const router = useRouter()
 
   return (
-    <Transition appear show={account === undefined} as={Fragment}>
+    <Transition appear show={client === undefined} as={Fragment}>
       <Dialog as='div' className='relative z-10' onClose={() => {}}>
         <Transition.Child
           as={Fragment}

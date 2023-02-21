@@ -20,7 +20,7 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loginProgress, setLoginProgress] = useState(false)
-  const { setUser } = useAppwrite()
+  const { setClient } = useAppwrite()
   const router = useRouter()
 
   const { mutateUser } = useUser()
@@ -33,9 +33,7 @@ export default function Login() {
       const account = new Account(client)
       await account.createEmailSession(email, password)
       const userData = await account.get()
-      const databases = new Databases(client)
-      setUser(account, databases)
-      console.log(account)
+      setClient(client)
       await mutateUser(
         await fetchJson('/api/login', {
           method: 'POST',

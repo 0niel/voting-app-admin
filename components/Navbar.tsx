@@ -9,6 +9,7 @@ import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
 import { useAppwrite } from '@/context/AppwriteContext'
 import Image from 'next/image'
+import { Account } from 'appwrite'
 
 interface NavbarProps {
   sections?: Section[]
@@ -17,11 +18,11 @@ interface NavbarProps {
 export default function Navbar(props: NavbarProps) {
   const router = useRouter()
   const { user, mutateUser } = useUser()
-  const { account } = useAppwrite()
+  const { client } = useAppwrite()
 
   async function logout(event: FormEvent) {
     event.preventDefault()
-    await account?.deleteSession('current')
+    await new Account(client!)?.deleteSession('current')
     await mutateUser(await fetchJson('/api/logout', { method: 'POST' }), false)
     await router.push('/login')
   }
