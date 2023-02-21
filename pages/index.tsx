@@ -2,9 +2,12 @@ import { appDescription } from '@/constants/constants'
 import Link from 'next/link'
 import AdminPanelHead from '@/components/Head'
 import useUser from '@/lib/useUser'
+import { useAppwrite } from '@/context/AppwriteContext'
 
 export default function Landing() {
   const { user } = useUser()
+  const { account } = useAppwrite()
+
   return (
     <main>
       <AdminPanelHead />
@@ -14,7 +17,7 @@ export default function Landing() {
             <h1 className='text-5xl font-bold'>ОВК 2023!</h1>
             <p className='py-6 text-slate-500'>{appDescription}</p>
             <Link href='/login' className='btn btn-primary'>
-              Войти {user?.userData && `как ${user.userData.name}`}
+              Войти {user?.userData && account && `как ${user.userData.name}`}
             </Link>
           </div>
         </div>

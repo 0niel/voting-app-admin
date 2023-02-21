@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import { Account, Databases, Models } from 'appwrite'
 
 interface AppwriteContextI {

@@ -1,6 +1,6 @@
 import { appName, shortAppName } from '@/constants/constants'
 import Link from 'next/link'
-import { ArrowLeftOnRectangleIcon, Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
+import { ArrowLeftOnRectangleIcon, Bars3Icon, ChevronDownIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import React, { FormEvent } from 'react'
 import Section from '@/components/Section'
 import { hamburgerMenuId } from '@/components/LayoutWithDrawer'
@@ -80,6 +80,12 @@ export default function Navbar(props: NavbarProps) {
             tabIndex={0}
             className='dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40'
           >
+            <li>
+              <button onClick={() => router.push('/admin/profile')}>
+                <UserCircleIcon className='w-6 h-6' />
+                <span>Профиль</span>
+              </button>
+            </li>
             <li>
               <button className='text-red-600' onClick={logout}>
                 <ArrowLeftOnRectangleIcon className='w-6 h-6' />

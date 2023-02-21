@@ -23,10 +23,7 @@ export default function Login() {
   const { setUser } = useAppwrite()
   const router = useRouter()
 
-  const { mutateUser } = useUser({
-    redirectTo: '/admin/voting',
-    redirectIfFound: true,
-  })
+  const { mutateUser } = useUser()
 
   async function login(event: FormEvent<EventTarget>) {
     event.preventDefault()
@@ -38,6 +35,7 @@ export default function Login() {
       const userData = await account.get()
       const databases = new Databases(client)
       setUser(account, databases)
+      console.log(account)
       await mutateUser(
         await fetchJson('/api/login', {
           method: 'POST',
