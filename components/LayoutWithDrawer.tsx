@@ -42,9 +42,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
         />
         <div className='drawer-content flex flex-col'>
           <Navbar sections={sections} />
-          <div className='lg:mx-auto px-4 sm:px-6 lg:px-8 pt-16 max-w-7xl'>
-            {props.children}
-          </div>
+          <div className='mx-auto px-4 sm:px-6 lg:px-8 pt-16 max-w-7xl'>{props.children}</div>
         </div>
         <div className='drawer-side'>
           <label className='drawer-overlay' />

@@ -1,6 +1,11 @@
 import { appName, shortAppName } from '@/constants/constants'
 import Link from 'next/link'
-import { ArrowLeftOnRectangleIcon, Bars3Icon, ChevronDownIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowLeftOnRectangleIcon,
+  Bars3Icon,
+  ChevronDownIcon,
+  UserCircleIcon,
+} from '@heroicons/react/24/outline'
 import React, { FormEvent } from 'react'
 import Section from '@/components/Section'
 import { hamburgerMenuId } from '@/components/LayoutWithDrawer'
@@ -10,6 +15,7 @@ import useUser from '@/lib/useUser'
 import { useAppwrite } from '@/context/AppwriteContext'
 import Image from 'next/image'
 import { Account } from 'appwrite'
+import Avatar from '@/components/profile/Avatar'
 
 interface NavbarProps {
   sections?: Section[]
@@ -74,7 +80,7 @@ export default function Navbar(props: NavbarProps) {
       <div className='navbar-end'>
         <div className='dropdown dropdown-end dropdown-hover'>
           <label tabIndex={0} className='flex inline-block items-center btn btn-ghost normal-case'>
-            {user?.userData?.name || 'Пользователь'}
+            <Avatar iconSize='w-8 h-8' fontSize='' />
             <ChevronDownIcon className='w-5 h-5 pt-0.5 stroke-2' />
           </label>
           <ul

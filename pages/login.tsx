@@ -1,11 +1,11 @@
 import NinjaXUnion from '@/components/NinjaXUnion'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { toast, Toaster } from 'react-hot-toast'
 import LayoutWithoutDrawer from '@/components/LayoutWithoutDrawer'
 import useUser from '@/lib/useUser'
 import fetchJson from '@/lib/fetchJson'
-import { Account, Client, Databases } from 'appwrite'
+import { Account, Client } from 'appwrite'
 import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 
@@ -20,10 +20,19 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loginProgress, setLoginProgress] = useState(false)
-  const { setClient } = useAppwrite()
+  const { client, setClient } = useAppwrite()
   const router = useRouter()
 
   const { mutateUser } = useUser()
+
+  useEffect(() => {
+    const redirectLogined = async () => {
+      if (client !== undefined) {
+        await router.push('/admin/voting')
+      }
+    }
+    redirectLogined().then(() => {})
+  }, [client])
 
   async function login(event: FormEvent<EventTarget>) {
     event.preventDefault()
