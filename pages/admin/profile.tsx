@@ -4,9 +4,9 @@ import PersonalInformationCard from '@/components/profile/PersonalInformationCar
 
 const Profile = () => {
   return (
-    <>
+    <div className='grid grid-flow-row-dense gap-4 p-3'>
       <PersonalInformationCard />
-    </>
+    </div>
   )
 }
 

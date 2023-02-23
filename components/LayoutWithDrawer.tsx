@@ -43,8 +43,8 @@ export default function LayoutWithDrawer(props: LayoutProps) {
           onChange={(event) => setOpen(event.target.checked)}
         />
         <div className='drawer-content flex flex-col'>
-          <Navbar sections={sections} />
           <div className='mx-auto px-4 sm:px-6 lg:px-8 pt-16 max-w-7xl'>{props.children}</div>
+          <Navbar sections={sections} />
         </div>
         <div className='drawer-side'>
           <label className='drawer-overlay' />
@@ -64,7 +64,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
           </ul>
         </div>
         <UndefinedAppwriteContextModal />
-        <Toaster position='top-right' />
+        <Toaster position='bottom-right' />
       </main>
     </>
   )

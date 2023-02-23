@@ -4,6 +4,7 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { useEffect, useState } from 'react'
 import { Models, Teams } from 'appwrite'
 import Avatar from '@/components/profile/Avatar'
+import PanelWindow from '@/components/PanelWindow'
 
 export default function PersonalInformationCard() {
   const { user } = useUser()
@@ -20,7 +21,7 @@ export default function PersonalInformationCard() {
   }, [client])
 
   return (
-    <div className='card w-96 group ring-1 ring-secondary'>
+    <PanelWindow className='group'>
       <div className='card-body items-center text-center'>
         <Avatar iconSize='w-16 h-16' fontSize='text-xl font-bold' />
         <div className='card-title'>{user?.userData?.name}</div>
@@ -60,6 +61,6 @@ export default function PersonalInformationCard() {
           </div>
         </div>
       </div>
-    </div>
+    </PanelWindow>
   )
 }

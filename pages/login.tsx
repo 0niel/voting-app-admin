@@ -74,7 +74,7 @@ export default function Login() {
               <NinjaXUnion withLinks />
             </div>
           </div>
-          <div className='card flex-shrink-0 w-full max-w-sm shadow-md bg-base-200'>
+          <div className='card flex-shrink-0 w-full max-w-sm ring-1 ring-secondary hover:ring-secondary-focus rounded-box'>
             <div className='card-body'>
               <div className='form-control'>
                 <label className='label'>
