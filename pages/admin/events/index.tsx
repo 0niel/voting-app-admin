@@ -13,7 +13,7 @@ import { ArrowTopRightOnSquareIcon, PencilIcon, TrashIcon } from '@heroicons/rea
 import PanelWindow from '@/components/PanelWindow'
 import Link from 'next/link'
 import UpdateEventModal from '@/components/events/UpdateEventModal'
-import { UpdateEventProvider, useUpdateEvent } from '@/context/UpdateEventContext'
+import { useUpdateEvent } from '@/context/UpdateEventContext'
 
 const Events = () => {
   const { client } = useAppwrite()
@@ -56,7 +56,7 @@ const Events = () => {
           ID.unique(),
           { name: newEventName, creator_id: user?.userData?.$id },
           [
-            Permission.read(Role.team(appwriteSuperUsersTeam)),
+            Permission.read(Role.users()),
             Permission.update(Role.user(user?.userData?.$id!)),
             Permission.delete(Role.user(user?.userData?.$id!)),
           ],

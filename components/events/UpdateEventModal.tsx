@@ -1,6 +1,5 @@
-import React, { Fragment, useRef, useState } from 'react'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { event } from 'next/dist/build/output/log'
 import { Databases } from 'appwrite'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
@@ -12,11 +11,22 @@ export default function UpdateEventModal() {
   const dialogPanelRef = useRef(null)
   const [eventName, setEventName] = useState('')
   const { eventId, setEventId } = useUpdateEvent()
+  const [eventNamePlaceholder, setEventNamePlaceholder] = useState('')
   const { client } = useAppwrite()
 
   useOnClickOutside(dialogPanelRef, () => {
     setEventId(undefined)
   })
+
+  useEffect(() => {
+    if (eventId != null) {
+      new Databases(client!)
+        .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventId)
+        .then((r) => {
+          setEventNamePlaceholder(r.name)
+        })
+    }
+  }, [eventId])
 
   return (
     <Transition appear show={eventId !== undefined} as={Fragment}>
@@ -54,7 +64,7 @@ export default function UpdateEventModal() {
                 <div className='mt-2'>
                   <input
                     type='text'
-                    placeholder='Новое название события'
+                    placeholder={eventNamePlaceholder}
                     value={eventName}
                     onChange={(e) => setEventName(e.target.value)}
                     className='input input-bordered input-accent w-full max-w-xs'
@@ -66,7 +76,7 @@ export default function UpdateEventModal() {
                     type='button'
                     className='btn btn-primary px-4 py-2'
                     onClick={async () => {
-                      if (event.name) {
+                      if (eventName.length > 0) {
                         new Databases(client!)
                           .updateDocument(
                             appwriteVotingDatabase,
@@ -77,6 +87,8 @@ export default function UpdateEventModal() {
                           .then((r) => setEventId(undefined))
                           .catch((error) => toast.error(error))
                           .finally(() => setEventName(''))
+                      } else {
+                        toast.error('Введите название события.')
                       }
                     }}
                   >

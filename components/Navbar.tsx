@@ -67,7 +67,7 @@ export default function Navbar(props: NavbarProps) {
                 <li key={index}>
                   <Link
                     href={section.path}
-                    className={`tab ${section.path === router.pathname && 'tab-active'}`}
+                    className={`tab ${router.pathname.startsWith(section.path) && 'tab-active'}`}
                   >
                     {section.name}
                   </Link>
@@ -78,14 +78,14 @@ export default function Navbar(props: NavbarProps) {
         </div>
       </div>
       <div className='navbar-end'>
-        <div className='dropdown dropdown-end dropdown-hover'>
+        <div className='dropdown dropdown-end'>
           <label tabIndex={0} className='flex inline-block items-center btn btn-ghost normal-case'>
             <Avatar iconSize='w-8 h-8' fontSize='' />
-            <ChevronDownIcon className='w-5 h-5 pt-0.5 stroke-2' />
+            <ChevronDownIcon className='w-5 h-5 pt-0.5 stroke-2 text-slate-500' />
           </label>
           <ul
             tabIndex={0}
-            className='dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40'
+            className='dropdown-content menu p-2 shadow bg-base-100 rounded-box mt-4 ring-1 ring-secondary'
           >
             <li>
               <button onClick={() => router.push('/admin/profile')}>
