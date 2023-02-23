@@ -23,7 +23,7 @@ interface NavbarProps {
 
 export default function Navbar(props: NavbarProps) {
   const router = useRouter()
-  const { user, mutateUser } = useUser()
+  const { mutateUser } = useUser()
   const { client } = useAppwrite()
 
   async function logout(event: FormEvent) {
