@@ -32,6 +32,7 @@ export default function Login() {
       }
     }
     redirectLogined().then(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client])
 
   async function login(event: FormEvent<EventTarget>) {

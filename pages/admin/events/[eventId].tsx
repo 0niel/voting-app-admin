@@ -26,6 +26,7 @@ const Event = () => {
         updateEvent()
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function updateEvent() {

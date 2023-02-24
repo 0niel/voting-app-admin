@@ -94,7 +94,7 @@ export default function Navbar(props: NavbarProps) {
               </button>
             </li>
             <li>
-              <button className='text-red-600' onClick={logout}>
+              <button className='text-error' onClick={logout}>
                 <ArrowLeftOnRectangleIcon className='w-6 h-6' />
                 <span>Выйти</span>
               </button>

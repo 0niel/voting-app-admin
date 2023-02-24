@@ -2,22 +2,19 @@ import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { Databases, ID, Models, Permission, Role } from 'appwrite'
 import { useAppwrite } from '@/context/AppwriteContext'
-import {
-  appwriteEventsCollection,
-  appwriteSuperUsersTeam,
-  appwriteVotingDatabase,
-} from '@/constants/constants'
+import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import useUser from '@/lib/useUser'
 import { toast } from 'react-hot-toast'
-import { ArrowTopRightOnSquareIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
 import PanelWindow from '@/components/PanelWindow'
 import Link from 'next/link'
 import UpdateEventModal from '@/components/events/UpdateEventModal'
-import { useUpdateEvent } from '@/context/UpdateEventContext'
+import { useEvent } from '@/context/EventContext'
+import DeleteEventModal from '@/components/events/DeleteEventModal'
 
 const Events = () => {
   const { client } = useAppwrite()
-  const { setEventId } = useUpdateEvent()
+  const { setEventIdToUpdate, setEventIdToDelete } = useEvent()
   const { user } = useUser()
   const [events, setEvents] = useState<Models.Document[]>([])
   const [newEventName, setNewEventName] = useState('')
@@ -35,6 +32,7 @@ const Events = () => {
         updateEvents()
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function updateEvents() {
@@ -70,18 +68,6 @@ const Events = () => {
     }
   }
 
-  async function deleteEvent(eventId: string) {
-    try {
-      await new Databases(client!).deleteDocument(
-        appwriteVotingDatabase,
-        appwriteEventsCollection,
-        eventId,
-      )
-    } catch (error: any) {
-      toast.error(error)
-    }
-  }
-
   return (
     <>
       <div className='grid grid-cols-3 grid-flow-row-dense gap-4 p-3'>
@@ -110,14 +96,13 @@ const Events = () => {
               <tbody>
                 {events.map((event, index) => (
                   <tr key={index}>
-                    <th className='font-light text-slate-500 text-xs'>
+                    <th className='font-light text-xs'>
                       {event.creator_id === user?.userData?.$id ? (
                         <Link
                           href={`/admin/events/${event.$id}`}
-                          className='flex hover:underline hover:text-base-content'
+                          className='link link-hover hover:text-blue-600 after:content-["_↗"]'
                         >
-                          {event.$id.slice(-7)}{' '}
-                          <ArrowTopRightOnSquareIcon className='w-3 h-4 ml-0.5' />
+                          {event.$id.slice(-7)}
                         </Link>
                       ) : (
                         event.$id.slice(-7)
@@ -128,14 +113,14 @@ const Events = () => {
                       {event.creator_id === user?.userData?.$id && (
                         <>
                           <button
-                            className='hover:text-primary-focus px-1'
-                            onClick={() => setEventId(event.$id)}
+                            className='hover:text-info px-1'
+                            onClick={() => setEventIdToUpdate(event.$id)}
                           >
                             <PencilIcon className='w-5 h-5' />
                           </button>
                           <button
-                            className='hover:text-red-500 px-1'
-                            onClick={() => deleteEvent(event.$id)}
+                            className='hover:text-error px-1'
+                            onClick={() => setEventIdToDelete(event.$id)}
                           >
                             <TrashIcon className='w-5 h-5' />
                           </button>
@@ -150,6 +135,7 @@ const Events = () => {
         </PanelWindow>
       </div>
       <UpdateEventModal />
+      <DeleteEventModal />
     </>
   )
 }

@@ -5,7 +5,7 @@ import type { AppProps } from 'next/app'
 import { SWRConfig } from 'swr'
 import fetchJson from '@/lib/fetchJson'
 import { AppwriteProvider } from '@/context/AppwriteContext'
-import { UpdateEventProvider } from '@/context/UpdateEventContext'
+import { EventProvider } from '@/context/EventContext'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -20,7 +20,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <AppwriteProvider>
-      <UpdateEventProvider>
+      <EventProvider>
         <SWRConfig
           value={{
             fetcher: fetchJson,
@@ -31,7 +31,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         >
           {getLayout(<Component {...pageProps} />)}
         </SWRConfig>
-      </UpdateEventProvider>
+      </EventProvider>
     </AppwriteProvider>
   )
 }

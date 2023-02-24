@@ -13,7 +13,6 @@ export default function PersonalInformationCard() {
 
   useEffect(() => {
     async function getTeams() {
-      console.log(client)
       const teams = (await new Teams(client!).list()).teams
       setTeams(teams)
     }

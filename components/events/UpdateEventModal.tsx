@@ -4,32 +4,33 @@ import { Databases } from 'appwrite'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { toast } from 'react-hot-toast'
-import { useUpdateEvent } from '@/context/UpdateEventContext'
+import { useEvent } from '@/context/EventContext'
 import { useOnClickOutside } from 'usehooks-ts'
 
 export default function UpdateEventModal() {
   const dialogPanelRef = useRef(null)
-  const [eventName, setEventName] = useState('')
-  const { eventId, setEventId } = useUpdateEvent()
+  const [newEventName, setNewEventName] = useState('')
+  const { eventIdToUpdate, setEventIdToUpdate } = useEvent()
   const [eventNamePlaceholder, setEventNamePlaceholder] = useState('')
   const { client } = useAppwrite()
 
   useOnClickOutside(dialogPanelRef, () => {
-    setEventId(undefined)
+    setEventIdToUpdate(undefined)
   })
 
   useEffect(() => {
-    if (eventId != null) {
+    if (eventIdToUpdate != null) {
       new Databases(client!)
-        .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventId)
+        .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventIdToUpdate)
         .then((r) => {
           setEventNamePlaceholder(r.name)
         })
     }
-  }, [eventId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventIdToUpdate])
 
   return (
-    <Transition appear show={eventId !== undefined} as={Fragment}>
+    <Transition appear show={eventIdToUpdate !== undefined} as={Fragment}>
       <Dialog as='div' className='relative z-10' onClose={() => {}}>
         <Transition.Child
           as={Fragment}
@@ -56,37 +57,40 @@ export default function UpdateEventModal() {
             >
               <Dialog.Panel
                 ref={dialogPanelRef}
-                className='w-full max-w-md transform overflow-hidden bg-base-100 rounded-box p-6 text-left align-middle transition-all ring-1 ring-secondary'
+                className='w-full max-w-md transform overflow-hidden bg-base-100 rounded-box p-6 text-left align-middle transition-all ring-1 ring-secondary hover:ring-2 hover:ring-secondary-focus'
               >
                 <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
                   Изменение события
                 </Dialog.Title>
-                <div className='mt-2'>
+                <div className='form-control w-full max-w-xs mt-2'>
+                  <label className='label'>
+                    <span className='label-text'>Название</span>
+                  </label>
                   <input
                     type='text'
                     placeholder={eventNamePlaceholder}
-                    value={eventName}
-                    onChange={(e) => setEventName(e.target.value)}
+                    value={newEventName}
+                    onChange={(e) => setNewEventName(e.target.value)}
                     className='input input-bordered input-accent w-full max-w-xs'
                   />
                 </div>
 
-                <div className='mt-4'>
+                <div className='mt-6 text-end'>
                   <button
                     type='button'
-                    className='btn btn-primary px-4 py-2'
+                    className='btn btn-primary'
                     onClick={async () => {
-                      if (eventName.length > 0) {
+                      if (newEventName.length > 0) {
                         new Databases(client!)
                           .updateDocument(
                             appwriteVotingDatabase,
                             appwriteEventsCollection,
-                            eventId!,
-                            { name: eventName },
+                            eventIdToUpdate!,
+                            { name: newEventName },
                           )
-                          .then((r) => setEventId(undefined))
+                          .then(() => setEventIdToUpdate(undefined))
                           .catch((error) => toast.error(error))
-                          .finally(() => setEventName(''))
+                          .finally(() => setNewEventName(''))
                       } else {
                         toast.error('Введите название события.')
                       }
