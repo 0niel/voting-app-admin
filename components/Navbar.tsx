@@ -16,6 +16,7 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import Image from 'next/image'
 import { Account } from 'appwrite'
 import Avatar from '@/components/profile/Avatar'
+import ProjectLogo from '@/components/logos/ProjectLogo'
 
 interface NavbarProps {
   sections?: Section[]
@@ -46,15 +47,11 @@ export default function Navbar(props: NavbarProps) {
         <div className='flex-1 mx-2'>
           <Link href='/' className='btn btn-ghost'>
             <div className='flex items-center text-xl normal-case'>
-              <Image
-                src={'/assets/logo.svg'}
-                alt={'Логотип ОВК'}
-                width={10}
-                height={10}
-                className='w-6 h-6 mr-2'
-              />
-              <div className='whitespace-nowrap hidden lg:block'>{appName}</div>
-              <div className='whitespace-nowrap lg:hidden'>{shortAppName}</div>
+              <ProjectLogo className='w-6 h-6' />
+              <div className='pl-2'>
+                <span className='whitespace-nowrap hidden lg:block'>{appName}</span>
+                <span className='whitespace-nowrap lg:hidden'>{shortAppName}</span>
+              </div>
             </div>
           </Link>
         </div>

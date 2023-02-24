@@ -122,12 +122,12 @@ const Events = () => {
                 {events.map((event, index) => (
                   <tr key={index}>
                     <th className='font-light text-xs'>{event.$id.slice(-7)}</th>
-                    <td>{event.name.slice(0, 30)}</td>
+                    <td className='max-w-[10rem] text-ellipsis overflow-hidden'>{event.name}</td>
                     <td className='font-light text-xs'>
                       {event.creator_id === user?.userData?.$id &&
                       event.access_moderators_team_id ? (
                         <Link
-                          href={`/admin/events/${event.$id}/access-moderators`}
+                          href={`/admin/events/${event.$id}/access-moderators/${event.access_moderators_team_id}`}
                           className='link link-hover hover:text-blue-600 dark-hover:text-blue-400 after:content-["_↗"]'
                         >
                           {event.access_moderators_team_id.slice(-7)}
@@ -140,7 +140,7 @@ const Events = () => {
                       {event.creator_id === user?.userData?.$id &&
                       event.voting_moderators_team_id ? (
                         <Link
-                          href={`/admin/events/${event.$id}/voting-moderators`}
+                          href={`/admin/events/${event.$id}/voting-moderators/${event.voting_moderators_team_id}`}
                           className='link link-hover hover:text-blue-600 dark-hover:text-blue-400 after:content-["_↗"]'
                         >
                           {event.voting_moderators_team_id.slice(-7)}
@@ -152,7 +152,7 @@ const Events = () => {
                     <td className='font-light text-xs'>
                       {event.creator_id === user?.userData?.$id && event.participants_team_id ? (
                         <Link
-                          href={`/admin/events/${event.$id}/participants`}
+                          href={`/admin/events/${event.$id}/participants/${event.participants_team_id}`}
                           className='link link-hover hover:text-blue-600 dark-hover:text-blue-400 after:content-["_↗"]'
                         >
                           {event.participants_team_id.slice(-7)}

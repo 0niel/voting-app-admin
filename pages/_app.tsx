@@ -6,6 +6,7 @@ import { SWRConfig } from 'swr'
 import fetchJson from '@/lib/fetchJson'
 import { AppwriteProvider } from '@/context/AppwriteContext'
 import { EventProvider } from '@/context/EventContext'
+import { MembershipProvider } from '@/context/MembershipContext'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -21,16 +22,18 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <AppwriteProvider>
       <EventProvider>
-        <SWRConfig
-          value={{
-            fetcher: fetchJson,
-            onError: (err) => {
-              console.error(err)
-            },
-          }}
-        >
-          {getLayout(<Component {...pageProps} />)}
-        </SWRConfig>
+        <MembershipProvider>
+          <SWRConfig
+            value={{
+              fetcher: fetchJson,
+              onError: (err) => {
+                console.error(err)
+              },
+            }}
+          >
+            {getLayout(<Component {...pageProps} />)}
+          </SWRConfig>
+        </MembershipProvider>
       </EventProvider>
     </AppwriteProvider>
   )

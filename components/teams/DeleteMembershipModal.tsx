@@ -1,56 +1,61 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { Databases, Models, Teams } from 'appwrite'
+import { Models, Teams } from 'appwrite'
 import { useAppwrite } from '@/context/AppwriteContext'
-import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { toast } from 'react-hot-toast'
-import { useEvent } from '@/context/EventContext'
 import { useOnClickOutside } from 'usehooks-ts'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { useMembership } from '@/context/MembershipContext'
 
-export default function DeleteEventModal() {
+export default function DeleteMembershipModal() {
   const dialogPanelRef = useRef(null)
-  const { eventIdToDelete, setEventIdToDelete } = useEvent()
-  const [eventToDelete, setEventToDelete] = useState<Models.Document>()
+  const {
+    membershipIDToDelete,
+    setMembershipIDToDelete,
+    teamIDRelatedToMembershipToDelete,
+    setTeamIDRelatedToMembershipToDelete,
+  } = useMembership()
+  const [membershipToDelete, setMembershipToDelete] = useState<Models.Membership>()
   const { client } = useAppwrite()
 
   useOnClickOutside(dialogPanelRef, () => {
-    setEventIdToDelete(undefined)
+    setMembershipIDToDelete(undefined)
+    setTeamIDRelatedToMembershipToDelete(undefined)
   })
 
   useEffect(() => {
     try {
-      if (eventIdToDelete != null) {
-        new Databases(client!)
-          .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventIdToDelete)
-          .then((r) => {
-            setEventToDelete(r)
+      if (membershipIDToDelete !== undefined && teamIDRelatedToMembershipToDelete !== undefined) {
+        new Teams(client!)
+          .getMembership(teamIDRelatedToMembershipToDelete, membershipIDToDelete)
+          .then((membership) => {
+            setMembershipToDelete(membership)
           })
       }
     } catch (error: any) {
       toast.error(error.message)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventIdToDelete])
+  }, [membershipIDToDelete, teamIDRelatedToMembershipToDelete])
 
-  async function deleteEvent() {
+  async function deleteMembership() {
     try {
-      await new Teams(client!).delete(eventToDelete!.access_moderators_team_id)
-      await new Teams(client!).delete(eventToDelete!.voting_moderators_team_id)
-      await new Teams(client!).delete(eventToDelete!.participants_team_id)
-      await new Databases(client!).deleteDocument(
-        appwriteVotingDatabase,
-        appwriteEventsCollection,
-        eventIdToDelete!,
+      await new Teams(client!).deleteMembership(
+        teamIDRelatedToMembershipToDelete!,
+        membershipIDToDelete!,
       )
-      setEventIdToDelete(undefined)
     } catch (error: any) {
       toast.error(error.message)
     }
+    setMembershipIDToDelete(undefined)
+    setTeamIDRelatedToMembershipToDelete(undefined)
   }
 
   return (
-    <Transition appear show={eventIdToDelete !== undefined} as={Fragment}>
+    <Transition
+      appear
+      show={teamIDRelatedToMembershipToDelete !== undefined && membershipIDToDelete !== undefined}
+      as={Fragment}
+    >
       <Dialog as='div' className='relative z-10' onClose={() => {}}>
         <Transition.Child
           as={Fragment}
@@ -80,34 +85,31 @@ export default function DeleteEventModal() {
                 className='w-full max-w-md transform overflow-hidden bg-base-100 rounded-box p-6 text-left align-middle transition-all ring-1 ring-secondary'
               >
                 <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
-                  Вы уверены, что хотите удалить событие{' '}
+                  Вы уверены, что хотите исключить из команды пользователя{' '}
                   <span className='text-info'>
-                    {eventToDelete?.name}
-                    <span className='font-light text-sm'> {eventToDelete?.$id.slice(-7)}</span>
+                    {membershipToDelete?.userName} {membershipToDelete?.userEmail}
+                    <span className='font-light text-sm'> {membershipToDelete?.$id.slice(-7)}</span>
                   </span>
                   ?
                 </Dialog.Title>
-                <div className='pt-5'>
-                  <div className='alert alert-warning shadow-lg'>
-                    <div>
-                      <ExclamationTriangleIcon className='w-8 h-8' />
-                      <span>
-                        При удалении события будут удалены списки модераторов, участников.
-                      </span>
-                    </div>
-                  </div>
-                </div>
                 <div className='mt-6 justify-end flex'>
                   <div className='mr-2'>
                     <button
                       type='button'
                       className='btn btn-primary'
-                      onClick={() => setEventIdToDelete(undefined)}
+                      onClick={() => {
+                        setMembershipIDToDelete(undefined)
+                        setTeamIDRelatedToMembershipToDelete(undefined)
+                      }}
                     >
                       Отменить
                     </button>
                   </div>
-                  <button type='button' className='btn btn-error btn-outline' onClick={deleteEvent}>
+                  <button
+                    type='button'
+                    className='btn btn-error btn-outline'
+                    onClick={deleteMembership}
+                  >
                     Удалить
                   </button>
                 </div>

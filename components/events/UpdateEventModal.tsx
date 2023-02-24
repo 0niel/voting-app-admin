@@ -66,7 +66,7 @@ export default function UpdateEventModal() {
                     <span className='font-light text-sm'> {eventToUpdate?.$id.slice(-7)}</span>
                   </span>
                 </Dialog.Title>
-                <div className='form-control w-full max-w-xs mt-2'>
+                <div className='form-control w-full max-w-xs pt-5'>
                   <label className='label'>
                     <span className='label-text'>Название</span>
                   </label>
