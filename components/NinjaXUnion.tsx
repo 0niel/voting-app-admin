@@ -37,7 +37,7 @@ export default function NinjaXUnion(props: NinjaXUnionProps) {
       ) : (
         mireaNinjaImage
       )}
-      <XMarkIcon className='px-1 h-7 w-7 text-slate-500' />
+      <XMarkIcon className='px-1 h-7 w-7 text-slate-500 dark:text-slate-400' />
       {props.withLinks ? (
         <Link target='_blank' href={studentUnionURL}>
           {studentUnionImage}

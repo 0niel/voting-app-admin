@@ -24,7 +24,7 @@ export default function PersonalInformationCard() {
       <div className='card-body items-center text-center'>
         <Avatar iconSize='w-16 h-16' fontSize='text-xl font-bold' />
         <div className='card-title'>{user?.userData?.name}</div>
-        <div className='text-slate-500'>
+        <div className='text-slate-500 dark:text-slate-400'>
           <div>
             <span>Почта: </span>
             {user?.userData?.email ? (
@@ -47,7 +47,7 @@ export default function PersonalInformationCard() {
           </div>
           <div className='pt-3'>
             {teams.length > 0 ? (
-              <div className='flex justify-center'>
+              <div className='grid grid-cols-1 md:grid-cols-3 gap-4 justify-center place-items-center'>
                 {teams.map((team, index) => (
                   <div key={index} className='badge badge-primary m-1 hover:scale-110'>
                     {team.name}

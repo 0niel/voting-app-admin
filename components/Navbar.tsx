@@ -81,7 +81,7 @@ export default function Navbar(props: NavbarProps) {
         <div className='dropdown dropdown-end'>
           <label tabIndex={0} className='flex inline-block items-center btn btn-ghost normal-case'>
             <Avatar iconSize='w-8 h-8' fontSize='' />
-            <ChevronDownIcon className='w-5 h-5 pt-0.5 stroke-2 text-slate-500' />
+            <ChevronDownIcon className='w-5 h-5 pt-0.5 stroke-2 text-slate-500 dark:text-slate-400' />
           </label>
           <ul
             tabIndex={0}

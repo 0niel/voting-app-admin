@@ -38,7 +38,9 @@ export default function UndefinedAppwriteContextModal() {
                   Сессия недействительна
                 </Dialog.Title>
                 <div className='mt-2'>
-                  <p className='text-sm text-slate-500'>Введите учетные данные заново.</p>
+                  <p className='text-sm text-slate-500 dark:text-slate-400'>
+                    Введите учетные данные заново.
+                  </p>
                 </div>
 
                 <div className='mt-4'>

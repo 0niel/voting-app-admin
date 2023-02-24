@@ -26,12 +26,9 @@ export default function Login() {
   const { mutateUser } = useUser()
 
   useEffect(() => {
-    const redirectLogined = async () => {
-      if (client !== undefined) {
-        await router.push('/admin/voting')
-      }
+    if (client !== undefined) {
+      router.push('/admin/voting').then((r) => {})
     }
-    redirectLogined().then(() => {})
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client])
 
@@ -70,7 +67,9 @@ export default function Login() {
         <div className='hero-content flex-col lg:flex-row-reverse'>
           <div className='text-center lg:text-left'>
             <h1 className='text-5xl font-bold'>ОВК 2023!</h1>
-            <p className='py-6 text-slate-500'>Для получения доступа обратитесь к организаторам.</p>
+            <p className='py-6 text-slate-500 dark:text-slate-400'>
+              Для получения доступа обратитесь к организаторам.
+            </p>
             <div className='flex justify-center lg:justify-start'>
               <NinjaXUnion withLinks />
             </div>

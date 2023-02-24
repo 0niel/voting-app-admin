@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { Databases } from 'appwrite'
+import { Databases, Models } from 'appwrite'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { toast } from 'react-hot-toast'
@@ -10,8 +10,8 @@ import { useOnClickOutside } from 'usehooks-ts'
 export default function UpdateEventModal() {
   const dialogPanelRef = useRef(null)
   const [newEventName, setNewEventName] = useState('')
+  const [eventToUpdate, setEventToUpdate] = useState<Models.Document>()
   const { eventIdToUpdate, setEventIdToUpdate } = useEvent()
-  const [eventNamePlaceholder, setEventNamePlaceholder] = useState('')
   const { client } = useAppwrite()
 
   useOnClickOutside(dialogPanelRef, () => {
@@ -22,8 +22,8 @@ export default function UpdateEventModal() {
     if (eventIdToUpdate != null) {
       new Databases(client!)
         .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventIdToUpdate)
-        .then((r) => {
-          setEventNamePlaceholder(r.name)
+        .then((event) => {
+          setEventToUpdate(event)
         })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,7 +60,11 @@ export default function UpdateEventModal() {
                 className='w-full max-w-md transform overflow-hidden bg-base-100 rounded-box p-6 text-left align-middle transition-all ring-1 ring-secondary hover:ring-2 hover:ring-secondary-focus'
               >
                 <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
-                  Изменение события
+                  Редактировать событие{' '}
+                  <span className='text-info'>
+                    {eventToUpdate?.name}
+                    <span className='font-light text-sm'> {eventToUpdate?.$id.slice(-7)}</span>
+                  </span>
                 </Dialog.Title>
                 <div className='form-control w-full max-w-xs mt-2'>
                   <label className='label'>
@@ -68,7 +72,7 @@ export default function UpdateEventModal() {
                   </label>
                   <input
                     type='text'
-                    placeholder={eventNamePlaceholder}
+                    placeholder={eventToUpdate?.name}
                     value={newEventName}
                     onChange={(e) => setNewEventName(e.target.value)}
                     className='input input-bordered input-accent w-full max-w-xs'
@@ -96,7 +100,7 @@ export default function UpdateEventModal() {
                       }
                     }}
                   >
-                    Изменить
+                    Сохранить
                   </button>
                 </div>
               </Dialog.Panel>

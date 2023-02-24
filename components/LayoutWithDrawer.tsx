@@ -54,7 +54,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
               <li key={index} onClick={() => setOpen(false)}>
                 <Link
                   href={section.path}
-                  className={`${section.path === router.pathname && 'active'}`}
+                  className={`${router.pathname.startsWith(section.path) && 'active'}`}
                 >
                   {section.icon}
                   {section.name}
