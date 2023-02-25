@@ -1,5 +1,5 @@
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
-import React, { ReactElement, useEffect, useState } from 'react'
+import React, { ReactElement, Suspense, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { Databases, Models, Query, Teams } from 'appwrite'
@@ -15,6 +15,7 @@ import {
   redirectURL,
 } from '@/constants/constants'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
+import useUser from '@/lib/useUser'
 
 const AccessModerators = () => {
   const { client } = useAppwrite()
@@ -25,6 +26,7 @@ const AccessModerators = () => {
   const [emailInvite, setEmailInvite] = useState('')
   const { setMembershipIDToDelete, setTeamIDRelatedToMembershipToDelete, setPostDeleteAction } =
     useMembership()
+  const { user } = useUser()
 
   useEffect(() => {
     try {
@@ -46,9 +48,7 @@ const AccessModerators = () => {
   function updateMemberships() {
     new Teams(client!)
       .listMemberships(teamID as string)
-      .then((membershipList) => {
-        setMemberships(membershipList.memberships.reverse())
-      })
+      .then((membershipList) => setMemberships(membershipList.memberships.reverse()))
       .catch((error) => toast.error(error.message))
   }
 
@@ -72,9 +72,9 @@ const AccessModerators = () => {
 
   return (
     <>
-      <h1 className='text-2xl font-bold text-start md:text-center'>
+      <h1 className='text-2xl text-start md:text-center'>
         <span className='text-slate-500 dark:text-slate-400'>Событие </span>
-        {event?.name}
+        <span className='font-bold'>{event?.name}</span>
       </h1>
       <div className='grid grid-cols-4 grid-flow-row-dense place-items-stretch gap-4 p-3'>
         {event && (
@@ -89,12 +89,12 @@ const AccessModerators = () => {
               {
                 name: 'Модераторы голосования',
                 keyword: 'voting-moderators',
-                path: `/admin/events/${event.$id}/voting-moderators/${event.access_moderators_team_id}`,
+                path: `/admin/events/${event.$id}/voting-moderators/${event.voting_moderators_team_id}`,
               },
               {
                 name: 'Участники',
                 keyword: 'participants',
-                path: `/admin/events/${event.$id}/participants/${event.access_moderators_team_id}`,
+                path: `/admin/events/${event.$id}/participants/${event.participants_team_id}`,
               },
             ]}
           />
@@ -144,11 +144,11 @@ const AccessModerators = () => {
                     <td>{formatDate(membership.invited)}</td>
                     <td>{membership.joined && formatDate(membership.joined)}</td>
                     <td>
-                      {!membership.roles.includes('owner') && (
+                      {membership.userId !== user?.userData?.$id && (
                         <button
                           className='hover:text-error'
                           onClick={() => {
-                            setPostDeleteAction(async () => {
+                            setPostDeleteAction(async function () {
                               ;(
                                 await new Teams(client!).listMemberships(
                                   event!.participants_team_id,

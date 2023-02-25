@@ -30,7 +30,7 @@ export default function Login() {
       router.push('/admin/voting').then((r) => {})
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client])
+  }, [])
 
   async function login(event: FormEvent<EventTarget>) {
     event.preventDefault()

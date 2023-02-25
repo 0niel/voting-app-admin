@@ -65,9 +65,9 @@ const VotingModerators = () => {
 
   return (
     <>
-      <h1 className='text-2xl font-bold text-start md:text-center'>
+      <h1 className='text-2xl text-start md:text-center'>
         <span className='text-slate-500 dark:text-slate-400'>Событие </span>
-        {event?.name}
+        <span className='font-bold'>{event?.name}</span>
       </h1>
       <div className='grid grid-cols-4 grid-flow-row-dense place-items-stretch gap-4 p-3'>
         {event && (
@@ -82,12 +82,12 @@ const VotingModerators = () => {
               {
                 name: 'Модераторы голосования',
                 keyword: 'voting-moderators',
-                path: `/admin/events/${event.$id}/voting-moderators/${event.access_moderators_team_id}`,
+                path: `/admin/events/${event.$id}/voting-moderators/${event.voting_moderators_team_id}`,
               },
               {
                 name: 'Участники',
                 keyword: 'participants',
-                path: `/admin/events/${event.$id}/participants/${event.access_moderators_team_id}`,
+                path: `/admin/events/${event.$id}/participants/${event.participants_team_id}`,
               },
             ]}
           />
