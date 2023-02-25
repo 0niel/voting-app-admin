@@ -4,7 +4,10 @@ import Navbar from '@/components/Navbar'
 import Section from '@/components/Section'
 import AdminPanelHead from '@/components/Head'
 import { useOnClickOutside } from 'usehooks-ts'
-import { ChartBarIcon, Cog8ToothIcon } from '@heroicons/react/24/outline'
+import { CalendarIcon, Cog8ToothIcon, PresentationChartLineIcon } from '@heroicons/react/24/outline'
+import { useRouter } from 'next/router'
+import UndefinedAppwriteContextModal from '@/components/UndefinedAppwriteContextModal'
+import { Toaster } from 'react-hot-toast'
 
 export interface LayoutProps {
   children: React.ReactNode
@@ -13,12 +16,18 @@ export interface LayoutProps {
 export const hamburgerMenuId = 'hamburger-menu'
 
 const sections: Section[] = [
-  { name: 'Голосование', path: '/admin/voting', icon: <ChartBarIcon className='w-6 h-6' /> },
-  { name: 'Настройки', path: '/admin/settings', icon: <Cog8ToothIcon className='w-6 h-6' /> },
+  {
+    name: 'Голосование',
+    path: '/admin/voting',
+    icon: <PresentationChartLineIcon className='w-6 h-6' />,
+  },
+  { name: 'События', path: '/admin/events', icon: <CalendarIcon className='w-6 h-6' /> },
+  // { name: 'Настройки', path: '/admin/settings', icon: <Cog8ToothIcon className='w-6 h-6' /> },
 ]
 export default function LayoutWithDrawer(props: LayoutProps) {
   const sidebarRef = useRef(null)
   const [open, setOpen] = useState(false)
+  const router = useRouter()
 
   useOnClickOutside(sidebarRef, () => setOpen(false))
 
@@ -34,16 +43,19 @@ export default function LayoutWithDrawer(props: LayoutProps) {
           onChange={(event) => setOpen(event.target.checked)}
         />
         <div className='drawer-content flex flex-col'>
-          <Navbar sections={sections} />
           <div className='mx-auto px-4 sm:px-6 lg:px-8 pt-16 max-w-7xl'>{props.children}</div>
+          <Navbar sections={sections} />
         </div>
         <div className='drawer-side'>
           <label className='drawer-overlay' />
-          <ul className='menu p-4 w-2/3 md:w-80 bg-base-100' ref={sidebarRef}>
+          <ul className='menu p-4 w-60 bg-base-100' ref={sidebarRef}>
             {/*Sidebar content here*/}
             {sections.map((section, index) => (
               <li key={index} onClick={() => setOpen(false)}>
-                <Link href={section.path}>
+                <Link
+                  href={section.path}
+                  className={`${router.pathname.startsWith(section.path) && 'active'}`}
+                >
                   {section.icon}
                   {section.name}
                 </Link>
@@ -51,6 +63,8 @@ export default function LayoutWithDrawer(props: LayoutProps) {
             ))}
           </ul>
         </div>
+        <UndefinedAppwriteContextModal />
+        <Toaster position='bottom-right' />
       </main>
     </>
   )

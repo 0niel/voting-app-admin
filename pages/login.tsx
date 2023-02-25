@@ -1,11 +1,11 @@
 import NinjaXUnion from '@/components/NinjaXUnion'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { toast, Toaster } from 'react-hot-toast'
 import LayoutWithoutDrawer from '@/components/LayoutWithoutDrawer'
 import useUser from '@/lib/useUser'
 import fetchJson from '@/lib/fetchJson'
-import { Account, Client, Databases } from 'appwrite'
+import { Account, Client } from 'appwrite'
 import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 
@@ -19,23 +19,28 @@ const alerts: { [englishAlert: string]: string } = {
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const { setUser } = useAppwrite()
+  const [loginProgress, setLoginProgress] = useState(false)
+  const { client, setClient } = useAppwrite()
   const router = useRouter()
 
-  const { mutateUser } = useUser({
-    redirectTo: '/admin/voting',
-    redirectIfFound: true,
-  })
+  const { mutateUser } = useUser()
+
+  useEffect(() => {
+    if (client !== undefined) {
+      router.push('/admin/voting').then((r) => {})
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [client])
 
   async function login(event: FormEvent<EventTarget>) {
     event.preventDefault()
+    setLoginProgress(true)
     try {
       const client = new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
       const account = new Account(client)
       await account.createEmailSession(email, password)
       const userData = await account.get()
-      const databases = new Databases(client)
-      setUser(account, databases)
+      setClient(client)
       await mutateUser(
         await fetchJson('/api/login', {
           method: 'POST',
@@ -53,6 +58,7 @@ export default function Login() {
           error.message,
       )
     }
+    setLoginProgress(false)
   }
 
   return (
@@ -61,12 +67,14 @@ export default function Login() {
         <div className='hero-content flex-col lg:flex-row-reverse'>
           <div className='text-center lg:text-left'>
             <h1 className='text-5xl font-bold'>ОВК 2023!</h1>
-            <p className='py-6 text-slate-500'>Для получения доступа обратитесь к организаторам.</p>
+            <p className='py-6 text-slate-500 dark:text-slate-400'>
+              Для получения доступа обратитесь к организаторам.
+            </p>
             <div className='flex justify-center lg:justify-start'>
               <NinjaXUnion withLinks />
             </div>
           </div>
-          <div className='card flex-shrink-0 w-full max-w-sm shadow-md bg-base-200'>
+          <div className='card flex-shrink-0 w-full max-w-sm ring-1 ring-secondary hover:ring-secondary-focus rounded-box'>
             <div className='card-body'>
               <div className='form-control'>
                 <label className='label'>
@@ -98,8 +106,12 @@ export default function Login() {
                 {/*</label>*/}
               </div>
               <div className='form-control mt-6'>
-                <button className='btn btn-primary' onClick={login} disabled={!email || !password}>
-                  Войти
+                <button
+                  className={`btn btn-primary`}
+                  onClick={login}
+                  disabled={!email || !password || loginProgress}
+                >
+                  {!loginProgress ? 'Войти' : <progress className='progress w-20'></progress>}
                 </button>
               </div>
             </div>
