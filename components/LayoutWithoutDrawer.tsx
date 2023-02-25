@@ -5,7 +5,7 @@ export default function LayoutWithoutDrawer(props: LayoutProps) {
   return (
     <>
       <AdminPanelHead />
-      <main>{props.children}</main>
+      <main className='h-screen bg-white'>{props.children}</main>
     </>
   )
 }

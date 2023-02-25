@@ -8,6 +8,7 @@ import fetchJson from '@/lib/fetchJson'
 import { Account, Client } from 'appwrite'
 import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
+import Image from 'next/image'
 
 const alerts: { [englishAlert: string]: string } = {
   'Invalid credentials. Please check the email and password.': 'Неверные почта или пароль.',
@@ -62,63 +63,113 @@ export default function Login() {
   }
 
   return (
-    <LayoutWithoutDrawer>
-      <div className='hero min-h-screen'>
-        <div className='hero-content flex-col lg:flex-row-reverse'>
-          <div className='text-center lg:text-left'>
-            <h1 className='text-5xl font-bold'>ОВК 2023!</h1>
-            <p className='py-6 text-slate-500 dark:text-slate-400'>
-              Для получения доступа обратитесь к организаторам.
-            </p>
-            <div className='flex justify-center lg:justify-start'>
-              <NinjaXUnion withLinks />
+    <>
+      <LayoutWithoutDrawer>
+        <div className='flex min-h-full'>
+          <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
+            <div className='mx-auto w-full max-w-sm lg:w-96'>
+              <div>
+                <NinjaXUnion withLinks />
+                <h2 className='mt-6 text-3xl font-bold tracking-tight text-gray-900'>
+                  Вход в систему
+                </h2>
+                <p className='mt-2 text-sm text-gray-600'>
+                  Для получения доступа обратитесь к организаторам.
+                </p>
+              </div>
+
+              <div className='mt-8'>
+                <div className='mt-6'>
+                  <form action='#' method='POST' className='space-y-6'>
+                    <div>
+                      <label htmlFor='email' className='block text-sm font-medium text-gray-700'>
+                        Email адрес
+                      </label>
+                      <div className='mt-1'>
+                        <input
+                          value={email}
+                          onChange={(event) => setEmail(event.target.value)}
+                          id='email'
+                          name='email'
+                          type='email'
+                          autoComplete='email'
+                          required
+                          className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+                        />
+                      </div>
+                    </div>
+
+                    <div className='space-y-1'>
+                      <label htmlFor='password' className='block text-sm font-medium text-gray-700'>
+                        Пароль
+                      </label>
+                      <div className='mt-1'>
+                        <input
+                          value={password}
+                          onChange={(event) => setPassword(event.target.value)}
+                          id='password'
+                          name='password'
+                          type='password'
+                          autoComplete='current-password'
+                          required
+                          className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <button
+                        type='submit'
+                        onClick={login}
+                        disabled={!email || !password || loginProgress}
+                        className='flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50'
+                      >
+                        {loginProgress ? (
+                          <div className='flex items-center justify-center'>
+                            <svg
+                              className='-ml-1 mr-3 h-5 w-5 animate-spin text-white'
+                              xmlns='http://www.w3.org/2000/svg'
+                              fill='none'
+                              viewBox='0 0 24 24'
+                            >
+                              <circle
+                                className='opacity-25'
+                                cx='12'
+                                cy='12'
+                                r='10'
+                                stroke='currentColor'
+                                stroke-width='4'
+                              ></circle>
+                              <path
+                                className='opacity-75'
+                                fill='currentColor'
+                                d='M4 12a8 8 0 018-8v8z'
+                              ></path>
+                            </svg>
+                            Загрузка
+                          </div>
+                        ) : (
+                          'Войти'
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
-          <div className='card flex-shrink-0 w-full max-w-sm ring-1 ring-secondary hover:ring-secondary-focus rounded-box'>
-            <div className='card-body'>
-              <div className='form-control'>
-                <label className='label'>
-                  <span className='label-text'>Почта</span>
-                </label>
-                <input
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  type='email'
-                  placeholder='почта'
-                  className='input input-bordered'
-                />
-              </div>
-              <div className='form-control'>
-                <label className='label'>
-                  <span className='label-text'>Пароль</span>
-                </label>
-                <input
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  type='password'
-                  placeholder='пароль'
-                  className='input input-bordered'
-                />
-                {/*<label className='label'>*/}
-                {/*  <a href='#' className='label-text-alt link link-hover'>*/}
-                {/*    Forgot password?*/}
-                {/*  </a>*/}
-                {/*</label>*/}
-              </div>
-              <div className='form-control mt-6'>
-                <button
-                  className={`btn btn-primary`}
-                  onClick={login}
-                  disabled={!email || !password || loginProgress}
-                >
-                  {!loginProgress ? 'Войти' : <progress className='progress w-20'></progress>}
-                </button>
-              </div>
-            </div>
+          <div className='relative hidden w-0 flex-1 lg:block'>
+            <Image
+              className='absolute inset-0 h-full w-full object-cover'
+              fill
+              src='https://www.mirea.ru/upload/medialibrary/1b3/01.jpg'
+              alt=''
+            />
           </div>
         </div>
-      </div>
-      <Toaster position='top-right' />
-    </LayoutWithoutDrawer>
+
+        <Toaster position='top-right' />
+      </LayoutWithoutDrawer>
+    </>
   )
 }

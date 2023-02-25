@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   images: {
-    domains: ['cdn.cms.mirea.ninja', 'appwrite.mirea.ninja'],
+    domains: ['cdn.cms.mirea.ninja', 'appwrite.mirea.ninja', 'www.mirea.ru'],
   },
   async redirects() {
     return [
