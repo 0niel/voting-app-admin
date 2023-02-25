@@ -16,14 +16,12 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
   const router = useRouter()
 
   return (
-    <div
-      className={`${props.className} btn-group btn-group-vertical md:btn-group-horizontal w-screen-3/4 justify-center`}
-    >
+    <div className={`${props.className} tabs tabs-boxed justify-center`}>
       {props.buttons.map((button, index) => (
         <Link
           href={button.path}
           key={index}
-          className={`btn ${router.pathname.includes(button.keyword) && 'btn-active'}`}
+          className={`tab ${router.pathname.includes(button.keyword) && 'tab-active'}`}
         >
           {button.name}
         </Link>

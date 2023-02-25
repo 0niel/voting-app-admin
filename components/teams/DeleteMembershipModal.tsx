@@ -38,7 +38,7 @@ export default function DeleteMembershipModal() {
       toast.error(error.message)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [membershipIDToDelete, teamIDRelatedToMembershipToDelete])
+  }, [membershipIDToDelete])
 
   async function deleteMembership() {
     try {
@@ -46,7 +46,6 @@ export default function DeleteMembershipModal() {
         teamIDRelatedToMembershipToDelete!,
         membershipIDToDelete!,
       )
-      console.log(postDeleteAction)
       await postDeleteAction()
     } catch (error: any) {
       toast.error(error.message)
