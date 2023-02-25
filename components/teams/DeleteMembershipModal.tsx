@@ -13,6 +13,8 @@ export default function DeleteMembershipModal() {
     setMembershipIDToDelete,
     teamIDRelatedToMembershipToDelete,
     setTeamIDRelatedToMembershipToDelete,
+    postDeleteAction,
+    setPostDeleteAction,
   } = useMembership()
   const [membershipToDelete, setMembershipToDelete] = useState<Models.Membership>()
   const { client } = useAppwrite()
@@ -20,6 +22,7 @@ export default function DeleteMembershipModal() {
   useOnClickOutside(dialogPanelRef, () => {
     setMembershipIDToDelete(undefined)
     setTeamIDRelatedToMembershipToDelete(undefined)
+    setPostDeleteAction(undefined)
   })
 
   useEffect(() => {
@@ -43,11 +46,14 @@ export default function DeleteMembershipModal() {
         teamIDRelatedToMembershipToDelete!,
         membershipIDToDelete!,
       )
+      console.log(postDeleteAction)
+      await postDeleteAction()
     } catch (error: any) {
       toast.error(error.message)
     }
     setMembershipIDToDelete(undefined)
     setTeamIDRelatedToMembershipToDelete(undefined)
+    setPostDeleteAction(() => {})
   }
 
   return (
@@ -98,6 +104,7 @@ export default function DeleteMembershipModal() {
                       type='button'
                       className='btn btn-primary'
                       onClick={() => {
+                        setPostDeleteAction(() => {})
                         setMembershipIDToDelete(undefined)
                         setTeamIDRelatedToMembershipToDelete(undefined)
                       }}

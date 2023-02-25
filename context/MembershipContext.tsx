@@ -5,13 +5,17 @@ interface MembershipContextI {
   setMembershipIDToDelete: Function
   teamIDRelatedToMembershipToDelete?: string
   setTeamIDRelatedToMembershipToDelete: Function
+  postDeleteAction: () => void
+  setPostDeleteAction: Function
 }
 
 const MembershipContext = createContext<MembershipContextI>({
   membershipIDToDelete: undefined,
-  setMembershipIDToDelete: (_eventId: string) => null,
+  setMembershipIDToDelete: (_membershipID: string) => null,
   teamIDRelatedToMembershipToDelete: undefined,
-  setTeamIDRelatedToMembershipToDelete: (_eventId: string) => null,
+  setTeamIDRelatedToMembershipToDelete: (_membershipID: string) => null,
+  postDeleteAction: () => {},
+  setPostDeleteAction: (_function: () => void) => null,
 })
 
 export const useMembership = () => React.useContext(MembershipContext)
@@ -21,6 +25,7 @@ export function MembershipProvider({ children }: any) {
   const [teamIDRelatedToMembershipToDelete, setTeamIDRelatedToMembershipToDelete] = useState<
     string | undefined
   >(undefined)
+  const [postDeleteAction, setPostDeleteAction] = useState<() => void>(() => {})
 
   return (
     <MembershipContext.Provider
@@ -29,6 +34,8 @@ export function MembershipProvider({ children }: any) {
         setMembershipIDToDelete,
         teamIDRelatedToMembershipToDelete,
         setTeamIDRelatedToMembershipToDelete,
+        postDeleteAction,
+        setPostDeleteAction,
       }}
     >
       {children}
