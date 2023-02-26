@@ -9,6 +9,7 @@ import { Account, Client } from 'appwrite'
 import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import Image from 'next/image'
+import * as https from 'https'
 
 const alerts: { [englishAlert: string]: string } = {
   'Invalid credentials. Please check the email and password.': 'Неверные почта или пароль.',
@@ -41,6 +42,7 @@ export default function Login() {
       const account = new Account(client)
       await account.createEmailSession(email, password)
       const userData = await account.get()
+      console.log(client.config)
       setClient(client)
       await mutateUser(
         await fetchJson('/api/login', {
@@ -60,6 +62,17 @@ export default function Login() {
       )
     }
     setLoginProgress(false)
+  }
+
+  async function loginOAuth2(event: FormEvent<EventTarget>) {
+    event.preventDefault()
+    const client = new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
+    const account = new Account(client)
+    account.createOAuth2Session(
+      'mirea',
+      'http://localhost:3000/oauth2',
+      'http://localhost:3000/login',
+    )
   }
 
   return (
@@ -141,7 +154,7 @@ export default function Login() {
                                 cy='12'
                                 r='10'
                                 stroke='currentColor'
-                                stroke-width='4'
+                                strokeWidth='4'
                               ></circle>
                               <path
                                 className='opacity-75'
@@ -154,6 +167,15 @@ export default function Login() {
                         ) : (
                           'Войти'
                         )}
+                      </button>
+                    </div>
+                    <div>
+                      <button
+                        className='flex w-full justify-center rounded-md border-2 border-base-200 py-2 px-4 text-sm font-medium shadow-sm ring-base-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50'
+                        onClick={loginOAuth2}
+                      >
+                        <Image src={'/assets/mirea-emblem.svg'} alt='' width={20} height={20} />{' '}
+                        <span> Войти через ЛКС</span>
                       </button>
                     </div>
                   </form>
