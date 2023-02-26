@@ -70,10 +70,10 @@ export default function Login() {
             <div className='mx-auto w-full max-w-sm lg:w-96'>
               <div>
                 <NinjaXUnion withLinks />
-                <h2 className='mt-6 text-3xl font-bold tracking-tight text-gray-900'>
+                <h2 className='mt-6 text-3xl font-bold tracking-tight text-neutral-focus'>
                   Вход в систему
                 </h2>
-                <p className='mt-2 text-sm text-gray-600'>
+                <p className='mt-2 text-sm text-neutral'>
                   Для получения доступа обратитесь к организаторам.
                 </p>
               </div>
@@ -82,7 +82,10 @@ export default function Login() {
                 <div className='mt-6'>
                   <form action='#' method='POST' className='space-y-6'>
                     <div>
-                      <label htmlFor='email' className='block text-sm font-medium text-gray-700'>
+                      <label
+                        htmlFor='email'
+                        className='block text-sm font-medium text-base-content'
+                      >
                         Email адрес
                       </label>
                       <div className='mt-1'>
@@ -94,13 +97,13 @@ export default function Login() {
                           type='email'
                           autoComplete='email'
                           required
-                          className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+                          className='block w-full appearance-none rounded-md border border-base-200 px-3 py-2 placeholder-base-300 shadow-sm focus:border-primary focus:outline-none focus:ring-primary-focus sm:text-sm'
                         />
                       </div>
                     </div>
 
                     <div className='space-y-1'>
-                      <label htmlFor='password' className='block text-sm font-medium text-gray-700'>
+                      <label htmlFor='password' className='block text-sm font-medium text-neutral'>
                         Пароль
                       </label>
                       <div className='mt-1'>
@@ -112,7 +115,7 @@ export default function Login() {
                           type='password'
                           autoComplete='current-password'
                           required
-                          className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+                          className='block w-full appearance-none rounded-md border border-base-200 px-3 py-2 placeholder-base-300 shadow-sm focus:border-primary focus:outline-none focus:ring-primary-focus sm:text-sm'
                         />
                       </div>
                     </div>
@@ -122,7 +125,7 @@ export default function Login() {
                         type='submit'
                         onClick={login}
                         disabled={!email || !password || loginProgress}
-                        className='flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50'
+                        className='flex w-full justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-base-100 shadow-sm hover:bg-primary-focus focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50'
                       >
                         {loginProgress ? (
                           <div className='flex items-center justify-center'>

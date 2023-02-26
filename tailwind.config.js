@@ -29,10 +29,42 @@ module.exports = {
       },
     },
   },
-  plugins: [require('daisyui'), require('@tailwindcss/typography')],
+  plugins: [require('@tailwindcss/typography'), require('daisyui')],
   daisyui: {
-    themes: ['fantasy', 'night'],
-    darkTheme: 'night',
+    themes: [
+      {
+        mirea: {
+          primary: '#4f46e5',
+          'primary-focus': '#4338ca',
+          'primary-content': '#ffffff',
+
+          secondary: '#2563eb',
+          'secondary-focus': '#1d4ed8',
+          'secondary-content': '#ffffff',
+
+          accent: '#a78bfa',
+          'accent-focus': '#8b5cf6',
+          'accent-content': '#ddd6fe',
+
+          neutral: '#374151',
+          'neutral-focus': '#111827',
+
+          'base-100': '#ffffff',
+          'base-content': '#374151',
+          'base-200': '#d1d5db',
+          'base-300': '#9ca3af',
+
+          info: '#38bdf8',
+
+          success: '#5eead4',
+
+          warning: '#fde047',
+
+          error: '#dc2626',
+        },
+      },
+    ],
+    darkTheme: 'mirea',
     logs: false,
   },
 }
