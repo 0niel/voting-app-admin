@@ -1,5 +1,5 @@
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
-import React, { ReactElement, Suspense, useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { Databases, Models, Query, Teams } from 'appwrite'
@@ -43,6 +43,7 @@ const AccessModerators = () => {
     } catch (error: any) {
       toast.error(error)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function updateMemberships() {
