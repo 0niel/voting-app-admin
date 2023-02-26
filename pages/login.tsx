@@ -9,7 +9,6 @@ import { Account, Client } from 'appwrite'
 import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import Image from 'next/image'
-import * as https from 'https'
 
 const alerts: { [englishAlert: string]: string } = {
   'Invalid credentials. Please check the email and password.': 'Неверные почта или пароль.',
@@ -42,7 +41,6 @@ export default function Login() {
       const account = new Account(client)
       await account.createEmailSession(email, password)
       const userData = await account.get()
-      console.log(client.config)
       setClient(client)
       await mutateUser(
         await fetchJson('/api/login', {
@@ -68,10 +66,11 @@ export default function Login() {
     event.preventDefault()
     const client = new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
     const account = new Account(client)
+    console.log(process.env.REDIRECT_HOSTNAME)
     account.createOAuth2Session(
       'mirea',
-      'http://localhost:3000/oauth2',
-      'http://localhost:3000/login',
+      `${process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME}/oauth2`,
+      `${process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME}/login`,
     )
   }
 
