@@ -8,9 +8,9 @@ interface AvatarProps {
 export default function Avatar(props: AvatarProps) {
   const { user } = useUser()
   return (
-    <div className='avatar placeholder'>
+    <div className='placeholder avatar'>
       <div
-        className={`${props.iconSize} rounded-full ring-1 group-hover:ring-2 duration-200 ring-secondary bg-accent group-hover:bg-accent-focus`}
+        className={`${props.iconSize} rounded-full bg-accent ring-1 ring-secondary duration-200 group-hover:bg-accent-focus group-hover:ring-2`}
       >
         <span className={`${props.fontSize} text-access-content`}>
           {user?.userData?.name

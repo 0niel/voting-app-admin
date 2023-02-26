@@ -22,7 +22,7 @@ const studentUnionImage = (
 
 export default function NinjaXUnion(props: NinjaXUnionProps) {
   return (
-    <div className='flex inline-block items-center'>
+    <div className='inline-block flex items-center'>
       {props.withLinks ? (
         <Link target='_blank' href={mireaNinjaURL}>
           <MNLogo className='w-100 h-100' />
@@ -30,7 +30,7 @@ export default function NinjaXUnion(props: NinjaXUnionProps) {
       ) : (
         <MNLogo className='w-30 h-30' />
       )}
-      <XMarkIcon className='px-1 h-7 w-7 text-slate-500 dark:text-slate-400' />
+      <XMarkIcon className='h-7 w-7 px-1 text-slate-500 dark:text-slate-400' />
       {props.withLinks ? (
         <Link target='_blank' href={studentUnionURL}>
           {studentUnionImage}

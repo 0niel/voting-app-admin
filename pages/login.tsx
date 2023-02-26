@@ -62,6 +62,18 @@ export default function Login() {
     setLoginProgress(false)
   }
 
+  async function loginOAuth2(event: FormEvent<EventTarget>) {
+    event.preventDefault()
+    const client = new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
+    const account = new Account(client)
+    console.log(process.env.REDIRECT_HOSTNAME)
+    account.createOAuth2Session(
+      'mirea',
+      `${process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME}/oauth2`,
+      `${process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME}/login`,
+    )
+  }
+
   return (
     <>
       <LayoutWithoutDrawer>
@@ -141,7 +153,7 @@ export default function Login() {
                                 cy='12'
                                 r='10'
                                 stroke='currentColor'
-                                stroke-width='4'
+                                strokeWidth='4'
                               ></circle>
                               <path
                                 className='opacity-75'
@@ -154,6 +166,15 @@ export default function Login() {
                         ) : (
                           'Войти'
                         )}
+                      </button>
+                    </div>
+                    <div>
+                      <button
+                        className='flex w-full justify-center rounded-md border-2 border-base-200 py-2 px-4 text-sm font-medium shadow-sm ring-base-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50'
+                        onClick={loginOAuth2}
+                      >
+                        <Image src={'/assets/mirea-emblem.svg'} alt='' width={20} height={20} />{' '}
+                        <span> Войти через ЛКС</span>
                       </button>
                     </div>
                   </form>

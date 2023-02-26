@@ -57,13 +57,13 @@ export default function UpdateEventModal() {
             >
               <Dialog.Panel
                 ref={dialogPanelRef}
-                className='w-full max-w-md transform overflow-hidden bg-base-100 rounded-box p-6 text-left align-middle transition-all ring-1 ring-secondary hover:ring-2 hover:ring-secondary-focus'
+                className='rounded-box w-full max-w-md transform overflow-hidden bg-base-100 p-6 text-left align-middle ring-1 ring-secondary transition-all hover:ring-2 hover:ring-secondary-focus'
               >
                 <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
                   Редактировать событие{' '}
                   <span className='text-info'>
                     {eventToUpdate?.name}
-                    <span className='font-light text-sm'> {eventToUpdate?.$id.slice(-7)}</span>
+                    <span className='text-sm font-light'> {eventToUpdate?.$id.slice(-7)}</span>
                   </span>
                 </Dialog.Title>
                 <div className='form-control w-full max-w-xs pt-5'>
@@ -75,14 +75,14 @@ export default function UpdateEventModal() {
                     placeholder={eventToUpdate?.name}
                     value={newEventName}
                     onChange={(e) => setNewEventName(e.target.value)}
-                    className='input input-bordered input-accent w-full max-w-xs'
+                    className='input-bordered input-accent input w-full max-w-xs'
                   />
                 </div>
 
                 <div className='mt-6 text-end'>
                   <button
                     type='button'
-                    className='btn btn-primary'
+                    className='btn-primary btn'
                     onClick={async () => {
                       if (newEventName.length > 0) {
                         new Databases(client!)

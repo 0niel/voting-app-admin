@@ -33,7 +33,7 @@ export default function UndefinedAppwriteContextModal() {
               leaveFrom='opacity-100 scale-100'
               leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel className='w-full max-w-md transform overflow-hidden bg-base-100 rounded-box p-6 text-left align-middle transition-all ring-1 ring-secondary'>
+              <Dialog.Panel className='rounded-box w-full max-w-md transform overflow-hidden bg-base-100 p-6 text-left align-middle ring-1 ring-secondary transition-all'>
                 <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
                   Сессия недействительна
                 </Dialog.Title>
@@ -46,7 +46,7 @@ export default function UndefinedAppwriteContextModal() {
                 <div className='mt-4'>
                   <button
                     type='button'
-                    className='btn btn-primary px-4 py-2'
+                    className='btn-primary btn px-4 py-2'
                     onClick={async () => {
                       await router.push('/login')
                     }}

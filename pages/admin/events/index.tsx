@@ -92,22 +92,22 @@ const Events = () => {
 
   return (
     <>
-      <div className='grid grid-cols-4 grid-flow-row-dense gap-4 p-3'>
+      <div className='grid grid-flow-row-dense grid-cols-4 gap-4 p-3'>
         <PanelWindow inCard className='col-span-4 md:col-span-1'>
           <input
             type='text'
             placeholder='Название события'
             value={newEventName}
             onChange={(e) => setNewEventName(e.target.value)}
-            className='input input-bordered input-accent w-full max-w-xs'
+            className='input-bordered input-accent input w-full max-w-xs'
           />
-          <button className='btn btn-ghost btn-secondary' onClick={createEvent}>
+          <button className='btn-secondary btn-ghost btn' onClick={createEvent}>
             Создать событие
           </button>
         </PanelWindow>
-        <PanelWindow className='col-span-4 md:col-span-3 row-span-3'>
+        <PanelWindow className='col-span-4 row-span-3 md:col-span-3'>
           <div className='overflow-x-auto'>
-            <table className='table table-compact w-full'>
+            <table className='table-compact table w-full'>
               <thead>
                 <tr>
                   <th />
@@ -121,14 +121,14 @@ const Events = () => {
               <tbody>
                 {events.map((event, index) => (
                   <tr key={index}>
-                    <th className='font-light text-xs'>{event.$id.slice(-7)}</th>
-                    <td className='max-w-[10rem] text-ellipsis overflow-hidden'>{event.name}</td>
-                    <td className='font-light text-xs'>
+                    <th className='text-xs font-light'>{event.$id.slice(-7)}</th>
+                    <td className='max-w-[10rem] overflow-hidden text-ellipsis'>{event.name}</td>
+                    <td className='text-xs font-light'>
                       {event.creator_id === user?.userData?.$id &&
                       event.access_moderators_team_id ? (
                         <Link
                           href={`/admin/events/${event.$id}/access-moderators/${event.access_moderators_team_id}`}
-                          className='link link-hover hover:text-blue-600 dark-hover:text-blue-400 after:content-["_↗"]'
+                          className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
                         >
                           {event.access_moderators_team_id.slice(-7)}
                         </Link>
@@ -136,12 +136,12 @@ const Events = () => {
                         event.access_moderators_team_id?.slice(-7) || 'нет'
                       )}
                     </td>
-                    <td className='font-light text-xs'>
+                    <td className='text-xs font-light'>
                       {event.creator_id === user?.userData?.$id &&
                       event.voting_moderators_team_id ? (
                         <Link
                           href={`/admin/events/${event.$id}/voting-moderators/${event.voting_moderators_team_id}`}
-                          className='link link-hover hover:text-blue-600 dark-hover:text-blue-400 after:content-["_↗"]'
+                          className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
                         >
                           {event.voting_moderators_team_id.slice(-7)}
                         </Link>
@@ -149,11 +149,11 @@ const Events = () => {
                         event.voting_moderators_team_id?.slice(-7) || 'нет'
                       )}
                     </td>
-                    <td className='font-light text-xs'>
+                    <td className='text-xs font-light'>
                       {event.creator_id === user?.userData?.$id && event.participants_team_id ? (
                         <Link
                           href={`/admin/events/${event.$id}/participants/${event.participants_team_id}`}
-                          className='link link-hover hover:text-blue-600 dark-hover:text-blue-400 after:content-["_↗"]'
+                          className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
                         >
                           {event.participants_team_id.slice(-7)}
                         </Link>
@@ -165,16 +165,16 @@ const Events = () => {
                       {event.creator_id === user?.userData?.$id && (
                         <>
                           <button
-                            className='hover:text-info px-1'
+                            className='px-1 hover:text-info'
                             onClick={() => setEventIdToUpdate(event.$id)}
                           >
-                            <PencilIcon className='w-5 h-5' />
+                            <PencilIcon className='h-5 w-5' />
                           </button>
                           <button
-                            className='hover:text-error px-1'
+                            className='px-1 hover:text-error'
                             onClick={() => setEventIdToDelete(event.$id)}
                           >
-                            <TrashIcon className='w-5 h-5' />
+                            <TrashIcon className='h-5 w-5' />
                           </button>
                         </>
                       )}

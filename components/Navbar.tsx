@@ -35,21 +35,21 @@ export default function Navbar(props: NavbarProps) {
   }
 
   return (
-    <div className='fixed w-full navbar bg-base-200 border-b border-base-300'>
+    <div className='navbar fixed w-full border-b border-base-300 bg-base-200'>
       <div className='navbar-start'>
         {props.sections && (
           <div className='flex-none lg:hidden'>
-            <label htmlFor={hamburgerMenuId} className='btn btn-square btn-ghost'>
+            <label htmlFor={hamburgerMenuId} className='btn-ghost btn-square btn'>
               <Bars3Icon className='h-6 w-6' />
             </label>
           </div>
         )}
-        <div className='flex-1 mx-2'>
-          <Link href='/' className='btn btn-ghost'>
+        <div className='mx-2 flex-1'>
+          <Link href='/' className='btn-ghost btn'>
             <div className='flex items-center text-xl normal-case'>
-              <ProjectLogo className='w-6 h-6' />
+              <ProjectLogo className='h-6 w-6' />
               <div className='pl-2'>
-                <span className='whitespace-nowrap hidden lg:block'>{appName}</span>
+                <span className='hidden whitespace-nowrap lg:block'>{appName}</span>
                 <span className='whitespace-nowrap lg:hidden'>{shortAppName}</span>
               </div>
             </div>
@@ -57,7 +57,7 @@ export default function Navbar(props: NavbarProps) {
         </div>
       </div>
       <div className='navbar-center'>
-        <div className='flex-none hidden lg:block'>
+        <div className='hidden flex-none lg:block'>
           {props.sections && (
             <ul className='tabs tabs-boxed'>
               {props.sections.map((section, index) => (
@@ -75,24 +75,24 @@ export default function Navbar(props: NavbarProps) {
         </div>
       </div>
       <div className='navbar-end'>
-        <div className='dropdown dropdown-end'>
-          <label tabIndex={0} className='flex inline-block items-center btn btn-ghost normal-case'>
+        <div className='dropdown-end dropdown'>
+          <label tabIndex={0} className='btn-ghost btn inline-block flex items-center normal-case'>
             <Avatar iconSize='w-8 h-8' fontSize='' />
-            <ChevronDownIcon className='w-5 h-5 pt-0.5 stroke-2 text-slate-500 dark:text-slate-400' />
+            <ChevronDownIcon className='h-5 w-5 stroke-2 pt-0.5 text-slate-500 dark:text-slate-400' />
           </label>
           <ul
             tabIndex={0}
-            className='dropdown-content menu p-2 shadow bg-base-100 rounded-box mt-4 ring-1 ring-secondary'
+            className='dropdown-content menu rounded-box mt-4 bg-base-100 p-2 shadow ring-1 ring-secondary'
           >
             <li>
               <button onClick={() => router.push('/admin/profile')}>
-                <UserCircleIcon className='w-6 h-6' />
+                <UserCircleIcon className='h-6 w-6' />
                 <span>Профиль</span>
               </button>
             </li>
             <li>
               <button className='text-error' onClick={logout}>
-                <ArrowLeftOnRectangleIcon className='w-6 h-6' />
+                <ArrowLeftOnRectangleIcon className='h-6 w-6' />
                 <span>Выйти</span>
               </button>
             </li>

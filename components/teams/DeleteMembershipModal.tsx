@@ -87,21 +87,21 @@ export default function DeleteMembershipModal() {
             >
               <Dialog.Panel
                 ref={dialogPanelRef}
-                className='w-full max-w-md transform overflow-hidden bg-base-100 rounded-box p-6 text-left align-middle transition-all ring-1 ring-secondary'
+                className='rounded-box w-full max-w-md transform overflow-hidden bg-base-100 p-6 text-left align-middle ring-1 ring-secondary transition-all'
               >
                 <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
                   Вы уверены, что хотите исключить из команды пользователя{' '}
                   <span className='text-info'>
                     {membershipToDelete?.userName} {membershipToDelete?.userEmail}
-                    <span className='font-light text-sm'> {membershipToDelete?.$id.slice(-7)}</span>
+                    <span className='text-sm font-light'> {membershipToDelete?.$id.slice(-7)}</span>
                   </span>
                   ?
                 </Dialog.Title>
-                <div className='mt-6 justify-end flex'>
+                <div className='mt-6 flex justify-end'>
                   <div className='mr-2'>
                     <button
                       type='button'
-                      className='btn btn-primary'
+                      className='btn-primary btn'
                       onClick={() => {
                         setPostDeleteAction(() => {})
                         setMembershipIDToDelete(undefined)
@@ -113,7 +113,7 @@ export default function DeleteMembershipModal() {
                   </div>
                   <button
                     type='button'
-                    className='btn btn-error btn-outline'
+                    className='btn-error btn-outline btn'
                     onClick={deleteMembership}
                   >
                     Удалить

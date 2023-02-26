@@ -77,37 +77,37 @@ export default function DeleteEventModal() {
             >
               <Dialog.Panel
                 ref={dialogPanelRef}
-                className='w-full max-w-md transform overflow-hidden bg-base-100 rounded-box p-6 text-left align-middle transition-all ring-1 ring-secondary'
+                className='rounded-box w-full max-w-md transform overflow-hidden bg-base-100 p-6 text-left align-middle ring-1 ring-secondary transition-all'
               >
                 <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
                   Вы уверены, что хотите удалить событие{' '}
                   <span className='text-info'>
                     {eventToDelete?.name}
-                    <span className='font-light text-sm'> {eventToDelete?.$id.slice(-7)}</span>
+                    <span className='text-sm font-light'> {eventToDelete?.$id.slice(-7)}</span>
                   </span>
                   ?
                 </Dialog.Title>
                 <div className='pt-5'>
                   <div className='alert alert-warning shadow-lg'>
                     <div>
-                      <ExclamationTriangleIcon className='w-8 h-8' />
+                      <ExclamationTriangleIcon className='h-8 w-8' />
                       <span>
                         При удалении события будут удалены списки модераторов, участников.
                       </span>
                     </div>
                   </div>
                 </div>
-                <div className='mt-6 justify-end flex'>
+                <div className='mt-6 flex justify-end'>
                   <div className='mr-2'>
                     <button
                       type='button'
-                      className='btn btn-primary'
+                      className='btn-primary btn'
                       onClick={() => setEventIdToDelete(undefined)}
                     >
                       Отменить
                     </button>
                   </div>
-                  <button type='button' className='btn btn-error btn-outline' onClick={deleteEvent}>
+                  <button type='button' className='btn-outline btn-error btn' onClick={deleteEvent}>
                     Удалить
                   </button>
                 </div>

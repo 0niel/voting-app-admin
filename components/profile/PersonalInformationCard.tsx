@@ -47,11 +47,11 @@ export default function PersonalInformationCard() {
           </div>
           <div className='pt-3'>
             {teams.length > 0 ? (
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-4 justify-center place-items-center'>
+              <div className='grid grid-cols-1 place-items-center justify-center gap-4 md:grid-cols-3'>
                 {teams.map((team, index) => (
                   <div
                     key={index}
-                    className='badge badge-primary m-1 hover:scale-110 h-full text-ellipsis overflow-hidden'
+                    className='badge-primary badge m-1 h-full overflow-hidden text-ellipsis hover:scale-110'
                   >
                     {team.name}
                   </div>

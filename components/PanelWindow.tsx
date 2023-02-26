@@ -10,7 +10,7 @@ export default function PanelWindow(props: PanelWindowProps) {
   if (props.inCard) {
     return (
       <div
-        className={`ring-1 ring-secondary hover:ring-secondary-focus rounded-box card items-center text-center ${props.className}`}
+        className={`card rounded-box items-center text-center ring-1 ring-secondary hover:ring-secondary-focus ${props.className}`}
       >
         <div className='card-body'>{props.children}</div>
       </div>
@@ -18,7 +18,7 @@ export default function PanelWindow(props: PanelWindowProps) {
   } else {
     return (
       <div
-        className={`ring-1 ring-secondary hover:ring-secondary-focus rounded-box ${props.className}`}
+        className={`rounded-box ring-1 ring-secondary hover:ring-secondary-focus ${props.className}`}
       >
         <div className='p-1'>{props.children}</div>
       </div>
