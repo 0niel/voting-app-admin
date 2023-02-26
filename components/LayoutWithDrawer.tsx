@@ -53,6 +53,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
         ).then(() => {})
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

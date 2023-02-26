@@ -40,6 +40,7 @@ const VotingModerators = () => {
     } catch (error: any) {
       toast.error(error)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function updateMemberships() {

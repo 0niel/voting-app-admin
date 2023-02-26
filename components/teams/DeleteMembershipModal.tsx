@@ -113,7 +113,7 @@ export default function DeleteMembershipModal() {
                   </div>
                   <button
                     type='button'
-                    className='btn-error btn-outline btn'
+                    className='outline·btn-error btn'
                     onClick={deleteMembership}
                   >
                     Удалить

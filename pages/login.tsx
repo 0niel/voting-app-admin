@@ -5,8 +5,7 @@ import { toast, Toaster } from 'react-hot-toast'
 import LayoutWithoutDrawer from '@/components/LayoutWithoutDrawer'
 import useUser from '@/lib/useUser'
 import fetchJson from '@/lib/fetchJson'
-import { Account, Client } from 'appwrite'
-import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
+import { Account } from 'appwrite'
 import { useAppwrite } from '@/context/AppwriteContext'
 import Image from 'next/image'
 
@@ -15,6 +14,8 @@ const alerts: { [englishAlert: string]: string } = {
   'Rate limit for the current endpoint has been exceeded. Please try again after some time.':
     'Превышен лимит попыток входа. Повторите попытку через некоторое время.',
   'Network request failed': 'Проверьте подключение к Интернету',
+  'The current user is not authorized to perform the requested action.':
+    'Не достаточно прав для выполнения этого действия.',
 }
 
 export default function Login() {
@@ -37,7 +38,6 @@ export default function Login() {
     event.preventDefault()
     setLoginProgress(true)
     try {
-      const client = new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
       const account = new Account(client)
       await account.createEmailSession(email, password)
       const userData = await account.get()
@@ -64,10 +64,7 @@ export default function Login() {
 
   async function loginOAuth2(event: FormEvent<EventTarget>) {
     event.preventDefault()
-    const client = new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
-    const account = new Account(client)
-    console.log(process.env.REDIRECT_HOSTNAME)
-    account.createOAuth2Session(
+    new Account(client).createOAuth2Session(
       'mirea',
       `${process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME}/oauth2`,
       `${process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME}/login`,

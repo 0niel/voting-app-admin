@@ -1,20 +1,23 @@
 import React, { createContext, useState } from 'react'
 import { Client, Databases, Models } from 'appwrite'
+import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
 
 interface AppwriteContextI {
-  client?: Client
+  client: Client
   setClient: Function
 }
 
 const AppwriteContext = createContext<AppwriteContextI>({
-  client: undefined,
+  client: new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId),
   setClient: (_appwrite: Models.Session, _databases: Databases) => null,
 })
 
 export const useAppwrite = () => React.useContext(AppwriteContext)
 
 export function AppwriteProvider({ children }: any) {
-  const [client, setClient] = useState<Client | undefined>(undefined)
+  const [client, setClient] = useState<Client>(
+    new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId),
+  )
 
   return (
     <AppwriteContext.Provider value={{ client, setClient }}>{children}</AppwriteContext.Provider>
