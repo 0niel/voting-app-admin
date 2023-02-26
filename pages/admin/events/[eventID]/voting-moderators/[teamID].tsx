@@ -65,14 +65,14 @@ const VotingModerators = () => {
 
   return (
     <>
-      <h1 className='text-2xl text-start md:text-center'>
+      <h1 className='text-start text-2xl md:text-center'>
         <span className='text-slate-500 dark:text-slate-400'>Событие </span>
         <span className='font-bold'>{event?.name}</span>
       </h1>
-      <div className='grid grid-cols-4 grid-flow-row-dense place-items-stretch gap-4 p-3'>
+      <div className='grid grid-flow-row-dense grid-cols-4 place-items-stretch gap-4 p-3'>
         {event && (
           <TeamsNavigation
-            className='col-span-4 place-item-center'
+            className='place-item-center col-span-4'
             buttons={[
               {
                 name: 'Модераторы доступа',
@@ -100,16 +100,16 @@ const VotingModerators = () => {
               placeholder='Почта нового модератора'
               value={emailInvite}
               onChange={(e) => setEmailInvite(e.target.value)}
-              className='input input-bordered input-accent w-full max-w-xs'
+              className='input-bordered input w-full max-w-xs'
             />
           </div>
-          <button className='btn btn-ghost btn-secondary' onClick={createMembership}>
+          <button className='btn-secondary btn-ghost btn' onClick={createMembership}>
             Пригласить
           </button>
         </PanelWindow>
-        <PanelWindow className='col-span-4 md:col-span-3 row-span-3'>
+        <PanelWindow className='col-span-4 row-span-3 md:col-span-3'>
           <div className='overflow-x-auto'>
-            <table className='table table-compact w-full'>
+            <table className='table-compact table w-full'>
               <thead>
                 <tr>
                   <th />
@@ -124,14 +124,14 @@ const VotingModerators = () => {
               <tbody>
                 {memberships.map((membership, index) => (
                   <tr key={index}>
-                    <th className='font-light text-xs'>{membership.$id.slice(-7)}</th>
-                    <td className='max-w-[10rem] text-ellipsis overflow-hidden'>
+                    <th className='text-xs font-light'>{membership.$id.slice(-7)}</th>
+                    <td className='max-w-[10rem] overflow-hidden text-ellipsis'>
                       {membership.userEmail}
                     </td>
-                    <td className='max-w-[10rem] text-ellipsis overflow-hidden'>
+                    <td className='max-w-[10rem] overflow-hidden text-ellipsis'>
                       {membership.userEmail}
                     </td>
-                    <td className='max-w-[10rem] text-ellipsis overflow-hidden'>
+                    <td className='max-w-[10rem] overflow-hidden text-ellipsis'>
                       {membership.roles.join(', ')}
                     </td>
                     <td>{formatDate(membership.invited)}</td>
@@ -145,7 +145,7 @@ const VotingModerators = () => {
                             setTeamIDRelatedToMembershipToDelete(membership.teamId)
                           }}
                         >
-                          <UserMinusIcon className='w-5 h-5' />
+                          <UserMinusIcon className='h-5 w-5' />
                         </button>
                       )}
                     </td>
