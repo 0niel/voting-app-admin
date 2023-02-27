@@ -14,13 +14,15 @@ export default function oauth2() {
 
   useEffect(() => {
     const client = new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
+    const account = new Account(client)
     setClient(client)
-    new Account(client!).get().then((userData) => {
+    account.get().then(async (userData) => {
+      const jwt = await account.createJWT().then((r) => r.jwt)
       mutateUser(
         fetchJson('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userData }),
+          body: JSON.stringify({ userData, jwt }),
         }),
         false,
       ).then(() => router.push('/admin/voting'))

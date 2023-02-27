@@ -37,25 +37,6 @@ export default function LayoutWithDrawer(props: LayoutProps) {
 
   useOnClickOutside(sidebarRef, () => setOpen(false))
 
-  useEffect(() => {
-    console.log(client)
-    if (!client) {
-      const client = new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
-      setClient(client)
-      new Account(client!).get().then((userData) => {
-        mutateUser(
-          fetchJson('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userData }),
-          }),
-          false,
-        ).then(() => {})
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   return (
     <>
       <AdminPanelHead />

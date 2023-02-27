@@ -61,7 +61,7 @@ export default function UpdateEventModal() {
               >
                 <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
                   Редактировать событие{' '}
-                  <span className='text-info'>
+                  <span className='text-primary'>
                     {eventToUpdate?.name}
                     <span className='text-sm font-light'> {eventToUpdate?.$id.slice(-7)}</span>
                   </span>

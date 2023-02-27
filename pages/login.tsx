@@ -15,7 +15,7 @@ const alerts: { [englishAlert: string]: string } = {
     'Превышен лимит попыток входа. Повторите попытку через некоторое время.',
   'Network request failed': 'Проверьте подключение к Интернету',
   'The current user is not authorized to perform the requested action.':
-    'Не достаточно прав для выполнения этого действия.',
+    'Недостаточно прав для выполнения этого действия.',
 }
 
 export default function Login() {
@@ -41,12 +41,13 @@ export default function Login() {
       const account = new Account(client)
       await account.createEmailSession(email, password)
       const userData = await account.get()
+      const jwt = await account.createJWT().then((r) => r.jwt)
       setClient(client)
       await mutateUser(
         await fetchJson('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userData }),
+          body: JSON.stringify({ userData, jwt }),
         }),
         false,
       )
@@ -134,12 +135,12 @@ export default function Login() {
                         type='submit'
                         onClick={login}
                         disabled={!email || !password || loginProgress}
-                        className='flex w-full justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-base-100 shadow-sm hover:bg-primary-focus focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50'
+                        className='flex w-full justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-base-100 text-primary-content shadow-sm hover:bg-primary-focus focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50'
                       >
                         {loginProgress ? (
                           <div className='flex items-center justify-center'>
                             <svg
-                              className='-ml-1 mr-3 h-5 w-5 animate-spin text-white'
+                              className='-ml-1 mr-3 h-5 w-5 animate-spin'
                               xmlns='http://www.w3.org/2000/svg'
                               fill='none'
                               viewBox='0 0 24 24'
@@ -167,10 +168,16 @@ export default function Login() {
                     </div>
                     <div>
                       <button
-                        className='flex w-full justify-center rounded-md border-2 border-base-200 py-2 px-4 text-sm font-medium shadow-sm ring-base-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50'
+                        className='flex w-full items-center justify-center rounded-md border-2 border-base-200 py-2 px-4 text-sm font-medium shadow-sm ring-base-200 hover:border-base-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50'
                         onClick={loginOAuth2}
                       >
-                        <Image src={'/assets/mirea-emblem.svg'} alt='' width={20} height={20} />{' '}
+                        <Image
+                          className='pr-1'
+                          src={'/assets/mirea-emblem.svg'}
+                          alt=''
+                          width={25}
+                          height={25}
+                        />
                         <span> Войти через ЛКС</span>
                       </button>
                     </div>
@@ -188,8 +195,6 @@ export default function Login() {
             />
           </div>
         </div>
-
-        <Toaster position='top-right' />
       </LayoutWithoutDrawer>
     </>
   )

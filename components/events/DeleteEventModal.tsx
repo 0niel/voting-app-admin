@@ -21,7 +21,7 @@ export default function DeleteEventModal() {
   useEffect(() => {
     try {
       if (eventIdToDelete != null) {
-        new Databases(client!)
+        new Databases(client)
           .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventIdToDelete)
           .then((r) => {
             setEventToDelete(r)
@@ -77,11 +77,11 @@ export default function DeleteEventModal() {
             >
               <Dialog.Panel
                 ref={dialogPanelRef}
-                className='rounded-box w-full max-w-md transform overflow-hidden bg-base-100 p-6 text-left align-middle ring-1 ring-secondary transition-all'
+                className='rounded-box w-full max-w-md transform overflow-hidden bg-base-100 p-6 text-left align-middle ring-1 ring-secondary transition-all hover:ring-2 hover:ring-secondary-focus'
               >
                 <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
-                  Вы уверены, что хотите удалить событие{' '}
-                  <span className='text-info'>
+                  <span>Вы уверены, что хотите удалить событие </span>
+                  <span className='text-primary'>
                     {eventToDelete?.name}
                     <span className='text-sm font-light'> {eventToDelete?.$id.slice(-7)}</span>
                   </span>
@@ -92,7 +92,8 @@ export default function DeleteEventModal() {
                     <div>
                       <ExclamationTriangleIcon className='h-8 w-8' />
                       <span>
-                        При удалении события будут удалены списки модераторов, участников.
+                        При удалении события списки модераторов доступа и голосования, участников
+                        также будут удалены.
                       </span>
                     </div>
                   </div>

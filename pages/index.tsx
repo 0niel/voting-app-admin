@@ -15,7 +15,7 @@ export default function Landing() {
         <div className='hero-content text-center'>
           <div className='max-w-md'>
             <h1 className='text-5xl font-bold'>ОВК 2023!</h1>
-            <p className='py-6 text-slate-500 dark:text-slate-400'>{appDescription}</p>
+            <p className='py-6 text-base-content'>{appDescription}</p>
             <Link href={client && user ? '/admin/voting' : '/login'} className='btn-primary btn'>
               Войти {user?.userData && client && `как ${user.userData.name}`}
             </Link>

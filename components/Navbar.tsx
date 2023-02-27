@@ -13,10 +13,10 @@ import { useRouter } from 'next/router'
 import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
 import { useAppwrite } from '@/context/AppwriteContext'
-import Image from 'next/image'
-import { Account } from 'appwrite'
+import { Account, AppwriteException } from 'appwrite'
 import Avatar from '@/components/profile/Avatar'
 import ProjectLogo from '@/components/logos/ProjectLogo'
+import { toast } from 'react-hot-toast'
 
 interface NavbarProps {
   sections?: Section[]
@@ -29,13 +29,22 @@ export default function Navbar(props: NavbarProps) {
 
   async function logout(event: FormEvent) {
     event.preventDefault()
-    await new Account(client!)?.deleteSession('current')
-    await mutateUser(await fetchJson('/api/logout', { method: 'POST' }), false)
-    await router.push('/login')
+    try {
+      await new Account(client).deleteSession('current')
+    } catch (error: any) {
+      if (error instanceof AppwriteException) {
+      } // session does not exists
+      else {
+        toast.error(error.message)
+      }
+    } finally {
+      await mutateUser(await fetchJson('/api/logout', { method: 'POST' }), false)
+      await router.push('/login')
+    }
   }
 
   return (
-    <div className='navbar fixed w-full border-b border-base-300 bg-base-200'>
+    <div className='navbar fixed w-full border-b border-base-200 bg-opacity-30 backdrop-blur-sm backdrop-filter'>
       <div className='navbar-start'>
         {props.sections && (
           <div className='flex-none lg:hidden'>
@@ -78,11 +87,11 @@ export default function Navbar(props: NavbarProps) {
         <div className='dropdown-end dropdown'>
           <label tabIndex={0} className='btn-ghost btn inline-block flex items-center normal-case'>
             <Avatar iconSize='w-8 h-8' fontSize='' />
-            <ChevronDownIcon className='h-5 w-5 stroke-2 pt-0.5 text-slate-500 dark:text-slate-400' />
+            <ChevronDownIcon className='h-5 w-5 stroke-2 pt-0.5 text-base-content' />
           </label>
           <ul
             tabIndex={0}
-            className='dropdown-content menu rounded-box mt-4 bg-base-100 p-2 shadow ring-1 ring-secondary'
+            className='dropdown-content menu mt-4 rounded-md bg-base-100 p-2 shadow ring-1 ring-base-200'
           >
             <li>
               <button onClick={() => router.push('/admin/profile')}>
