@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { sessionOptions } from '@/lib/session'
-import { Client, Teams } from 'node-appwrite'
+import { Client, Query, Teams } from "node-appwrite";
 import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
 import * as process from "process";
 
@@ -14,9 +14,24 @@ async function createMembership(req: NextApiRequest, res: NextApiResponse) {
     const client = new Client()
       .setEndpoint(appwriteEndpoint)
       .setProject(appwriteProjectId)
-      .setKey(process.env.API_TEAMS_ACCESS_TOKEN!)
-    await new Teams(client).createMembership(teamID, email, roles || [], url)
-    res.status(200).json({ message: 'ok' })
+      .setJWT(req.session.user?.jwt!)
+    const memberships = await new Teams(client)
+      .listMemberships(teamID)
+      .then((membershipList) => membershipList.memberships)
+    if (
+      memberships.filter(
+        (membership) => membership.teamId == teamID && membership.roles.includes('owner'),
+      ).length > 0
+    ) {
+      const server = new Client()
+        .setEndpoint(appwriteEndpoint)
+        .setProject(appwriteProjectId)
+        .setKey(process.env.API_TEAMS_ACCESS_TOKEN!)
+      await new Teams(server).createMembership(teamID, email, roles || [], url)
+      res.status(200).json({ message: 'ok' })
+    } else {
+      res.status(403).json({ message: 'Client is not owner of the team.' })
+    }
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: (error as Error).message })

@@ -73,12 +73,25 @@ const AccessModerators = () => {
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
           }),
         })
-          .then((r) => console.log(r))
-          .catch((e) => console.log(e))
-        await teams.createMembership(event!.participants_team_id, newEmail, ['owner'], redirectURL)
-        setEmailInvite('')
+          .then(async () => {
+            await fetch('/api/teams/create-membership', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                teamID: event!.participants_team_id!,
+                email: newEmail,
+                roles: ['owner'],
+                url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
+              }),
+            })
+          })
+          .then(() => {
+            setEmailInvite('')
+            updateMemberships()
+          })
+          .catch((error: any) => toast.error(error.message))
       } else {
-        throw new Error('Укажите действительную почту')
+        throw new Error('Укажите действительную почту.')
       }
     } catch (error: any) {
       toast.error(error.message)
@@ -88,7 +101,7 @@ const AccessModerators = () => {
   return (
     <>
       <h1 className='p-1 text-start text-2xl text-base-content md:text-center'>
-        <span>Событие</span>
+        <span className='text-neutral'>Событие</span>
         <span className='pl-1 font-bold'>{event?.name}</span>
       </h1>
       <TeamsNavigation className='place-item-center col-span-4' eventID={event?.$id} />
@@ -122,7 +135,6 @@ const AccessModerators = () => {
                   <th>Почта</th>
                   <th>Роли</th>
                   <th>Приглашен</th>
-                  <th>Вступил</th>
                   <th className='rounded-tr-md' />
                 </tr>
               </thead>
@@ -140,9 +152,8 @@ const AccessModerators = () => {
                       {membership.roles.join(', ')}
                     </td>
                     <td>{formatDate(membership.invited)}</td>
-                    <td>{membership.joined && formatDate(membership.joined)}</td>
                     <td>
-                      {membership.userId !== user?.userData?.$id && (
+                      {!membership.roles.includes('owner') && (
                         <button
                           className='hover:text-error'
                           onClick={() => {

@@ -16,6 +16,7 @@ import {
 } from '@/constants/constants'
 import useUser from '@/lib/useUser'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
+import process from "process";
 
 const Participants = () => {
   const { client } = useAppwrite()
@@ -52,9 +53,9 @@ const Participants = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function updateMemberships(_teamID: string) {
+  function updateMemberships(_teamID?: string) {
     teams
-      .listMemberships(_teamID)
+      .listMemberships(_teamID || teamID!)
       .then((membershipList) => setMemberships(membershipList.memberships.reverse()))
       .catch((error) => toast.error(error.message))
   }
@@ -63,8 +64,23 @@ const Participants = () => {
     try {
       const newEmail = emailInvite?.trim()
       if (newEmail && newEmail.length > 0) {
-        await teams.createMembership(teamID as string, newEmail, [], redirectURL)
-        setEmailInvite('')
+        await fetch('/api/teams/create-membership', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            teamID: teamID!,
+            email: newEmail,
+            roles: [],
+            url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
+          }),
+        })
+          .then(() => {
+            setEmailInvite('')
+            updateMemberships()
+          })
+          .catch((error: any) => toast.error(error.message))
+      } else {
+        throw new Error('Укажите действительную почту.')
       }
     } catch (error: any) {
       toast.error(error.message)
@@ -74,7 +90,7 @@ const Participants = () => {
   return (
     <>
       <h1 className='p-1 text-start text-2xl text-base-content md:text-center'>
-        <span>Событие</span>
+        <span className='text-neutral'>Событие</span>
         <span className='pl-1 font-bold'>{event?.name}</span>
       </h1>
       <TeamsNavigation className='place-item-center col-span-4' eventID={event?.$id} />
@@ -91,7 +107,7 @@ const Participants = () => {
               placeholder='email'
               value={emailInvite}
               onChange={(e) => setEmailInvite(e.target.value)}
-              className='w-full input-bordered input'
+              className='input-bordered input w-full'
             />
           </div>
           <button className='btn-outline btn-secondary btn' onClick={createMembership}>
@@ -108,7 +124,6 @@ const Participants = () => {
                   <th>Почта</th>
                   <th>Роли</th>
                   <th>Приглашен</th>
-                  <th>Вступил</th>
                   <th className='rounded-tr-md' />
                 </tr>
               </thead>
@@ -126,9 +141,8 @@ const Participants = () => {
                       {membership.roles.join(', ')}
                     </td>
                     <td>{formatDate(membership.invited)}</td>
-                    <td>{membership.joined && formatDate(membership.joined)}</td>
                     <td>
-                      {membership.userId !== user?.userData?.$id && (
+                      {!membership.roles.includes('owner') && (
                         <button
                           className='hover:text-error'
                           onClick={() => {
