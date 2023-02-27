@@ -2,7 +2,11 @@ import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { Databases, ID, Models, Permission, Role, Teams } from 'appwrite'
 import { useAppwrite } from '@/context/AppwriteContext'
-import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
+import {
+  appwriteEventsCollection,
+  appwriteSuperUsersTeam,
+  appwriteVotingDatabase,
+} from '@/constants/constants'
 import useUser from '@/lib/useUser'
 import { toast } from 'react-hot-toast'
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
@@ -18,12 +22,13 @@ const Events = () => {
   const { user } = useUser()
   const [events, setEvents] = useState<Models.Document[]>([])
   const [newEventName, setNewEventName] = useState('')
-  const databases = new Databases(client!)
+  const databases = new Databases(client)
+  const teams = new Teams(client)
 
   useEffect(() => {
     try {
       updateEventList()
-      client!.subscribe('documents', (response) => {
+      client.subscribe('documents', (response) => {
         if (
           // @ts-ignore
           response.payload!.$databaseId === appwriteVotingDatabase &&
@@ -54,17 +59,15 @@ const Events = () => {
       const eventName = newEventName?.trim()
       if (eventName && eventName.length > 0) {
         const accessModeratorsTeamID = (
-          await new Teams(client!).create(ID.unique(), `Модераторы доступа ${eventName}`, ['owner'])
+          await teams.create(ID.unique(), `Модераторы доступа ${eventName}`, ['owner'])
         ).$id
         const votingModeratorsTeamID = (
-          await new Teams(client!).create(ID.unique(), `Модераторы голосования ${eventName}`, [
-            'owner',
-          ])
+          await teams.create(ID.unique(), `Модераторы голосования ${eventName}`, ['owner'])
         ).$id
         const participantsTeamID = (
-          await new Teams(client!).create(ID.unique(), `Участники ${eventName}`, ['owner'])
+          await teams.create(ID.unique(), `Участники ${eventName}`, ['owner'])
         ).$id
-        await new Databases(client!).createDocument(
+        await databases.createDocument(
           appwriteVotingDatabase,
           appwriteEventsCollection,
           ID.unique(),
@@ -76,7 +79,11 @@ const Events = () => {
             participants_team_id: participantsTeamID,
           },
           [
-            Permission.read(Role.users()),
+            Permission.read(Role.team(appwriteSuperUsersTeam)),
+            Permission.read(Role.team(accessModeratorsTeamID)),
+            Permission.read(Role.team(votingModeratorsTeamID)),
+            Permission.read(Role.team(participantsTeamID)),
+            Permission.read(Role.team(accessModeratorsTeamID)),
             Permission.update(Role.user(user?.userData?.$id!)),
             Permission.delete(Role.user(user?.userData?.$id!)),
           ],
@@ -99,23 +106,23 @@ const Events = () => {
             placeholder='Название события'
             value={newEventName}
             onChange={(e) => setNewEventName(e.target.value)}
-            className='input-bordered input-accent input w-full max-w-xs'
+            className='input-bordered input w-full'
           />
-          <button className='btn-secondary btn-ghost btn' onClick={createEvent}>
+          <button className='btn-outline btn-secondary btn' onClick={createEvent}>
             Создать событие
           </button>
         </PanelWindow>
         <PanelWindow className='col-span-4 row-span-3 md:col-span-3'>
           <div className='overflow-x-auto'>
             <table className='table-compact table w-full'>
-              <thead>
+              <thead className='[&_th]:font-semibold'>
                 <tr>
-                  <th />
+                  <th className='rounded-tl-md' />
                   <th>Название</th>
                   <th>Модер. доступа</th>
                   <th>Модер. голос.</th>
                   <th>Участники</th>
-                  <th />
+                  <th className='rounded-tr-md' />
                 </tr>
               </thead>
               <tbody>
@@ -127,7 +134,7 @@ const Events = () => {
                       {event.creator_id === user?.userData?.$id &&
                       event.access_moderators_team_id ? (
                         <Link
-                          href={`/admin/events/${event.$id}/access-moderators/${event.access_moderators_team_id}`}
+                          href={`/admin/events/${event.$id}/access-moderators`}
                           className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
                         >
                           {event.access_moderators_team_id.slice(-7)}
@@ -140,7 +147,7 @@ const Events = () => {
                       {event.creator_id === user?.userData?.$id &&
                       event.voting_moderators_team_id ? (
                         <Link
-                          href={`/admin/events/${event.$id}/voting-moderators/${event.voting_moderators_team_id}`}
+                          href={`/admin/events/${event.$id}/voting-moderators`}
                           className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
                         >
                           {event.voting_moderators_team_id.slice(-7)}
@@ -152,7 +159,7 @@ const Events = () => {
                     <td className='text-xs font-light'>
                       {event.creator_id === user?.userData?.$id && event.participants_team_id ? (
                         <Link
-                          href={`/admin/events/${event.$id}/participants/${event.participants_team_id}`}
+                          href={`/admin/events/${event.$id}/participants`}
                           className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
                         >
                           {event.participants_team_id.slice(-7)}

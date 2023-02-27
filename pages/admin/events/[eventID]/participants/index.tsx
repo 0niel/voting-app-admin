@@ -14,41 +14,49 @@ import {
   appwriteVotingDatabase,
   redirectURL,
 } from '@/constants/constants'
+import useUser from '@/lib/useUser'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
+import process from "process";
 
-const VotingModerators = () => {
+const Participants = () => {
   const { client } = useAppwrite()
   const router = useRouter()
-  const { eventID, teamID } = router.query
+  const { eventID } = router.query
+  const [teamID, setTeamID] = useState<string>()
   const [event, setEvent] = useState<Models.Document>()
   const [memberships, setMemberships] = useState<Models.Membership[]>([])
   const [emailInvite, setEmailInvite] = useState('')
   const { setMembershipIDToDelete, setTeamIDRelatedToMembershipToDelete } = useMembership()
+  const { user } = useUser()
+  const databases = new Databases(client)
+  const teams = new Teams(client)
 
   useEffect(() => {
     try {
-      updateMemberships()
-      new Databases(client!)
+      databases
         .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventID as string)
-        .then((response) => setEvent(response))
-      client!.subscribe('memberships', async (response) => {
-        // @ts-ignore
-        if (response.payload!.teamId === teamID) {
-          updateMemberships()
-        }
-      })
+        .then((e) => {
+          setEvent(e)
+          const _teamID = e.participants_team_id
+          setTeamID(_teamID)
+          updateMemberships(_teamID)
+          client.subscribe('memberships', async (response) => {
+            // @ts-ignore
+            if (response.payload!.teamId === _teamID) {
+              updateMemberships(_teamID)
+            }
+          })
+        })
     } catch (error: any) {
       toast.error(error)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function updateMemberships() {
-    new Teams(client!)
-      .listMemberships(teamID as string)
-      .then((membershipList) => {
-        setMemberships(membershipList.memberships.reverse())
-      })
+  function updateMemberships(_teamID?: string) {
+    teams
+      .listMemberships(_teamID || teamID!)
+      .then((membershipList) => setMemberships(membershipList.memberships.reverse()))
       .catch((error) => toast.error(error.message))
   }
 
@@ -56,8 +64,23 @@ const VotingModerators = () => {
     try {
       const newEmail = emailInvite?.trim()
       if (newEmail && newEmail.length > 0) {
-        await new Teams(client!).createMembership(teamID as string, newEmail, [], redirectURL)
-        setEmailInvite('')
+        await fetch('/api/teams/create-membership', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            teamID: teamID!,
+            email: newEmail,
+            roles: [],
+            url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
+          }),
+        })
+          .then(() => {
+            setEmailInvite('')
+            updateMemberships()
+          })
+          .catch((error: any) => toast.error(error.message))
+      } else {
+        throw new Error('Укажите действительную почту.')
       }
     } catch (error: any) {
       toast.error(error.message)
@@ -66,60 +89,42 @@ const VotingModerators = () => {
 
   return (
     <>
-      <h1 className='text-start text-2xl md:text-center'>
-        <span className='text-slate-500 dark:text-slate-400'>Событие </span>
-        <span className='font-bold'>{event?.name}</span>
+      <h1 className='p-1 text-start text-2xl text-base-content md:text-center'>
+        <span className='text-neutral'>Событие</span>
+        <span className='pl-1 font-bold'>{event?.name}</span>
       </h1>
-      <div className='grid grid-flow-row-dense grid-cols-4 place-items-stretch gap-4 p-3'>
-        {event && (
-          <TeamsNavigation
-            className='place-item-center col-span-4'
-            buttons={[
-              {
-                name: 'Модераторы доступа',
-                keyword: 'access-moderators',
-                path: `/admin/events/${event.$id}/access-moderators/${event.access_moderators_team_id}`,
-              },
-              {
-                name: 'Модераторы голосования',
-                keyword: 'voting-moderators',
-                path: `/admin/events/${event.$id}/voting-moderators/${event.voting_moderators_team_id}`,
-              },
-              {
-                name: 'Участники',
-                keyword: 'participants',
-                path: `/admin/events/${event.$id}/participants/${event.participants_team_id}`,
-              },
-            ]}
-          />
-        )}
+      <TeamsNavigation className='place-item-center col-span-4' eventID={event?.$id} />
+      <div className='grid grid-flow-row-dense grid-cols-4 place-items-stretch gap-4 px-3'>
         <PanelWindow inCard className='col-span-4 md:col-span-1'>
-          <h3 className='pb-1 text-xl'>Пригласить модератора голосования</h3>
-          <div className='pb-2'>
+          <div className='form-control w-full max-w-xs'>
+            <label className='label'>
+              <span className='label-text overflow-hidden truncate text-ellipsis'>
+                Пригласить участника
+              </span>
+            </label>
             <input
               type='text'
-              placeholder='Почта нового модератора'
+              placeholder='email'
               value={emailInvite}
               onChange={(e) => setEmailInvite(e.target.value)}
-              className='input-bordered input w-full max-w-xs'
+              className='input-bordered input w-full'
             />
           </div>
-          <button className='btn-secondary btn-ghost btn' onClick={createMembership}>
+          <button className='btn-outline btn-secondary btn' onClick={createMembership}>
             Пригласить
           </button>
         </PanelWindow>
         <PanelWindow className='col-span-4 row-span-3 md:col-span-3'>
           <div className='overflow-x-auto'>
             <table className='table-compact table w-full'>
-              <thead>
+              <thead className='[&_th]:font-semibold'>
                 <tr>
-                  <th />
+                  <th className='rounded-tl-md' />
                   <th>Имя</th>
                   <th>Почта</th>
                   <th>Роли</th>
                   <th>Приглашен</th>
-                  <th>Вступил</th>
-                  <th />
+                  <th className='rounded-tr-md' />
                 </tr>
               </thead>
               <tbody>
@@ -136,7 +141,6 @@ const VotingModerators = () => {
                       {membership.roles.join(', ')}
                     </td>
                     <td>{formatDate(membership.invited)}</td>
-                    <td>{membership.joined && formatDate(membership.joined)}</td>
                     <td>
                       {!membership.roles.includes('owner') && (
                         <button
@@ -162,8 +166,8 @@ const VotingModerators = () => {
   )
 }
 
-VotingModerators.getLayout = function getLayout(page: ReactElement) {
+Participants.getLayout = function getLayout(page: ReactElement) {
   return <LayoutWithDrawer>{page}</LayoutWithDrawer>
 }
 
-export default VotingModerators
+export default Participants

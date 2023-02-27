@@ -91,7 +91,7 @@ export default function DeleteMembershipModal() {
               >
                 <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
                   Вы уверены, что хотите исключить из команды пользователя{' '}
-                  <span className='text-info'>
+                  <span className='text-primary'>
                     {membershipToDelete?.userName} {membershipToDelete?.userEmail}
                     <span className='text-sm font-light'> {membershipToDelete?.$id.slice(-7)}</span>
                   </span>

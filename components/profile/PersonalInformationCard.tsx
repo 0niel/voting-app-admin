@@ -24,7 +24,7 @@ export default function PersonalInformationCard() {
       <div className='card-body items-center text-center'>
         <Avatar iconSize='w-16 h-16' fontSize='text-xl font-bold' />
         <div className='card-title'>{user?.userData?.name}</div>
-        <div className='text-slate-500 dark:text-slate-400'>
+        <div className='text-neutral'>
           <div>
             <span>Почта: </span>
             {user?.userData?.email ? (
@@ -35,16 +35,16 @@ export default function PersonalInformationCard() {
               'Отсутствует'
             )}
           </div>
-          <div>
-            <span>Телефон: </span>
-            {user?.userData?.phone ? (
-              <Link href={`tel:${user?.userData?.phone}`} className='link'>
-                {user?.userData?.phone}
-              </Link>
-            ) : (
-              'Отсутствует'
-            )}
-          </div>
+          {/*<div>*/}
+          {/*  <span>Телефон: </span>*/}
+          {/*  {user?.userData?.phone ? (*/}
+          {/*    <Link href={`tel:${user?.userData?.phone}`} className='link'>*/}
+          {/*      {user?.userData?.phone}*/}
+          {/*    </Link>*/}
+          {/*  ) : (*/}
+          {/*    'Отсутствует'*/}
+          {/*  )}*/}
+          {/*</div>*/}
           <div className='pt-3'>
             {teams.length > 0 ? (
               <div className='grid grid-cols-1 place-items-center justify-center gap-4 md:grid-cols-3'>

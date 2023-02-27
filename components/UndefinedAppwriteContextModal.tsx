@@ -2,6 +2,7 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import React, { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { useRouter } from 'next/router'
+import { Account } from 'appwrite'
 
 export default function UndefinedAppwriteContextModal() {
   const { client } = useAppwrite()
@@ -38,9 +39,7 @@ export default function UndefinedAppwriteContextModal() {
                   Сессия недействительна
                 </Dialog.Title>
                 <div className='mt-2'>
-                  <p className='text-sm text-slate-500 dark:text-slate-400'>
-                    Введите учетные данные заново.
-                  </p>
+                  <p className='text-sm text-base-content'>Введите учетные данные заново.</p>
                 </div>
 
                 <div className='mt-4'>
