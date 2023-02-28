@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { Teams } from 'appwrite'
+import { Models, Teams } from 'appwrite'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { toast } from 'react-hot-toast'
 
@@ -28,7 +28,7 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
       {teamIDs?.includes(props.event?.access_moderators_team_id) && (
         <Link
           href={props.event?.$id ? `/admin/events/${props.event.$id}/access-moderators` : ''}
-          className={`tab tab-bordered ${
+          className={`tab-bordered tab ${
             router.pathname.includes('access-moderators') && 'tab-active'
           }`}
         >
@@ -38,7 +38,7 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
       {teamIDs?.includes(props.event?.voting_moderators_team_id) && (
         <Link
           href={props.event?.$id ? `/admin/events/${props.event.$id}/voting-moderators` : ''}
-          className={`tab tab-bordered ${
+          className={`tab-bordered tab ${
             router.pathname.includes('voting-moderators') && 'tab-active'
           }`}
         >
@@ -48,7 +48,7 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
       {teamIDs?.includes(props.event?.participants_team_id) && (
         <Link
           href={props.event?.$id ? `/admin/events/${props.event.$id}/participants` : ''}
-          className={`tab tab-bordered ${router.pathname.includes('participants') && 'tab-active'}`}
+          className={`tab-bordered tab ${router.pathname.includes('participants') && 'tab-active'}`}
         >
           Участники
         </Link>

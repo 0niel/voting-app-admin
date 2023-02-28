@@ -12,6 +12,7 @@ import { useMembership } from '@/context/MembershipContext'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
 import useUser from '@/lib/useUser'
+import usePermitted from '@/lib/usePermitted'
 
 const Participants = () => {
   const { client } = useAppwrite()
@@ -26,6 +27,7 @@ const Participants = () => {
   const databases = new Databases(client)
   const teams = new Teams(client)
   const account = new Account(client)
+  const isPermitted = usePermitted(memberships)
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -103,24 +105,14 @@ const Participants = () => {
               type='text'
               placeholder='email'
               value={emailInvite}
-              disabled={
-                memberships.filter(
-                  (membership) =>
-                    membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
-                ).length === 0
-              }
+              disabled={!isPermitted}
               onChange={(e) => setEmailInvite(e.target.value)}
               className='input-bordered input w-full'
             />
           </div>
           <button
-            disabled={
-              memberships.filter(
-                (membership) =>
-                  membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
-              ).length === 0
-            }
-            className='btn-secondary btn-outline btn'
+            disabled={!isPermitted}
+            className='btn-outline btn-secondary btn'
             onClick={createMembership}
           >
             Пригласить

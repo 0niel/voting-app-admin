@@ -1,7 +1,7 @@
 import NinjaXUnion from '@/components/NinjaXUnion'
 import { FormEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { toast, Toaster } from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 import LayoutWithoutDrawer from '@/components/LayoutWithoutDrawer'
 import useUser from '@/lib/useUser'
 import fetchJson from '@/lib/fetchJson'
