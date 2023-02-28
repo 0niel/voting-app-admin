@@ -2,21 +2,15 @@ import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAppwrite } from '@/context/AppwriteContext'
-import { Databases, Models, Query, Teams } from 'appwrite'
+import { Account, Databases, Models, Query, Teams } from 'appwrite'
 import PanelWindow from '@/components/PanelWindow'
 import { toast } from 'react-hot-toast'
 import { formatDate } from '@/lib/formatDate'
 import { UserMinusIcon } from '@heroicons/react/24/outline'
 import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
 import { useMembership } from '@/context/MembershipContext'
-import {
-  appwriteEventsCollection,
-  appwriteVotingDatabase,
-  redirectURL,
-} from '@/constants/constants'
+import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
-import useUser from '@/lib/useUser'
-import fetchJson from '@/lib/fetchJson'
 import * as process from 'process'
 
 const AccessModerators = () => {
@@ -29,11 +23,18 @@ const AccessModerators = () => {
   const [emailInvite, setEmailInvite] = useState('')
   const { setMembershipIDToDelete, setTeamIDRelatedToMembershipToDelete, setPostDeleteAction } =
     useMembership()
-  const { user } = useUser()
   const databases = new Databases(client)
   const teams = new Teams(client)
+  const account = new Account(client)
 
   useEffect(() => {
+    client.subscribe('memberships', async (response) => {
+      // @ts-ignore
+      if (response.payload!.teamId === teamID) {
+        updateMemberships()
+      }
+    })
+
     databases
       .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventID as string)
       .then((e) => {
@@ -41,12 +42,6 @@ const AccessModerators = () => {
         const _teamID = e.access_moderators_team_id
         setTeamID(_teamID)
         updateMemberships(_teamID)
-        client.subscribe('memberships', async (response) => {
-          // @ts-ignore
-          if (response.payload!.teamId === teamID) {
-            updateMemberships()
-          }
-        })
       })
       .catch((error: any) => toast.error(error.message))
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,6 +58,7 @@ const AccessModerators = () => {
     try {
       const newEmail = emailInvite?.trim()
       if (newEmail && newEmail.length > 0) {
+        const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
         await fetch('/api/teams/create-membership', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -71,27 +67,24 @@ const AccessModerators = () => {
             email: newEmail,
             roles: [],
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
+            jwt,
           }),
-        })
-          .then(async () => {
-            await fetch('/api/teams/create-membership', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                teamID: event!.participants_team_id!,
-                email: newEmail,
-                roles: ['owner'],
-                url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
-              }),
-            })
-          })
-          .then(() => {
-            setEmailInvite('')
-            updateMemberships()
-          })
-          .catch((error: any) => toast.error(error.message))
+        }).catch((error: any) => toast.error(error.message))
+        await fetch('/api/teams/create-membership', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            teamID: event!.participants_team_id!,
+            email: newEmail,
+            roles: ['owner'],
+            url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
+            jwt,
+          }),
+        }).catch((error: any) => toast.error(error.message))
+        setEmailInvite('')
+        updateMemberships()
       } else {
-        throw new Error('Укажите действительную почту.')
+        toast.error('Укажите действительную почту.')
       }
     } catch (error: any) {
       toast.error(error.message)
@@ -121,7 +114,7 @@ const AccessModerators = () => {
               className='input-bordered input w-full'
             />
           </div>
-          <button className='btn-outline btn-secondary btn' onClick={createMembership}>
+          <button className='btn-secondary btn-outline btn' onClick={createMembership}>
             Пригласить
           </button>
         </PanelWindow>

@@ -6,7 +6,6 @@ import { NextApiRequest, NextApiResponse } from 'next'
 export type User = {
   isLoggedIn: boolean
   userData?: Models.Account<Models.Preferences>
-  jwt?: string
 }
 
 export default withIronSessionApiRoute(userRoute, sessionOptions)
@@ -21,7 +20,6 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse<User>) {
     res.json({
       isLoggedIn: false,
       userData: undefined,
-      jwt: undefined,
     })
   }
 }

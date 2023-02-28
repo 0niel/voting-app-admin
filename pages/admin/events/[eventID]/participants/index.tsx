@@ -2,21 +2,15 @@ import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAppwrite } from '@/context/AppwriteContext'
-import { Databases, Models, Teams } from 'appwrite'
+import { Account, Databases, Models, Teams } from 'appwrite'
 import PanelWindow from '@/components/PanelWindow'
 import { toast } from 'react-hot-toast'
 import { formatDate } from '@/lib/formatDate'
 import { UserMinusIcon } from '@heroicons/react/24/outline'
 import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
 import { useMembership } from '@/context/MembershipContext'
-import {
-  appwriteEventsCollection,
-  appwriteVotingDatabase,
-  redirectURL,
-} from '@/constants/constants'
-import useUser from '@/lib/useUser'
+import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
-import process from "process";
 
 const Participants = () => {
   const { client } = useAppwrite()
@@ -27,29 +21,27 @@ const Participants = () => {
   const [memberships, setMemberships] = useState<Models.Membership[]>([])
   const [emailInvite, setEmailInvite] = useState('')
   const { setMembershipIDToDelete, setTeamIDRelatedToMembershipToDelete } = useMembership()
-  const { user } = useUser()
   const databases = new Databases(client)
   const teams = new Teams(client)
+  const account = new Account(client)
 
   useEffect(() => {
-    try {
-      databases
-        .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventID as string)
-        .then((e) => {
-          setEvent(e)
-          const _teamID = e.participants_team_id
-          setTeamID(_teamID)
-          updateMemberships(_teamID)
-          client.subscribe('memberships', async (response) => {
-            // @ts-ignore
-            if (response.payload!.teamId === _teamID) {
-              updateMemberships(_teamID)
-            }
-          })
-        })
-    } catch (error: any) {
-      toast.error(error)
-    }
+    client.subscribe('memberships', async (response) => {
+      // @ts-ignore
+      if (response.payload!.teamId === teamID) {
+        updateMemberships()
+      }
+    })
+
+    databases
+      .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventID as string)
+      .then((e) => {
+        setEvent(e)
+        const _teamID = e.participants_team_id
+        setTeamID(_teamID)
+        updateMemberships(_teamID)
+      })
+      .catch((error: any) => toast.error(error.message))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -64,6 +56,7 @@ const Participants = () => {
     try {
       const newEmail = emailInvite?.trim()
       if (newEmail && newEmail.length > 0) {
+        const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
         await fetch('/api/teams/create-membership', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -72,15 +65,13 @@ const Participants = () => {
             email: newEmail,
             roles: [],
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
+            jwt,
           }),
-        })
-          .then(() => {
-            setEmailInvite('')
-            updateMemberships()
-          })
-          .catch((error: any) => toast.error(error.message))
+        }).catch((error: any) => toast.error(error.message))
+        setEmailInvite('')
+        updateMemberships()
       } else {
-        throw new Error('Укажите действительную почту.')
+        toast.error('Укажите действительную почту.')
       }
     } catch (error: any) {
       toast.error(error.message)
@@ -110,7 +101,7 @@ const Participants = () => {
               className='input-bordered input w-full'
             />
           </div>
-          <button className='btn-outline btn-secondary btn' onClick={createMembership}>
+          <button className='btn-secondary btn-outline btn' onClick={createMembership}>
             Пригласить
           </button>
         </PanelWindow>
