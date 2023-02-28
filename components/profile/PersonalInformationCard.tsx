@@ -22,7 +22,7 @@ export default function PersonalInformationCard() {
   return (
     <PanelWindow className='group'>
       <div className='card-body items-center text-center'>
-        <Avatar iconSize='w-16 h-16' fontSize='text-xl font-bold' />
+        <Avatar iconSize='w-16 h-16' fontSize='text-2xl font-bold' />
         <div className='card-title'>{user?.userData?.name}</div>
         <div className='text-neutral'>
           <div>

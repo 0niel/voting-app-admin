@@ -24,10 +24,11 @@ const Events = () => {
   const [newEventName, setNewEventName] = useState('')
   const databases = new Databases(client)
   const teams = new Teams(client)
+  const [userTeamIDs, setUserTeamIDs] = useState<string[]>()
 
   useEffect(() => {
-    try {
-      updateEventList()
+    const subscribe = async function () {
+      await updateEventList()
       client.subscribe('documents', (response) => {
         if (
           // @ts-ignore
@@ -38,17 +39,19 @@ const Events = () => {
           updateEventList()
         }
       })
-    } catch (error: any) {
-      toast.error(error.message)
     }
+    subscribe().catch((error) => toast.error(error.message))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function updateEventList() {
+  async function updateEventList() {
     try {
-      databases
-        .listDocuments(appwriteVotingDatabase, appwriteEventsCollection)
-        .then((res) => setEvents(res.documents.reverse()))
+      setEvents(
+        (
+          await databases.listDocuments(appwriteVotingDatabase, appwriteEventsCollection)
+        ).documents.reverse(),
+      )
+      setUserTeamIDs((await teams.list()).teams.map((team) => team.$id))
     } catch (error: any) {
       toast.error(error.message)
     }
@@ -131,8 +134,7 @@ const Events = () => {
                     <th className='text-xs font-light'>{event.$id.slice(-7)}</th>
                     <td className='max-w-[10rem] overflow-hidden text-ellipsis'>{event.name}</td>
                     <td className='text-xs font-light'>
-                      {event.creator_id === user?.userData?.$id &&
-                      event.access_moderators_team_id ? (
+                      {userTeamIDs?.includes(event.access_moderators_team_id) ? (
                         <Link
                           href={`/admin/events/${event.$id}/access-moderators`}
                           className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
@@ -144,8 +146,7 @@ const Events = () => {
                       )}
                     </td>
                     <td className='text-xs font-light'>
-                      {event.creator_id === user?.userData?.$id &&
-                      event.voting_moderators_team_id ? (
+                      {userTeamIDs?.includes(event.voting_moderators_team_id) ? (
                         <Link
                           href={`/admin/events/${event.$id}/voting-moderators`}
                           className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
@@ -157,7 +158,7 @@ const Events = () => {
                       )}
                     </td>
                     <td className='text-xs font-light'>
-                      {event.creator_id === user?.userData?.$id && event.participants_team_id ? (
+                      {userTeamIDs?.includes(event.participants_team_id) ? (
                         <Link
                           href={`/admin/events/${event.$id}/participants`}
                           className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'

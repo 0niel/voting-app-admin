@@ -9,10 +9,7 @@ import { formatDate } from '@/lib/formatDate'
 import { UserMinusIcon } from '@heroicons/react/24/outline'
 import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
 import { useMembership } from '@/context/MembershipContext'
-import {
-  appwriteEventsCollection,
-  appwriteVotingDatabase,
-} from '@/constants/constants'
+import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
 
 const VotingModerators = () => {
@@ -49,7 +46,7 @@ const VotingModerators = () => {
       fetchEvent().catch((error) => toast.error(error.message))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [router.isReady])
 
   function updateMemberships(_teamID?: string) {
     teams
@@ -72,13 +69,10 @@ const VotingModerators = () => {
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
           }),
         })
-          .then(() => {
-            setEmailInvite('')
-            updateMemberships()
-          })
-          .catch((error: any) => toast.error(error.message))
+        setEmailInvite('')
+        updateMemberships()
       } else {
-        throw new Error('Укажите действительную почту.')
+        toast.error('Укажите действительную почту.')
       }
     } catch (error: any) {
       toast.error(error.message)
@@ -91,7 +85,7 @@ const VotingModerators = () => {
         <span className='text-neutral'>Событие</span>
         <span className='pl-1 font-bold'>{event?.name}</span>
       </h1>
-      <TeamsNavigation className='place-item-center col-span-4' eventID={event?.$id} />
+      <TeamsNavigation className='place-item-center col-span-4' event={event} />
       <div className='grid grid-flow-row-dense grid-cols-4 place-items-stretch gap-4 px-3'>
         <PanelWindow inCard className='col-span-4 md:col-span-1'>
           <div className='form-control w-full max-w-xs'>

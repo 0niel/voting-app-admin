@@ -12,7 +12,7 @@ export default function Avatar(props: AvatarProps) {
       <div
         className={`${props.iconSize} rounded-full bg-accent ring-1 ring-secondary duration-200 group-hover:bg-accent-focus group-hover:ring-2`}
       >
-        <span className={`${props.fontSize} text-access-content`}>
+        <span className={`${props.fontSize} text-accent-content`}>
           {user?.userData?.name
             .split(' ')
             .map((words) => words[0])
