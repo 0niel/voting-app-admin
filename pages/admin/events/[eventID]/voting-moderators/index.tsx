@@ -2,7 +2,7 @@ import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAppwrite } from '@/context/AppwriteContext'
-import { Databases, Models, Teams } from 'appwrite'
+import { Account, Databases, Models, Teams } from 'appwrite'
 import PanelWindow from '@/components/PanelWindow'
 import { toast } from 'react-hot-toast'
 import { formatDate } from '@/lib/formatDate'
@@ -11,9 +11,11 @@ import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
 import { useMembership } from '@/context/MembershipContext'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
+import useUser from '@/lib/useUser'
 
 const VotingModerators = () => {
   const { client } = useAppwrite()
+  const { user } = useUser()
   const router = useRouter()
   const { eventID } = router.query
   const [teamID, setTeamID] = useState<string>()
@@ -21,6 +23,7 @@ const VotingModerators = () => {
   const [memberships, setMemberships] = useState<Models.Membership[]>([])
   const [emailInvite, setEmailInvite] = useState('')
   const { setMembershipIDToDelete, setTeamIDRelatedToMembershipToDelete } = useMembership()
+  const account = new Account(client)
   const databases = new Databases(client)
   const teams = new Teams(client)
 
@@ -59,6 +62,7 @@ const VotingModerators = () => {
     try {
       const newEmail = emailInvite?.trim()
       if (newEmail && newEmail.length > 0) {
+        const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
         await fetch('/api/teams/create-membership', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -67,6 +71,7 @@ const VotingModerators = () => {
             email: newEmail,
             roles: [],
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
+            jwt,
           }),
         })
         setEmailInvite('')
@@ -97,12 +102,27 @@ const VotingModerators = () => {
             <input
               type='text'
               placeholder='email'
+              disabled={
+                memberships.filter(
+                  (membership) =>
+                    membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
+                ).length === 0
+              }
               value={emailInvite}
               onChange={(e) => setEmailInvite(e.target.value)}
               className='input-bordered input w-full'
             />
           </div>
-          <button className='btn-outline btn-secondary btn' onClick={createMembership}>
+          <button
+            disabled={
+              memberships.filter(
+                (membership) =>
+                  membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
+              ).length === 0
+            }
+            className='btn-secondary btn-outline btn'
+            onClick={createMembership}
+          >
             Пригласить
           </button>
         </PanelWindow>

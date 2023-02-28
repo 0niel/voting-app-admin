@@ -7,19 +7,22 @@ import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
 export default withIronSessionApiRoute(createMembership, sessionOptions)
 
 async function createMembership(req: NextApiRequest, res: NextApiResponse) {
-  const { teamID, email, roles, url } = await req.body
-
+  const { teamID, email, roles, url, jwt } = await req.body
   try {
     const client = new Client()
       .setEndpoint(appwriteEndpoint)
       .setProject(appwriteProjectId)
-      .setJWT(req.session.user?.jwt!)
+      .setJWT(jwt)
     const memberships = await new Teams(client)
       .listMemberships(teamID)
       .then((membershipList) => membershipList.memberships)
+    const account = await new Account(client).get()
     if (
       memberships.filter(
-        (membership) => membership.teamId == teamID && membership.roles.includes('owner'),
+        (membership) =>
+          membership.userId == account.$id &&
+          membership.teamId == teamID &&
+          membership.roles.includes('owner'),
       ).length > 0
     ) {
       const server = new Client()
@@ -32,7 +35,6 @@ async function createMembership(req: NextApiRequest, res: NextApiResponse) {
       res.status(403).json({ message: 'Client is not owner of the team.' })
     }
   } catch (error) {
-    console.log(error)
     res.status(500).json({ message: (error as Error).message })
   }
 }

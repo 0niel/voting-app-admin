@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { Models, Teams } from 'appwrite'
+import { Teams } from 'appwrite'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { toast } from 'react-hot-toast'
 

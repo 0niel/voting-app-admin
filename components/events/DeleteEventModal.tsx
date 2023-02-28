@@ -13,6 +13,8 @@ export default function DeleteEventModal() {
   const { eventIdToDelete, setEventIdToDelete } = useEvent()
   const [eventToDelete, setEventToDelete] = useState<Models.Document>()
   const { client } = useAppwrite()
+  const teams = new Teams(client)
+  const databases = new Databases(client)
 
   useOnClickOutside(dialogPanelRef, () => {
     setEventIdToDelete(undefined)
@@ -21,7 +23,7 @@ export default function DeleteEventModal() {
   useEffect(() => {
     try {
       if (eventIdToDelete != null) {
-        new Databases(client)
+        databases
           .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventIdToDelete)
           .then((r) => {
             setEventToDelete(r)
@@ -35,10 +37,10 @@ export default function DeleteEventModal() {
 
   async function deleteEvent() {
     try {
-      await new Teams(client!).delete(eventToDelete!.access_moderators_team_id)
-      await new Teams(client!).delete(eventToDelete!.voting_moderators_team_id)
-      await new Teams(client!).delete(eventToDelete!.participants_team_id)
-      await new Databases(client!).deleteDocument(
+      await teams.delete(eventToDelete!.access_moderators_team_id)
+      await teams.delete(eventToDelete!.voting_moderators_team_id)
+      await teams.delete(eventToDelete!.participants_team_id)
+      await databases.deleteDocument(
         appwriteVotingDatabase,
         appwriteEventsCollection,
         eventIdToDelete!,

@@ -1,5 +1,5 @@
 import React, { createContext, useState } from 'react'
-import { Client, Databases, Models } from 'appwrite'
+import { Account, Client, Databases, Models } from 'appwrite'
 import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
 
 interface AppwriteContextI {

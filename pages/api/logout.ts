@@ -10,6 +10,5 @@ function logoutRoute(req: NextApiRequest, res: NextApiResponse<User>) {
   res.json({
     isLoggedIn: false,
     userData: undefined,
-    jwt: undefined,
   })
 }

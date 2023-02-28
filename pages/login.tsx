@@ -41,13 +41,12 @@ export default function Login() {
       const account = new Account(client)
       await account.createEmailSession(email, password)
       const userData = await account.get()
-      const jwt = await account.createJWT().then((r) => r.jwt)
       setClient(client)
       await mutateUser(
         await fetchJson('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userData, jwt }),
+          body: JSON.stringify({ userData }),
         }),
         false,
       )
