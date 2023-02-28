@@ -31,23 +31,25 @@ const Participants = () => {
   const teams = new Teams(client)
 
   useEffect(() => {
-    try {
-      databases
-        .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventID as string)
-        .then((e) => {
-          setEvent(e)
-          const _teamID = e.participants_team_id
-          setTeamID(_teamID)
-          updateMemberships(_teamID)
-          client.subscribe('memberships', async (response) => {
-            // @ts-ignore
-            if (response.payload!.teamId === _teamID) {
-              updateMemberships(_teamID)
-            }
-          })
-        })
-    } catch (error: any) {
-      toast.error(error)
+    const fetchEvent = async () => {
+      const _event = await databases.getDocument(
+        appwriteVotingDatabase,
+        appwriteEventsCollection,
+        eventID as string,
+      )
+      setEvent(_event)
+      const _teamID = _event.participants_team_id
+      setTeamID(_teamID)
+      updateMemberships(_teamID)
+      client.subscribe('memberships', async (response) => {
+        // @ts-ignore
+        if (response.payload!.teamId === teamID) {
+          updateMemberships()
+        }
+      })
+    }
+    if (router.isReady) {
+      fetchEvent().catch((error) => toast.error(error.message))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

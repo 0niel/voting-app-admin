@@ -34,23 +34,28 @@ const AccessModerators = () => {
   const teams = new Teams(client)
 
   useEffect(() => {
-    databases
-      .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventID as string)
-      .then((e) => {
-        setEvent(e)
-        const _teamID = e.access_moderators_team_id
-        setTeamID(_teamID)
-        updateMemberships(_teamID)
-        client.subscribe('memberships', async (response) => {
-          // @ts-ignore
-          if (response.payload!.teamId === teamID) {
-            updateMemberships()
-          }
-        })
+    const fetchEvent = async () => {
+      const _event = await databases.getDocument(
+        appwriteVotingDatabase,
+        appwriteEventsCollection,
+        eventID as string,
+      )
+      setEvent(_event)
+      const _teamID = _event.access_moderators_team_id
+      setTeamID(_teamID)
+      updateMemberships(_teamID)
+      client.subscribe('memberships', async (response) => {
+        // @ts-ignore
+        if (response.payload!.teamId === teamID) {
+          updateMemberships()
+        }
       })
-      .catch((error: any) => toast.error(error.message))
+    }
+    if (router.isReady) {
+      fetchEvent().catch((error) => toast.error(error.message))
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [router.isReady])
 
   function updateMemberships(_teamID?: string) {
     teams
