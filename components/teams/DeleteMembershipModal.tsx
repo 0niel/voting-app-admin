@@ -18,6 +18,7 @@ export default function DeleteMembershipModal() {
   } = useMembership()
   const [membershipToDelete, setMembershipToDelete] = useState<Models.Membership>()
   const { client } = useAppwrite()
+  const teams = new Teams(client)
 
   useOnClickOutside(dialogPanelRef, () => {
     setMembershipIDToDelete(undefined)
@@ -28,7 +29,7 @@ export default function DeleteMembershipModal() {
   useEffect(() => {
     try {
       if (membershipIDToDelete !== undefined && teamIDRelatedToMembershipToDelete !== undefined) {
-        new Teams(client!)
+        teams
           .getMembership(teamIDRelatedToMembershipToDelete, membershipIDToDelete)
           .then((membership) => {
             setMembershipToDelete(membership)

@@ -1,6 +1,6 @@
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import React, { ReactElement, useEffect, useState } from 'react'
-import { Databases, ID, Models, Permission, Role, Teams } from 'appwrite'
+import { Account, Databases, ID, Models, Permission, Role, Teams } from "appwrite";
 import { useAppwrite } from '@/context/AppwriteContext'
 import {
   appwriteEventsCollection,
@@ -22,10 +22,19 @@ const Events = () => {
   const { user } = useUser()
   const [events, setEvents] = useState<Models.Document[]>([])
   const [newEventName, setNewEventName] = useState('')
+  const [userTeamIDs, setUserTeamIDs] = useState<string[]>([])
   const databases = new Databases(client)
   const teams = new Teams(client)
+  const accounts = new Account(client)
 
   useEffect(() => {
+    async function getTeams() {
+      const IDs = (await new Teams(client!).list()).teams.map((team) => team.$id)
+      setUserTeamIDs(IDs)
+    }
+    getTeams()
+      .then(() => {})
+      .catch((e) => toast.error(e.message))
     try {
       updateEventList()
       client.subscribe('documents', (response) => {
@@ -131,7 +140,7 @@ const Events = () => {
                     <th className='text-xs font-light'>{event.$id.slice(-7)}</th>
                     <td className='max-w-[10rem] overflow-hidden text-ellipsis'>{event.name}</td>
                     <td className='text-xs font-light'>
-                      {event.creator_id === user?.userData?.$id &&
+                      {userTeamIDs.includes(event.access_moderators_team_id) &&
                       event.access_moderators_team_id ? (
                         <Link
                           href={`/admin/events/${event.$id}/access-moderators`}
@@ -144,7 +153,7 @@ const Events = () => {
                       )}
                     </td>
                     <td className='text-xs font-light'>
-                      {event.creator_id === user?.userData?.$id &&
+                      {userTeamIDs.includes(event.access_moderators_team_id) &&
                       event.voting_moderators_team_id ? (
                         <Link
                           href={`/admin/events/${event.$id}/voting-moderators`}
@@ -157,7 +166,7 @@ const Events = () => {
                       )}
                     </td>
                     <td className='text-xs font-light'>
-                      {event.creator_id === user?.userData?.$id && event.participants_team_id ? (
+                      {userTeamIDs.includes(event.access_moderators_team_id) ? (
                         <Link
                           href={`/admin/events/${event.$id}/participants`}
                           className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'

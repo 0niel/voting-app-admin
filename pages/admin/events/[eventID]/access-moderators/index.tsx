@@ -12,9 +12,11 @@ import { useMembership } from '@/context/MembershipContext'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
 import * as process from 'process'
+import useUser from '@/lib/useUser'
 
 const AccessModerators = () => {
   const { client } = useAppwrite()
+  const { user } = useUser()
   const router = useRouter()
   const { eventID } = router.query
   const [teamID, setTeamID] = useState<string>()
@@ -28,13 +30,6 @@ const AccessModerators = () => {
   const account = new Account(client)
 
   useEffect(() => {
-    client.subscribe('memberships', async (response) => {
-      // @ts-ignore
-      if (response.payload!.teamId === teamID) {
-        updateMemberships()
-      }
-    })
-
     databases
       .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventID as string)
       .then((e) => {
@@ -44,6 +39,13 @@ const AccessModerators = () => {
         updateMemberships(_teamID)
       })
       .catch((error: any) => toast.error(error.message))
+
+    client.subscribe('memberships', async (response) => {
+      // @ts-ignore
+      if (response.payload!.teamId === teamID) {
+        updateMemberships()
+      }
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -110,11 +112,26 @@ const AccessModerators = () => {
               type='text'
               placeholder='email'
               value={emailInvite}
+              disabled={
+                memberships.filter(
+                  (membership) =>
+                    membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
+                ).length === 0
+              }
               onChange={(e) => setEmailInvite(e.target.value)}
               className='input-bordered input w-full'
             />
           </div>
-          <button className='btn-secondary btn-outline btn' onClick={createMembership}>
+          <button
+            disabled={
+              memberships.filter(
+                (membership) =>
+                  membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
+              ).length === 0
+            }
+            className='btn-secondary btn-outline btn'
+            onClick={createMembership}
+          >
             Пригласить
           </button>
         </PanelWindow>

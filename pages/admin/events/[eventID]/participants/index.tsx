@@ -11,9 +11,11 @@ import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
 import { useMembership } from '@/context/MembershipContext'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
+import useUser from '@/lib/useUser'
 
 const Participants = () => {
   const { client } = useAppwrite()
+  const { user } = useUser()
   const router = useRouter()
   const { eventID } = router.query
   const [teamID, setTeamID] = useState<string>()
@@ -97,11 +99,26 @@ const Participants = () => {
               type='text'
               placeholder='email'
               value={emailInvite}
+              disabled={
+                memberships.filter(
+                  (membership) =>
+                    membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
+                ).length === 0
+              }
               onChange={(e) => setEmailInvite(e.target.value)}
               className='input-bordered input w-full'
             />
           </div>
-          <button className='btn-secondary btn-outline btn' onClick={createMembership}>
+          <button
+            disabled={
+              memberships.filter(
+                (membership) =>
+                  membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
+              ).length === 0
+            }
+            className='btn-secondary btn-outline btn'
+            onClick={createMembership}
+          >
             Пригласить
           </button>
         </PanelWindow>

@@ -15,9 +15,11 @@ import {
   redirectURL,
 } from '@/constants/constants'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
+import useUser from '@/lib/useUser'
 
 const VotingModerators = () => {
   const { client } = useAppwrite()
+  const { user } = useUser()
   const router = useRouter()
   const { eventID } = router.query
   const [teamID, setTeamID] = useState<string>()
@@ -101,12 +103,27 @@ const VotingModerators = () => {
             <input
               type='text'
               placeholder='email'
+              disabled={
+                memberships.filter(
+                  (membership) =>
+                    membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
+                ).length === 0
+              }
               value={emailInvite}
               onChange={(e) => setEmailInvite(e.target.value)}
               className='input-bordered input w-full'
             />
           </div>
-          <button className='btn-secondary btn-outline btn' onClick={createMembership}>
+          <button
+            disabled={
+              memberships.filter(
+                (membership) =>
+                  membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
+              ).length === 0
+            }
+            className='btn-secondary btn-outline btn'
+            onClick={createMembership}
+          >
             Пригласить
           </button>
         </PanelWindow>
