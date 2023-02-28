@@ -11,6 +11,7 @@ import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
 import { useMembership } from '@/context/MembershipContext'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
+import useUser from '@/lib/useUser'
 
 const AccessModerators = () => {
   const { client } = useAppwrite()

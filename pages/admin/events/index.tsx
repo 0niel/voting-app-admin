@@ -1,6 +1,6 @@
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import React, { ReactElement, useEffect, useState } from 'react'
-import { Account, Databases, ID, Models, Permission, Role, Teams } from "appwrite";
+import { Account, Databases, ID, Models, Permission, Role, Teams } from 'appwrite'
 import { useAppwrite } from '@/context/AppwriteContext'
 import {
   appwriteEventsCollection,
@@ -22,7 +22,6 @@ const Events = () => {
   const { user } = useUser()
   const [events, setEvents] = useState<Models.Document[]>([])
   const [newEventName, setNewEventName] = useState('')
-  const [userTeamIDs, setUserTeamIDs] = useState<string[]>([])
   const databases = new Databases(client)
   const teams = new Teams(client)
   const [userTeamIDs, setUserTeamIDs] = useState<string[]>()
