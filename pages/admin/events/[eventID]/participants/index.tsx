@@ -16,7 +16,6 @@ import {
 } from '@/constants/constants'
 import useUser from '@/lib/useUser'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
-import process from "process";
 
 const Participants = () => {
   const { client } = useAppwrite()

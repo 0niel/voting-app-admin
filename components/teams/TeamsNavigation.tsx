@@ -17,7 +17,7 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
     <div className={`${props.className} tabs justify-center`}>
       <Link
         href={props.eventID ? `/admin/events/${props.eventID}/access-moderators` : ''}
-        className={`tab tab-bordered ${
+        className={`tab-bordered tab ${
           router.pathname.includes('access-moderators') && 'tab-active'
         }`}
       >
@@ -25,7 +25,7 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
       </Link>
       <Link
         href={props.eventID ? `/admin/events/${props.eventID}/voting-moderators` : ''}
-        className={`tab tab-bordered ${
+        className={`tab-bordered tab ${
           router.pathname.includes('voting-moderators') && 'tab-active'
         }`}
       >
@@ -33,7 +33,7 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
       </Link>
       <Link
         href={props.eventID ? `/admin/events/${props.eventID}/participants` : ''}
-        className={`tab tab-bordered ${router.pathname.includes('participants') && 'tab-active'}`}
+        className={`tab-bordered tab ${router.pathname.includes('participants') && 'tab-active'}`}
       >
         Участники
       </Link>

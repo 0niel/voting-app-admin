@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import { sessionOptions } from '@/lib/session'
-import { Client, Query, Teams } from "node-appwrite";
+import { Client, Teams } from 'node-appwrite'
 import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
-import * as process from "process";
 
 export default withIronSessionApiRoute(createMembership, sessionOptions)
 

@@ -7,7 +7,7 @@ import useUser from '@/lib/useUser'
 import { useAppwrite } from '@/context/AppwriteContext'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 
-export default function oauth2() {
+export default function OAuth2() {
   const router = useRouter()
   const { mutateUser } = useUser()
   const { setClient } = useAppwrite()
