@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { Models, Teams } from 'appwrite'
+import { Teams } from 'appwrite'
 import { useAppwrite } from '@/context/AppwriteContext'
 
 interface TeamNavigationProps {
@@ -10,8 +10,6 @@ interface TeamNavigationProps {
 }
 export default function TeamsNavigation(props: TeamNavigationProps) {
   const router = useRouter()
-  const { client } = useAppwrite()
-  const teams = new Teams(client)
 
   return (
     <div className={`${props.className} tabs justify-center`}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Section from '@/components/Section'
@@ -7,11 +7,6 @@ import { useOnClickOutside } from 'usehooks-ts'
 import { CalendarIcon, Cog8ToothIcon, PresentationChartLineIcon } from '@heroicons/react/24/outline'
 import { useRouter } from 'next/router'
 import { Toaster } from 'react-hot-toast'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { Account, Client } from 'appwrite'
-import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
-import fetchJson from '@/lib/fetchJson'
-import useUser from '@/lib/useUser'
 
 export interface LayoutProps {
   children: React.ReactNode
@@ -32,8 +27,6 @@ export default function LayoutWithDrawer(props: LayoutProps) {
   const sidebarRef = useRef(null)
   const [open, setOpen] = useState(false)
   const router = useRouter()
-  const { client, setClient } = useAppwrite()
-  const { mutateUser } = useUser()
 
   useOnClickOutside(sidebarRef, () => setOpen(false))
 

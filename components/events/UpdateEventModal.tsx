@@ -13,6 +13,7 @@ export default function UpdateEventModal() {
   const [eventToUpdate, setEventToUpdate] = useState<Models.Document>()
   const { eventIdToUpdate, setEventIdToUpdate } = useEvent()
   const { client } = useAppwrite()
+  const databases = new Databases(client)
 
   useOnClickOutside(dialogPanelRef, () => {
     setEventIdToUpdate(undefined)
@@ -20,7 +21,7 @@ export default function UpdateEventModal() {
 
   useEffect(() => {
     if (eventIdToUpdate != null) {
-      new Databases(client!)
+      databases
         .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventIdToUpdate)
         .then((event) => {
           setEventToUpdate(event)
