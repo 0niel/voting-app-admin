@@ -41,10 +41,7 @@ const VotingModerators = () => {
       setTeamID(_teamID)
       updateMemberships(_teamID)
       client.subscribe('memberships', async (response) => {
-        // @ts-ignore
-        if (response.payload!.teamId === teamID) {
-          updateMemberships()
-        }
+        updateMemberships()
       })
     }
     if (router.isReady) {
@@ -120,7 +117,7 @@ const VotingModerators = () => {
         </PanelWindow>
         <PanelWindow className='col-span-4 row-span-3 md:col-span-3'>
           <div className='overflow-x-auto'>
-            <table className='table-compact table w-full'>
+            <table className='w-full table-auto md:table-fixed'>
               <thead className='[&_th]:font-semibold'>
                 <tr>
                   <th className='rounded-tl-md' />

@@ -53,6 +53,14 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
           Участники
         </Link>
       )}
+      {teamIDs?.includes(props.event?.voting_moderators_team_id) && (
+        <Link
+          href={props.event?.$id ? `/admin/events/${props.event.$id}/poll-list` : ''}
+          className={`tab-bordered tab ${router.pathname.includes('poll-list') && 'tab-active'}`}
+        >
+          Голосования
+        </Link>
+      )}
     </div>
   )
 }

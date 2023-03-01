@@ -125,6 +125,7 @@ const Events = () => {
                   <th>Модер. доступа</th>
                   <th>Модер. голос.</th>
                   <th>Участники</th>
+                  <th>Голосования</th>
                   <th className='rounded-tr-md' />
                 </tr>
               </thead>
@@ -167,6 +168,18 @@ const Events = () => {
                         </Link>
                       ) : (
                         event.participants_team_id?.slice(-7) || 'нет'
+                      )}
+                    </td>
+                    <td className='text-xs font-light'>
+                      {userTeamIDs?.includes(event.voting_moderators_team_id) ? (
+                        <Link
+                          href={`/admin/events/${event.$id}/poll-list`}
+                          className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
+                        >
+                          список
+                        </Link>
+                      ) : (
+                        <span>список</span>
                       )}
                     </td>
                     <td>

@@ -27,7 +27,7 @@ export default function DeleteMembershipModal() {
   })
 
   useEffect(() => {
-    try {
+    const fetchData = async function () {
       if (membershipIDToDelete !== undefined && teamIDRelatedToMembershipToDelete !== undefined) {
         teams
           .getMembership(teamIDRelatedToMembershipToDelete, membershipIDToDelete)
@@ -35,22 +35,27 @@ export default function DeleteMembershipModal() {
             setMembershipToDelete(membership)
           })
       }
-    } catch (error: any) {
-      toast.error(error.message)
     }
+
+    fetchData().catch((error: any) => toast.error(error.message))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [membershipIDToDelete])
 
   async function deleteMembership() {
-    try {
+    const fetchDelete = async function () {
       await new Teams(client!).deleteMembership(
         teamIDRelatedToMembershipToDelete!,
         membershipIDToDelete!,
       )
       await postDeleteAction()
-    } catch (error: any) {
-      toast.error(error.message)
     }
+    fetchDelete().catch((error: any) => {
+      if (error instanceof TypeError) {
+        // postDeleteAction is not a function
+      } else {
+        toast.error(error.message)
+      }
+    })
     setMembershipIDToDelete(undefined)
     setTeamIDRelatedToMembershipToDelete(undefined)
     setPostDeleteAction(() => {})

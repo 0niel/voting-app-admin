@@ -42,10 +42,7 @@ const AccessModerators = () => {
       setTeamID(_teamID)
       updateMemberships(_teamID)
       client.subscribe('memberships', async (response) => {
-        // @ts-ignore
-        if (response.payload!.teamId === teamID) {
-          updateMemberships()
-        }
+        updateMemberships()
       })
     }
     if (router.isReady) {
@@ -132,7 +129,7 @@ const AccessModerators = () => {
         </PanelWindow>
         <PanelWindow className='col-span-4 row-span-4 md:col-span-3'>
           <div className='overflow-x-auto'>
-            <table className='table-compact table w-full'>
+            <table className='w-full table-auto md:table-fixed'>
               <thead className='[&_th]:font-semibold'>
                 <tr>
                   <th className='rounded-tl-md' />
@@ -147,13 +144,13 @@ const AccessModerators = () => {
                 {memberships.map((membership, index) => (
                   <tr key={index}>
                     <th className='text-xs font-light'>{membership.$id.slice(-7)}</th>
-                    <td className='max-w-[10rem] overflow-hidden text-ellipsis'>
+                    <td className='max-w-[30rem] overflow-hidden text-ellipsis'>
                       {membership.userEmail}
                     </td>
-                    <td className='max-w-[10rem] overflow-hidden text-ellipsis'>
+                    <td className='max-w-[30rem] overflow-hidden text-ellipsis'>
                       {membership.userEmail}
                     </td>
-                    <td className='max-w-[10rem] overflow-hidden text-ellipsis'>
+                    <td className='max-w-[30rem] overflow-hidden text-ellipsis'>
                       {membership.roles.join(', ')}
                     </td>
                     <td>{formatDate(membership.invited)}</td>
