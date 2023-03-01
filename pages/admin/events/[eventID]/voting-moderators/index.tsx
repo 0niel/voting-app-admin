@@ -146,7 +146,7 @@ const VotingModerators = () => {
                     </td>
                     <td>{formatDate(membership.invited)}</td>
                     <td>
-                      {!membership.roles.includes('owner') && (
+                      {!membership.roles.includes('owner') && isPermitted && (
                         <button
                           className='hover:text-error'
                           onClick={() => {
