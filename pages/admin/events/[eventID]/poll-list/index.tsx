@@ -13,7 +13,9 @@ import TeamsNavigation from '@/components/teams/TeamsNavigation'
 import PanelWindow from '@/components/PanelWindow'
 import { formatDate } from '@/lib/formatDate'
 import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { usePoll } from '@/context/PollContext'
+import CreatePollModal from "@/components/polls/CreatePollModal";
 
 const PollList = () => {
   const { client } = useAppwrite()
@@ -23,6 +25,7 @@ const PollList = () => {
   const databases = new Databases(client)
   const [event, setEvent] = useState<Models.Document>()
   const [votingModeratorsTeamID, setVotingModeratorsTeamID] = useState<string>()
+  const { setCreatePoll, setPollIdToDelete } = usePoll()
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -58,7 +61,13 @@ const PollList = () => {
         <span className='text-neutral'>Событие</span>
         <span className='pl-1 font-bold'>{event?.name}</span>
       </h1>
-      <TeamsNavigation className='place-item-center col-span-4' event={event} />
+      <div className='flex justify-between'>
+        <div />
+        <TeamsNavigation className='place-item-center col-span-4' event={event} />
+        <button className='flex' onClick={() => setCreatePoll(true)}>
+          <PlusIcon className='mr-3 h-5 w-5 text-base-content' />
+        </button>
+      </div>
       <div className='grid grid-flow-row-dense grid-cols-4 place-items-stretch gap-4 px-3'>
         <PanelWindow className='col-span-4 row-span-4'>
           <div className='overflow-x-auto'>
@@ -99,10 +108,10 @@ const PollList = () => {
                     </td>
                     <td className='border-b'>
                       <div className='flex items-center justify-center'>
-                        <button className='hover:text-info'>
-                          <PencilIcon className='mr-1 h-5 w-5' />
-                        </button>
-                        <button className='hover:text-error'>
+                        <button
+                          onClick={() => setPollIdToDelete(poll.$id)}
+                          className='hover:text-error'
+                        >
                           <TrashIcon className='h-5 w-5' />
                         </button>
                       </div>
@@ -114,7 +123,7 @@ const PollList = () => {
           </div>
         </PanelWindow>
       </div>
-      <DeleteMembershipModal />
+      <CreatePollModal />
     </>
   )
 }

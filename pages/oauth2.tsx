@@ -10,12 +10,10 @@ import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 export default function OAuth2() {
   const router = useRouter()
   const { mutateUser } = useUser()
-  const { setClient } = useAppwrite()
+  const { client } = useAppwrite()
 
   useEffect(() => {
-    const client = new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
     const account = new Account(client)
-    setClient(client)
     account.get().then(async (userData) => {
       const jwt = await account.createJWT().then((r) => r.jwt)
       mutateUser(
