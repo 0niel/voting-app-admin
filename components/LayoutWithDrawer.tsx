@@ -16,8 +16,8 @@ export const hamburgerMenuId = 'hamburger-menu'
 
 const sections: Section[] = [
   {
-    name: 'Голосование',
-    path: '/admin/voting',
+    name: 'Дашборды',
+    path: '/admin/dashboard',
     icon: <PresentationChartLineIcon className='h-6 w-6' />,
   },
   { name: 'События', path: '/admin/events', icon: <CalendarIcon className='h-6 w-6' /> },

@@ -12,6 +12,7 @@ import { useMembership } from '@/context/MembershipContext'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
 import useUser from '@/lib/useUser'
+import usePermitted from '@/lib/usePermitted'
 
 const Participants = () => {
   const { client } = useAppwrite()
@@ -26,26 +27,28 @@ const Participants = () => {
   const databases = new Databases(client)
   const teams = new Teams(client)
   const account = new Account(client)
+  const isPermitted = usePermitted(memberships)
 
   useEffect(() => {
-    client.subscribe('memberships', async (response) => {
-      // @ts-ignore
-      if (response.payload!.teamId === teamID) {
+    const fetchEvent = async () => {
+      const _event = await databases.getDocument(
+        appwriteVotingDatabase,
+        appwriteEventsCollection,
+        eventID as string,
+      )
+      setEvent(_event)
+      const _teamID = _event.participants_team_id
+      setTeamID(_teamID)
+      updateMemberships(_teamID)
+      client.subscribe('memberships', async (response) => {
         updateMemberships()
-      }
-    })
-
-    databases
-      .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventID as string)
-      .then((e) => {
-        setEvent(e)
-        const _teamID = e.participants_team_id
-        setTeamID(_teamID)
-        updateMemberships(_teamID)
       })
-      .catch((error: any) => toast.error(error.message))
+    }
+    if (router.isReady) {
+      fetchEvent().catch((error) => toast.error(error.message))
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [router.isReady])
 
   function updateMemberships(_teamID?: string) {
     teams
@@ -69,7 +72,7 @@ const Participants = () => {
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
             jwt,
           }),
-        }).catch((error: any) => toast.error(error.message))
+        })
         setEmailInvite('')
         updateMemberships()
       } else {
@@ -86,7 +89,7 @@ const Participants = () => {
         <span className='text-neutral'>Событие</span>
         <span className='pl-1 font-bold'>{event?.name}</span>
       </h1>
-      <TeamsNavigation className='place-item-center col-span-4' eventID={event?.$id} />
+      <TeamsNavigation className='place-item-center col-span-4' event={event} />
       <div className='grid grid-flow-row-dense grid-cols-4 place-items-stretch gap-4 px-3'>
         <PanelWindow inCard className='col-span-4 md:col-span-1'>
           <div className='form-control w-full max-w-xs'>
@@ -99,24 +102,14 @@ const Participants = () => {
               type='text'
               placeholder='email'
               value={emailInvite}
-              disabled={
-                memberships.filter(
-                  (membership) =>
-                    membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
-                ).length === 0
-              }
+              disabled={!isPermitted}
               onChange={(e) => setEmailInvite(e.target.value)}
               className='input-bordered input w-full'
             />
           </div>
           <button
-            disabled={
-              memberships.filter(
-                (membership) =>
-                  membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
-              ).length === 0
-            }
-            className='btn-secondary btn-outline btn'
+            disabled={!isPermitted}
+            className='btn-outline btn-secondary btn'
             onClick={createMembership}
           >
             Пригласить
@@ -124,7 +117,7 @@ const Participants = () => {
         </PanelWindow>
         <PanelWindow className='col-span-4 row-span-3 md:col-span-3'>
           <div className='overflow-x-auto'>
-            <table className='table-compact table w-full'>
+            <table className='w-full table-auto md:table-fixed'>
               <thead className='[&_th]:font-semibold'>
                 <tr>
                   <th className='rounded-tl-md' />
@@ -150,7 +143,7 @@ const Participants = () => {
                     </td>
                     <td>{formatDate(membership.invited)}</td>
                     <td>
-                      {!membership.roles.includes('owner') && (
+                      {!membership.roles.includes('owner') && isPermitted && (
                         <button
                           className='hover:text-error'
                           onClick={() => {

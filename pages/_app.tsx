@@ -7,6 +7,7 @@ import fetchJson from '@/lib/fetchJson'
 import { AppwriteProvider } from '@/context/AppwriteContext'
 import { EventProvider } from '@/context/EventContext'
 import { MembershipProvider } from '@/context/MembershipContext'
+import { PollProvider } from "@/context/PollContext";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -23,16 +24,18 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     <AppwriteProvider>
       <EventProvider>
         <MembershipProvider>
-          <SWRConfig
-            value={{
-              fetcher: fetchJson,
-              onError: (err) => {
-                console.error(err)
-              },
-            }}
-          >
-            {getLayout(<Component {...pageProps} />)}
-          </SWRConfig>
+          <PollProvider>
+            <SWRConfig
+              value={{
+                fetcher: fetchJson,
+                onError: (err) => {
+                  console.error(err)
+                },
+              }}
+            >
+              {getLayout(<Component {...pageProps} />)}
+            </SWRConfig>
+          </PollProvider>
         </MembershipProvider>
       </EventProvider>
     </AppwriteProvider>

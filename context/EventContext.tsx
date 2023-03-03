@@ -1,5 +1,4 @@
 import React, { createContext, useState } from 'react'
-import { Client, Databases, Models } from 'appwrite'
 
 interface EventContextI {
   eventIdToUpdate?: string

@@ -48,13 +48,13 @@ export default function Navbar(props: NavbarProps) {
       <div className='navbar-start'>
         {props.sections && (
           <div className='flex-none lg:hidden'>
-            <label htmlFor={hamburgerMenuId} className='btn-ghost btn-square btn'>
+            <label htmlFor={hamburgerMenuId} className='btn-ghost no-animation btn-square btn'>
               <Bars3Icon className='h-6 w-6' />
             </label>
           </div>
         )}
         <div className='mx-2 flex-1'>
-          <Link href='/' className='btn-ghost btn'>
+          <Link href='/' className='btn-ghost no-animation btn'>
             <div className='flex items-center text-xl normal-case'>
               <ProjectLogo className='h-6 w-6' />
               <div className='pl-2'>
@@ -85,9 +85,23 @@ export default function Navbar(props: NavbarProps) {
       </div>
       <div className='navbar-end'>
         <div className='dropdown-end dropdown'>
-          <label tabIndex={0} className='btn-ghost btn inline-block flex items-center normal-case'>
-            <Avatar iconSize='w-8 h-8' fontSize='' />
-            <ChevronDownIcon className='h-5 w-5 stroke-2 pt-0.5 text-base-content' />
+          <label
+            tabIndex={0}
+            className='btn-ghost no-animation btn inline-block flex items-center normal-case'
+          >
+            <Avatar iconSize='w-5 h-5' fontSize='text-xs' />
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              fillRule='evenodd'
+              clipRule='evenodd'
+              viewBox='0 0 512 345.51'
+              className='ml-1 h-2 w-2 stroke-2 pt-0.5 text-base-content'
+            >
+              <path
+                fillRule='nonzero'
+                d='m3.95 30.57 236.79 307.24c1.02 1.39 2.24 2.65 3.67 3.75 8.27 6.39 20.17 4.87 26.56-3.41l236.11-306.4C510.14 28.38 512 23.91 512 19c0-10.49-8.51-19-19-19H18.93v.06A18.9 18.9 0 0 0 7.36 4.01C-.92 10.4-2.44 22.3 3.95 30.57z'
+              />
+            </svg>
           </label>
           <ul
             tabIndex={0}

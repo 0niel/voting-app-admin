@@ -1,7 +1,7 @@
 import NinjaXUnion from '@/components/NinjaXUnion'
 import { FormEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { toast, Toaster } from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 import LayoutWithoutDrawer from '@/components/LayoutWithoutDrawer'
 import useUser from '@/lib/useUser'
 import fetchJson from '@/lib/fetchJson'
@@ -29,7 +29,7 @@ export default function Login() {
 
   useEffect(() => {
     if (client !== undefined) {
-      router.push('/admin/voting').then((r) => {})
+      router.push('/admin/dashboard').then((r) => {})
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -50,7 +50,7 @@ export default function Login() {
         }),
         false,
       )
-      await router.push('/admin/voting')
+      await router.push('/admin/dashboard')
     } catch (error: any) {
       toast.error(
         alerts[error?.data?.message] ||

@@ -7,15 +7,13 @@ import useUser from '@/lib/useUser'
 import { useAppwrite } from '@/context/AppwriteContext'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 
-export default function oauth2() {
+export default function OAuth2() {
   const router = useRouter()
   const { mutateUser } = useUser()
-  const { setClient } = useAppwrite()
+  const { client } = useAppwrite()
 
   useEffect(() => {
-    const client = new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
     const account = new Account(client)
-    setClient(client)
     account.get().then(async (userData) => {
       const jwt = await account.createJWT().then((r) => r.jwt)
       mutateUser(
@@ -25,7 +23,7 @@ export default function oauth2() {
           body: JSON.stringify({ userData, jwt }),
         }),
         false,
-      ).then(() => router.push('/admin/voting'))
+      ).then(() => router.push('/admin/dashboard'))
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

@@ -1,6 +1,6 @@
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import React, { ReactElement, useEffect, useState } from 'react'
-import { Account, Databases, ID, Models, Permission, Role, Teams } from "appwrite";
+import { Account, Databases, ID, Models, Permission, Role, Teams } from 'appwrite'
 import { useAppwrite } from '@/context/AppwriteContext'
 import {
   appwriteEventsCollection,
@@ -22,21 +22,13 @@ const Events = () => {
   const { user } = useUser()
   const [events, setEvents] = useState<Models.Document[]>([])
   const [newEventName, setNewEventName] = useState('')
-  const [userTeamIDs, setUserTeamIDs] = useState<string[]>([])
   const databases = new Databases(client)
   const teams = new Teams(client)
-  const accounts = new Account(client)
+  const [userTeamIDs, setUserTeamIDs] = useState<string[]>()
 
   useEffect(() => {
-    async function getTeams() {
-      const IDs = (await new Teams(client!).list()).teams.map((team) => team.$id)
-      setUserTeamIDs(IDs)
-    }
-    getTeams()
-      .then(() => {})
-      .catch((e) => toast.error(e.message))
-    try {
-      updateEventList()
+    const subscribe = async function () {
+      await updateEventList()
       client.subscribe('documents', (response) => {
         if (
           // @ts-ignore
@@ -47,17 +39,19 @@ const Events = () => {
           updateEventList()
         }
       })
-    } catch (error: any) {
-      toast.error(error.message)
     }
+    subscribe().catch((error) => toast.error(error.message))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function updateEventList() {
+  async function updateEventList() {
     try {
-      databases
-        .listDocuments(appwriteVotingDatabase, appwriteEventsCollection)
-        .then((res) => setEvents(res.documents.reverse()))
+      setEvents(
+        (
+          await databases.listDocuments(appwriteVotingDatabase, appwriteEventsCollection)
+        ).documents.reverse(),
+      )
+      setUserTeamIDs((await teams.list()).teams.map((team) => team.$id))
     } catch (error: any) {
       toast.error(error.message)
     }
@@ -131,6 +125,7 @@ const Events = () => {
                   <th>Модер. доступа</th>
                   <th>Модер. голос.</th>
                   <th>Участники</th>
+                  <th>Голосования</th>
                   <th className='rounded-tr-md' />
                 </tr>
               </thead>
@@ -140,8 +135,7 @@ const Events = () => {
                     <th className='text-xs font-light'>{event.$id.slice(-7)}</th>
                     <td className='max-w-[10rem] overflow-hidden text-ellipsis'>{event.name}</td>
                     <td className='text-xs font-light'>
-                      {userTeamIDs.includes(event.access_moderators_team_id) &&
-                      event.access_moderators_team_id ? (
+                      {userTeamIDs?.includes(event.access_moderators_team_id) ? (
                         <Link
                           href={`/admin/events/${event.$id}/access-moderators`}
                           className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
@@ -153,8 +147,7 @@ const Events = () => {
                       )}
                     </td>
                     <td className='text-xs font-light'>
-                      {userTeamIDs.includes(event.access_moderators_team_id) &&
-                      event.voting_moderators_team_id ? (
+                      {userTeamIDs?.includes(event.voting_moderators_team_id) ? (
                         <Link
                           href={`/admin/events/${event.$id}/voting-moderators`}
                           className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
@@ -166,7 +159,7 @@ const Events = () => {
                       )}
                     </td>
                     <td className='text-xs font-light'>
-                      {userTeamIDs.includes(event.access_moderators_team_id) ? (
+                      {userTeamIDs?.includes(event.participants_team_id) ? (
                         <Link
                           href={`/admin/events/${event.$id}/participants`}
                           className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
@@ -175,6 +168,18 @@ const Events = () => {
                         </Link>
                       ) : (
                         event.participants_team_id?.slice(-7) || 'нет'
+                      )}
+                    </td>
+                    <td className='text-xs font-light'>
+                      {userTeamIDs?.includes(event.voting_moderators_team_id) ? (
+                        <Link
+                          href={`/admin/events/${event.$id}/poll-list`}
+                          className='dark-hover:text-blue-400 link-hover link after:content-["_↗"] hover:text-blue-600'
+                        >
+                          список
+                        </Link>
+                      ) : (
+                        <span>список</span>
                       )}
                     </td>
                     <td>
