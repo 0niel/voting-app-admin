@@ -17,7 +17,7 @@ import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { Account, AppwriteException } from 'appwrite'
-import { toast } from 'react-hot-toast'
+import { Toaster, toast } from 'react-hot-toast'
 
 export interface LayoutProps {
   children: React.ReactNode
@@ -285,6 +285,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
           </div>
           <main className='flex-1'>
             <div className='py-6 px-4 sm:px-6 lg:px-8'>{props.children}</div>
+            <Toaster position='bottom-right' />
           </main>
         </div>
       </div>
