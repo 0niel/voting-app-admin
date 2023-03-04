@@ -6,18 +6,15 @@ import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/co
 import { toast } from 'react-hot-toast'
 import { useEvent } from '@/context/EventContext'
 import { useOnClickOutside } from 'usehooks-ts'
+import Modal from '@/components/Modal'
 
 export default function UpdateEventModal() {
   const dialogPanelRef = useRef(null)
-  const [newEventName, setNewEventName] = useState('')
+  const [eventNewName, setEventNewName] = useState('')
   const [eventToUpdate, setEventToUpdate] = useState<Models.Document>()
   const { eventIdToUpdate, setEventIdToUpdate } = useEvent()
   const { client } = useAppwrite()
   const databases = new Databases(client)
-
-  useOnClickOutside(dialogPanelRef, () => {
-    setEventIdToUpdate(undefined)
-  })
 
   useEffect(() => {
     if (eventIdToUpdate != null) {
@@ -30,85 +27,47 @@ export default function UpdateEventModal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventIdToUpdate])
 
+  async function updateEvent() {
+    if (eventNewName.length > 0) {
+      new Databases(client!)
+        .updateDocument(appwriteVotingDatabase, appwriteEventsCollection, eventIdToUpdate!, {
+          name: eventNewName,
+        })
+        .then(() => setEventIdToUpdate(undefined))
+        .catch((error) => toast.error(error))
+        .finally(() => setEventNewName(''))
+    } else {
+      toast.error('Введите название события.')
+    }
+  }
+
+  function setOpen(open: boolean) {
+    if (!open) {
+      setEventIdToUpdate(undefined)
+    }
+  }
+
   return (
-    <Transition appear show={eventIdToUpdate !== undefined} as={Fragment}>
-      <Dialog as='div' className='relative z-10' onClose={() => {}}>
-        <Transition.Child
-          as={Fragment}
-          enter='ease-out duration-300'
-          enterFrom='opacity-0'
-          enterTo='opacity-100'
-          leave='ease-in duration-200'
-          leaveFrom='opacity-100'
-          leaveTo='opacity-0'
-        >
-          <div className='fixed inset-0 bg-black bg-opacity-25' />
-        </Transition.Child>
-
-        <div className='fixed inset-0 overflow-y-auto'>
-          <div className='flex min-h-full items-center justify-center p-4 text-center'>
-            <Transition.Child
-              as={Fragment}
-              enter='ease-out duration-300'
-              enterFrom='opacity-0 scale-95'
-              enterTo='opacity-100 scale-100'
-              leave='ease-in duration-200'
-              leaveFrom='opacity-100 scale-100'
-              leaveTo='opacity-0 scale-95'
-            >
-              <Dialog.Panel
-                ref={dialogPanelRef}
-                className='rounded-box w-full max-w-md transform overflow-hidden bg-base-100 p-6 text-left align-middle ring-1 ring-secondary transition-all hover:ring-2 hover:ring-secondary-focus'
-              >
-                <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
-                  Редактировать событие{' '}
-                  <span className='text-primary'>
-                    {eventToUpdate?.name}
-                    <span className='text-sm font-light'> {eventToUpdate?.$id.slice(-7)}</span>
-                  </span>
-                </Dialog.Title>
-                <div className='form-control w-full max-w-xs pt-5'>
-                  <label className='label'>
-                    <span className='label-text'>Название</span>
-                  </label>
-                  <input
-                    type='text'
-                    placeholder={eventToUpdate?.name}
-                    value={newEventName}
-                    onChange={(e) => setNewEventName(e.target.value)}
-                    className='input-bordered input-accent input w-full max-w-xs'
-                  />
-                </div>
-
-                <div className='mt-6 text-end'>
-                  <button
-                    type='button'
-                    className='btn-primary btn'
-                    onClick={async () => {
-                      if (newEventName.length > 0) {
-                        new Databases(client!)
-                          .updateDocument(
-                            appwriteVotingDatabase,
-                            appwriteEventsCollection,
-                            eventIdToUpdate!,
-                            { name: newEventName },
-                          )
-                          .then(() => setEventIdToUpdate(undefined))
-                          .catch((error) => toast.error(error))
-                          .finally(() => setNewEventName(''))
-                      } else {
-                        toast.error('Введите название события.')
-                      }
-                    }}
-                  >
-                    Сохранить
-                  </button>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition>
+    <Modal
+      isOpen={eventIdToUpdate !== undefined}
+      setOpen={setOpen}
+      onAccept={updateEvent}
+      acceptButtonName='Обновить'
+      onCancel={() => setEventIdToUpdate(undefined)}
+      title={`Обновить событие ${eventToUpdate?.name}`}
+    >
+      <div className='form-control w-full max-w-xs pt-5'>
+        <label className='label'>
+          <span className='label-text'>Название</span>
+        </label>
+        <input
+          type='text'
+          placeholder={eventToUpdate?.name}
+          value={eventNewName}
+          onChange={(e) => setEventNewName(e.target.value)}
+          className='block w-full rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+        />
+      </div>
+    </Modal>
   )
 }

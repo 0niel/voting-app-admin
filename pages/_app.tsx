@@ -7,7 +7,7 @@ import fetchJson from '@/lib/fetchJson'
 import { AppwriteProvider } from '@/context/AppwriteContext'
 import { EventProvider } from '@/context/EventContext'
 import { MembershipProvider } from '@/context/MembershipContext'
-import { PollProvider } from "@/context/PollContext";
+import { PollProvider } from '@/context/PollContext'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode

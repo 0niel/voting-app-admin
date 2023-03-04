@@ -143,7 +143,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
                     </nav>
                   </div>
 
-                  <div className=' dropdown-end dropdown dropdown-top mt-2 w-60 p-2'>
+                  <div className=' dropdown-top dropdown-end dropdown mt-2 w-60 p-2'>
                     <label
                       tabIndex={0}
                       className='btn-ghost no-animation btn inline-block items-center normal-case'
@@ -226,7 +226,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
               </nav>
             </div>
             <div className='flex flex-shrink-0 border-t border-gray-200 p-2'>
-              <div className='dropdown-end dropdown dropdown-top'>
+              <div className='dropdown-end dropdown-top dropdown'>
                 <label
                   tabIndex={0}
                   className='p-1/2 btn-ghost no-animation inline-block items-center rounded-md normal-case'
