@@ -1,13 +1,14 @@
-import NinjaXUnion from '@/components/NinjaXUnion'
-import { FormEvent, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { toast } from 'react-hot-toast'
-import LayoutWithoutDrawer from '@/components/LayoutWithoutDrawer'
-import useUser from '@/lib/useUser'
-import fetchJson from '@/lib/fetchJson'
 import { Account } from 'appwrite'
-import { useAppwrite } from '@/context/AppwriteContext'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { FormEvent, useEffect, useState } from 'react'
+import { toast } from 'react-hot-toast'
+
+import LayoutWithoutDrawer from '@/components/LayoutWithoutDrawer'
+import NinjaXUnion from '@/components/NinjaXUnion'
+import { useAppwrite } from '@/context/AppwriteContext'
+import fetchJson from '@/lib/fetchJson'
+import useUser from '@/lib/useUser'
 
 const alerts: { [englishAlert: string]: string } = {
   'Invalid credentials. Please check the email and password.': 'Неверные почта или пароль.',

@@ -1,8 +1,9 @@
-import { appDescription } from '@/constants/constants'
 import Link from 'next/link'
+
 import AdminPanelHead from '@/components/Head'
-import useUser from '@/lib/useUser'
+import { appDescription } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
+import useUser from '@/lib/useUser'
 
 export default function Landing() {
   const { user } = useUser()

@@ -1,14 +1,15 @@
-import Modal from '@/components/Modal'
-import { useEvent } from '@/context/EventContext'
 import { Databases, ID, Permission, Role, Teams } from 'appwrite'
+import React, { useState } from 'react'
+import { toast } from 'react-hot-toast'
+
+import Modal from '@/components/Modal'
 import {
   appwriteEventsCollection,
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
 } from '@/constants/constants'
-import { toast } from 'react-hot-toast'
-import React, { useState } from 'react'
 import { useAppwrite } from '@/context/AppwriteContext'
+import { useEvent } from '@/context/EventContext'
 import useUser from '@/lib/useUser'
 
 export default function CreateEventModal() {

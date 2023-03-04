@@ -1,20 +1,21 @@
-import LayoutWithDrawer from '@/components/LayoutWithDrawer'
-import React, { ReactElement, useEffect, useState } from 'react'
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { Databases, ID, Models, Permission, Role, Teams } from 'appwrite'
-import { useAppwrite } from '@/context/AppwriteContext'
+import React, { ReactElement, useEffect, useState } from 'react'
+import { toast } from 'react-hot-toast'
+
+import CreateEventModal from '@/components/events/CreateEventModal'
+import DeleteEventModal from '@/components/events/DeleteEventModal'
+import UpdateEventModal from '@/components/events/UpdateEventModal'
+import LayoutWithDrawer from '@/components/LayoutWithDrawer'
+import Table, { Cell, Column } from '@/components/Table'
 import {
   appwriteEventsCollection,
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
 } from '@/constants/constants'
-import useUser from '@/lib/useUser'
-import { toast } from 'react-hot-toast'
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
-import UpdateEventModal from '@/components/events/UpdateEventModal'
+import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
-import DeleteEventModal from '@/components/events/DeleteEventModal'
-import Table, { Column, Cell } from '@/components/Table'
-import CreateEventModal from '@/components/events/CreateEventModal'
+import useUser from '@/lib/useUser'
 
 const Events = () => {
   const { client } = useAppwrite()
