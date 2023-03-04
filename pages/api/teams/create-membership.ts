@@ -1,8 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
 import { withIronSessionApiRoute } from 'iron-session/next'
-import { sessionOptions } from '@/lib/session'
-import { Client, Teams, Account } from 'node-appwrite'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { Account, Client, Teams } from 'node-appwrite'
+
 import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
+import { sessionOptions } from '@/lib/session'
 
 export default withIronSessionApiRoute(createMembership, sessionOptions)
 
@@ -13,10 +14,14 @@ async function createMembership(req: NextApiRequest, res: NextApiResponse) {
       .setEndpoint(appwriteEndpoint)
       .setProject(appwriteProjectId)
       .setJWT(jwt)
+
+    // Получаем список членов команды.
     const memberships = await new Teams(client)
       .listMemberships(teamID)
       .then((membershipList) => membershipList.memberships)
+
     const account = await new Account(client).get()
+
     if (
       memberships.filter(
         (membership) =>
@@ -28,7 +33,8 @@ async function createMembership(req: NextApiRequest, res: NextApiResponse) {
       const server = new Client()
         .setEndpoint(appwriteEndpoint)
         .setProject(appwriteProjectId)
-        .setKey(process.env.API_TEAMS_ACCESS_TOKEN!)
+        .setKey(process.env.APPWRITE_API_KEY!)
+
       await new Teams(server).createMembership(teamID, email, roles || [], url)
       res.status(200).json({ message: 'ok' })
     } else {

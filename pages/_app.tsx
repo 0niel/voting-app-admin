@@ -1,13 +1,15 @@
 import '@/styles/globals.css'
-import type { ReactElement, ReactNode } from 'react'
+
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
+import type { ReactElement, ReactNode } from 'react'
 import { SWRConfig } from 'swr'
-import fetchJson from '@/lib/fetchJson'
+
 import { AppwriteProvider } from '@/context/AppwriteContext'
 import { EventProvider } from '@/context/EventContext'
 import { MembershipProvider } from '@/context/MembershipContext'
 import { PollProvider } from '@/context/PollContext'
+import fetchJson from '@/lib/fetchJson'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode

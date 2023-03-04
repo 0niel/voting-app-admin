@@ -1,7 +1,8 @@
 import { Models } from 'appwrite'
 import { withIronSessionApiRoute } from 'iron-session/next'
-import { sessionOptions } from '@/lib/session'
 import { NextApiRequest, NextApiResponse } from 'next'
+
+import { sessionOptions } from '@/lib/session'
 
 export type User = {
   isLoggedIn: boolean

@@ -1,11 +1,12 @@
-import { useEffect } from 'react'
 import { Account, Client } from 'appwrite'
-import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
-import fetchJson from '@/lib/fetchJson'
 import { useRouter } from 'next/router'
-import useUser from '@/lib/useUser'
-import { useAppwrite } from '@/context/AppwriteContext'
+import { useEffect } from 'react'
+
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
+import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
+import { useAppwrite } from '@/context/AppwriteContext'
+import fetchJson from '@/lib/fetchJson'
+import useUser from '@/lib/useUser'
 
 export default function OAuth2() {
   const router = useRouter()
