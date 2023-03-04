@@ -13,9 +13,9 @@ import TeamsNavigation from '@/components/teams/TeamsNavigation'
 import PanelWindow from '@/components/PanelWindow'
 import { formatDate } from '@/lib/formatDate'
 import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
-import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { usePoll } from '@/context/PollContext'
-import CreatePollModal from "@/components/polls/CreatePollModal";
+import CreatePollModal from '@/components/polls/CreatePollModal'
 
 const PollList = () => {
   const { client } = useAppwrite()
