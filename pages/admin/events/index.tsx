@@ -141,9 +141,9 @@ const Events = () => {
         <Table
           columns={columns}
           rows={rows}
-          title='Список событий'
-          description='Список всех событий'
-          action='Создать событие'
+          title='Список мероприятий'
+          description='Список всех мероприятий, созданных в системе. Меропрития - это события, в рамках которых проводятся голосования'
+          action='Создать мероприятие'
           onActionClick={() => setCreateEvent(true)}
         />
 
