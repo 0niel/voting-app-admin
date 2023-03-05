@@ -1,14 +1,13 @@
-import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { Databases, Models } from 'appwrite'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
+import CreatePollModal from '@/components/events/poll-list/CreatePollModal'
+import TeamsNavigation from '@/components/events/TeamsNavigation'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import PanelWindow from '@/components/PanelWindow'
-import CreatePollModal from '@/components/poll-list/CreatePollModal'
-import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
-import TeamsNavigation from '@/components/teams/TeamsNavigation'
 import {
   appwriteEventsCollection,
   appwritePollsCollection,

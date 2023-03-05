@@ -9,7 +9,7 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import { EventDocument } from '@/lib/models/EventDocument'
 
-export default function DeleteParticipantsModal() {
+export default function DeleteVotingModeratorModal() {
   const { membershipIDToDelete, setMembershipIDToDelete } = useMembership()
   const router = useRouter()
   const { eventID } = router.query
@@ -34,7 +34,7 @@ export default function DeleteParticipantsModal() {
   }, [router.isReady])
 
   async function deleteParticipantFromDatabase() {
-    await teams.deleteMembership(event!.participants_team_id, membershipIDToDelete!)
+    await teams.deleteMembership(event!.voting_moderators_team_id, membershipIDToDelete!)
     setMembershipIDToDelete(undefined)
   }
 

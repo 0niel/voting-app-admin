@@ -18,6 +18,7 @@ import { useEvent } from '@/context/EventContext'
 import useUser from '@/lib/useUser'
 
 const Events = () => {
+  const { user } = useUser()
   const { client } = useAppwrite()
   const { setEventIdToUpdate, setEventIdToDelete } = useEvent()
   const [events, setEvents] = useState<Models.Document[]>([])
@@ -25,6 +26,7 @@ const Events = () => {
   const teams = new Teams(client)
   const [userTeamIDs, setUserTeamIDs] = useState<string[]>()
   const { setCreateEvent } = useEvent()
+  const [hasPermissionToCreteEvent, setHasPermissionToCreteEvent] = useState(false)
 
   useEffect(() => {
     const subscribe = async function () {
@@ -41,6 +43,13 @@ const Events = () => {
       })
     }
     subscribe().catch((error) => toast.error(error.message))
+    async function fetchTeams() {
+      const permission = (await new Teams(client!).list()).teams.some(
+        (team) => team.$id === appwriteSuperUsersTeam,
+      )
+      setHasPermissionToCreteEvent(permission)
+    }
+    fetchTeams().catch((error) => toast.error(error.message))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -146,6 +155,7 @@ const Events = () => {
           description='Список всех мероприятий, созданных в системе. Меропрития - это события, в рамках которых проводятся голосования'
           action='Создать мероприятие'
           onActionClick={() => setCreateEvent(true)}
+          isDisabledAction={!hasPermissionToCreteEvent}
         />
 
         <div className='rounded-md bg-white px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8'>

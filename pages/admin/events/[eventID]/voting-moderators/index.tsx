@@ -1,34 +1,33 @@
-import { UserMinusIcon } from '@heroicons/react/24/outline'
-import { Account, Databases, Models, Teams } from 'appwrite'
+import { Databases, Models, Teams } from 'appwrite'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
+import TeamsNavigation from '@/components/events/TeamsNavigation'
+import CreateVotingModeratorModal from '@/components/events/voting-moderators/CreateVotingModeratorModal'
+import DeleteVotingModeratorModal from '@/components/events/voting-moderators/DeleteVotingModeratorModal'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
-import PanelWindow from '@/components/PanelWindow'
-import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
-import TeamsNavigation from '@/components/teams/TeamsNavigation'
+import Table, { Cell } from '@/components/Table'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
-import { formatDate } from '@/lib/formatDate'
+import { GetMembershipRows, membershipColumns } from '@/lib/memberships'
+import { EventDocument } from '@/lib/models/EventDocument'
 import usePermitted from '@/lib/usePermitted'
 import useUser from '@/lib/useUser'
 
 const VotingModerators = () => {
   const { client } = useAppwrite()
-  const { user } = useUser()
   const router = useRouter()
   const { eventID } = router.query
-  const [teamID, setTeamID] = useState<string>()
   const [event, setEvent] = useState<Models.Document>()
   const [memberships, setMemberships] = useState<Models.Membership[]>([])
-  const [emailInvite, setEmailInvite] = useState('')
-  const { setMembershipIDToDelete, setTeamIDRelatedToMembershipToDelete } = useMembership()
-  const account = new Account(client)
+  const { setCreateMembership } = useMembership()
   const databases = new Databases(client)
   const teams = new Teams(client)
   const isPermitted = usePermitted(memberships)
+  const [hasPermissionToCreteEvent, setHasPermissionToCreteEvent] = useState(false)
+  const { user } = useUser()
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -37,12 +36,10 @@ const VotingModerators = () => {
         appwriteEventsCollection,
         eventID as string,
       )
-      setEvent(_event)
-      const _teamID = _event.voting_moderators_team_id
-      setTeamID(_teamID)
-      updateMemberships(_teamID)
+      setEvent(_event as EventDocument)
+      await updateMemberships(_event.voting_moderators_team_id)
       client.subscribe('memberships', async (response) => {
-        updateMemberships()
+        await updateMemberships(_event.voting_moderators_team_id)
       })
     }
     if (router.isReady) {
@@ -51,119 +48,42 @@ const VotingModerators = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady])
 
-  function updateMemberships(_teamID?: string) {
-    teams
-      .listMemberships(_teamID || teamID!)
-      .then((membershipList) => setMemberships(membershipList.memberships.reverse()))
-      .catch((error) => toast.error(error.message))
-  }
-
-  async function createMembership() {
+  async function updateMemberships(_teamID?: string) {
     try {
-      const newEmail = emailInvite?.trim()
-      if (newEmail && newEmail.length > 0) {
-        const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
-        await fetch('/api/teams/create-membership', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            teamID: teamID!,
-            email: newEmail,
-            roles: [],
-            url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
-            jwt,
-          }),
-        })
-        setEmailInvite('')
-        updateMemberships()
-      } else {
-        toast.error('Укажите действительную почту.')
-      }
+      const membershipList = await teams.listMemberships(
+        _teamID || event?.voting_moderators_team_id!,
+      )
+      setMemberships(membershipList.memberships.reverse())
     } catch (error: any) {
       toast.error(error.message)
     }
   }
 
+  useEffect(() => {
+    const permissionToCreate = memberships.some(
+      (membership) =>
+        membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
+    )
+    setHasPermissionToCreteEvent(permissionToCreate)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memberships])
+
+  const rows: Cell[][] = GetMembershipRows(memberships, isPermitted)
+
   return (
     <>
-      <h1 className='p-1 text-start text-2xl text-base-content md:text-center'>
-        <span className='text-neutral'>Событие</span>
-        <span className='pl-1 font-bold'>{event?.name}</span>
-      </h1>
       <TeamsNavigation className='place-item-center col-span-4' event={event} />
-      <div className='grid grid-flow-row-dense grid-cols-4 place-items-stretch gap-4 px-3'>
-        <PanelWindow inCard className='col-span-4 md:col-span-1'>
-          <div className='form-control w-full max-w-xs'>
-            <label className='label'>
-              <span className='label-text overflow-hidden truncate text-ellipsis'>
-                Пригласить модератора голосования
-              </span>
-            </label>
-            <input
-              type='text'
-              placeholder='email'
-              disabled={!isPermitted}
-              value={emailInvite}
-              onChange={(e) => setEmailInvite(e.target.value)}
-              className='input-bordered input w-full'
-            />
-          </div>
-          <button
-            disabled={!isPermitted}
-            className='btn-outline btn-secondary btn'
-            onClick={createMembership}
-          >
-            Пригласить
-          </button>
-        </PanelWindow>
-        <PanelWindow className='col-span-4 row-span-3 md:col-span-3'>
-          <div className='overflow-x-auto'>
-            <table className='w-full table-auto md:table-fixed'>
-              <thead className='[&_th]:font-semibold'>
-                <tr>
-                  <th className='rounded-tl-md' />
-                  <th>Имя</th>
-                  <th>Почта</th>
-                  <th>Роли</th>
-                  <th>Приглашен</th>
-                  <th className='rounded-tr-md' />
-                </tr>
-              </thead>
-              <tbody>
-                {memberships.map((membership, index) => (
-                  <tr key={index}>
-                    <th className='text-xs font-light'>{membership.$id.slice(-7)}</th>
-                    <td className='max-w-[10rem] overflow-hidden text-ellipsis'>
-                      {membership.userEmail}
-                    </td>
-                    <td className='max-w-[10rem] overflow-hidden text-ellipsis'>
-                      {membership.userEmail}
-                    </td>
-                    <td className='max-w-[10rem] overflow-hidden text-ellipsis'>
-                      {membership.roles.join(', ')}
-                    </td>
-                    <td>{formatDate(membership.invited)}</td>
-                    <td>
-                      {!membership.roles.includes('owner') && isPermitted && (
-                        <button
-                          className='hover:text-error'
-                          onClick={() => {
-                            setMembershipIDToDelete(membership.$id)
-                            setTeamIDRelatedToMembershipToDelete(membership.teamId)
-                          }}
-                        >
-                          <UserMinusIcon className='h-5 w-5' />
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </PanelWindow>
-      </div>
-      <DeleteMembershipModal />
+      <Table
+        title='Список модераторов доступа'
+        description={`Списко модераторов доступа ${event?.name}`}
+        action='Пригласить'
+        columns={membershipColumns}
+        rows={rows}
+        onActionClick={() => setCreateMembership(true)}
+        isDisabledAction={!hasPermissionToCreteEvent}
+      />
+      <CreateVotingModeratorModal />
+      <DeleteVotingModeratorModal />
     </>
   )
 }

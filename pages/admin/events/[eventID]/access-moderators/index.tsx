@@ -5,15 +5,16 @@ import { toast } from 'react-hot-toast'
 
 import CreateAccessModeratorModal from '@/components/events/access-moderators/CreateAccessModeratorModal'
 import DeleteAccessModeratorModal from '@/components/events/access-moderators/DeleteAccessModeratorModal'
+import TeamsNavigation from '@/components/events/TeamsNavigation'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
-import Table, { Cell, Column } from '@/components/Table'
-import TeamsNavigation from '@/components/teams/TeamsNavigation'
+import Table, { Cell } from '@/components/Table'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import { GetMembershipRows, membershipColumns } from '@/lib/memberships'
 import { EventDocument } from '@/lib/models/EventDocument'
 import usePermitted from '@/lib/usePermitted'
+import useUser from '@/lib/useUser'
 
 const AccessModerators = () => {
   const { client } = useAppwrite()
@@ -21,11 +22,12 @@ const AccessModerators = () => {
   const { eventID } = router.query
   const [event, setEvent] = useState<EventDocument>()
   const [memberships, setMemberships] = useState<Models.Membership[]>([])
-  const { setMembershipIDToDelete } = useMembership()
   const databases = new Databases(client)
   const teams = new Teams(client)
   const isPermitted = usePermitted(memberships)
   const { setCreateMembership } = useMembership()
+  const { user } = useUser()
+  const [hasPermissionToCreteEvent, setHasPermissionToCreteEvent] = useState(false)
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -57,6 +59,15 @@ const AccessModerators = () => {
     }
   }
 
+  useEffect(() => {
+    const permissionToCreate = memberships.some(
+      (membership) =>
+        membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
+    )
+    setHasPermissionToCreteEvent(permissionToCreate)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memberships])
+
   const rows: Cell[][] = GetMembershipRows(memberships, isPermitted)
 
   return (
@@ -69,6 +80,7 @@ const AccessModerators = () => {
         columns={membershipColumns}
         rows={rows}
         onActionClick={() => setCreateMembership(true)}
+        isDisabledAction={!hasPermissionToCreteEvent}
       />
       <CreateAccessModeratorModal />
       <DeleteAccessModeratorModal />

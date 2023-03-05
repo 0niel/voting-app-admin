@@ -5,15 +5,16 @@ import { toast } from 'react-hot-toast'
 
 import CreateParticipantsModal from '@/components/events/participants/CreateParticipantsModal'
 import DeleteParticipantsModal from '@/components/events/participants/DeleteParticipantsModal'
+import TeamsNavigation from '@/components/events/TeamsNavigation'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import Table, { Cell } from '@/components/Table'
-import TeamsNavigation from '@/components/teams/TeamsNavigation'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import { GetMembershipRows, membershipColumns } from '@/lib/memberships'
 import { EventDocument } from '@/lib/models/EventDocument'
 import usePermitted from '@/lib/usePermitted'
+import useUser from '@/lib/useUser'
 
 const Participants = () => {
   const { client } = useAppwrite()
@@ -25,6 +26,8 @@ const Participants = () => {
   const databases = new Databases(client)
   const teams = new Teams(client)
   const isPermitted = usePermitted(memberships)
+  const [hasPermissionToCreteEvent, setHasPermissionToCreteEvent] = useState(false)
+  const { user } = useUser()
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -44,6 +47,15 @@ const Participants = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady])
+
+  useEffect(() => {
+    const permissionToCreate = memberships.some(
+      (membership) =>
+        membership.userId === user?.userData?.$id && membership.roles.includes('owner'),
+    )
+    setHasPermissionToCreteEvent(permissionToCreate)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memberships])
 
   async function updateMemberships(_teamID?: string) {
     try {
@@ -66,6 +78,7 @@ const Participants = () => {
         columns={membershipColumns}
         rows={rows}
         onActionClick={() => setCreateMembership(true)}
+        isDisabledAction={!hasPermissionToCreteEvent}
       />
       <CreateParticipantsModal />
       <DeleteParticipantsModal />

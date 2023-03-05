@@ -1,4 +1,4 @@
-import { Account, Databases } from 'appwrite'
+import { Account, Databases, Models } from 'appwrite'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -9,14 +9,13 @@ import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/co
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import { handleFetchError } from '@/lib/handleFetchError'
-import { EventDocument } from '@/lib/models/EventDocument'
 
-export default function CreateParticipantsModal() {
+export default function CreateVotingModeratorModal() {
   const { createMembership, setCreateMembership } = useMembership()
   const [email, setEmail] = useState('')
   const router = useRouter()
   const { eventID } = router.query
-  const [event, setEvent] = useState<EventDocument>()
+  const [event, setEvent] = useState<Models.Document>()
   const { client } = useAppwrite()
   const account = new Account(client)
   const databases = new Databases(client)
@@ -28,7 +27,7 @@ export default function CreateParticipantsModal() {
         appwriteEventsCollection,
         eventID as string,
       )
-      setEvent(_event as EventDocument)
+      setEvent(_event)
     }
     if (router.isReady) {
       fetchEvent().catch((error) => toast.error(error.message))
@@ -37,7 +36,7 @@ export default function CreateParticipantsModal() {
   }, [router.isReady])
 
   async function addMembershipToDatabase() {
-    try {
+    const fetchCreate = async function () {
       const newEmail = email?.trim()
       if (newEmail && newEmail.length > 0) {
         const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
@@ -45,7 +44,7 @@ export default function CreateParticipantsModal() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            teamID: event?.participants_team_id,
+            teamID: event!.voting_moderators_team_id,
             email: newEmail,
             roles: [],
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
@@ -57,9 +56,8 @@ export default function CreateParticipantsModal() {
       } else {
         toast.error('Укажите действительную почту.')
       }
-    } catch (error: any) {
-      toast.error(error.message)
     }
+    await fetchCreate().catch((error: any) => toast.error(error.message))
   }
 
   return (
@@ -68,7 +66,7 @@ export default function CreateParticipantsModal() {
       onAccept={addMembershipToDatabase}
       acceptButtonName='Пригласить'
       onCancel={() => setCreateMembership(false)}
-      title='Пригласить участника'
+      title='Пригласить модератора доступа'
     >
       <CreateMembershipModalContent email={email} setEmail={setEmail} />
     </Modal>
