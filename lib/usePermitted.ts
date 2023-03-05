@@ -1,4 +1,5 @@
 import { Models } from 'appwrite'
+
 import useUser from '@/lib/useUser'
 
 export default function usePermitted(memberships: Models.Membership[]) {

@@ -1,21 +1,22 @@
-import LayoutWithDrawer from '@/components/LayoutWithDrawer'
-import React, { ReactElement, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { Databases, Models } from 'appwrite'
+import { useRouter } from 'next/router'
+import React, { ReactElement, useEffect, useState } from 'react'
+import { toast } from 'react-hot-toast'
+
+import LayoutWithDrawer from '@/components/LayoutWithDrawer'
+import PanelWindow from '@/components/PanelWindow'
+import CreatePollModal from '@/components/polls/CreatePollModal'
+import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
+import TeamsNavigation from '@/components/teams/TeamsNavigation'
 import {
   appwriteEventsCollection,
   appwritePollsCollection,
   appwriteVotingDatabase,
 } from '@/constants/constants'
-import { toast } from 'react-hot-toast'
 import { useAppwrite } from '@/context/AppwriteContext'
-import TeamsNavigation from '@/components/teams/TeamsNavigation'
-import PanelWindow from '@/components/PanelWindow'
-import { formatDate } from '@/lib/formatDate'
-import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
-import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { usePoll } from '@/context/PollContext'
-import CreatePollModal from '@/components/polls/CreatePollModal'
+import { formatDate } from '@/lib/formatDate'
 
 const PollList = () => {
   const { client } = useAppwrite()

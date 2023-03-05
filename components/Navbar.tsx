@@ -1,22 +1,23 @@
-import { appName, shortAppName } from '@/constants/constants'
-import Link from 'next/link'
 import {
   ArrowLeftOnRectangleIcon,
   Bars3Icon,
   ChevronDownIcon,
   UserCircleIcon,
 } from '@heroicons/react/24/outline'
-import React, { FormEvent } from 'react'
-import Section from '@/components/Section'
-import { hamburgerMenuId } from '@/components/LayoutWithDrawer'
+import { Account, AppwriteException } from 'appwrite'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
+import React, { FormEvent } from 'react'
+import { toast } from 'react-hot-toast'
+
+import { hamburgerMenuId } from '@/components/LayoutWithDrawer'
+import ProjectLogo from '@/components/logos/ProjectLogo'
+import Avatar from '@/components/profile/Avatar'
+import Section from '@/components/Section'
+import { appName, shortAppName } from '@/constants/constants'
+import { useAppwrite } from '@/context/AppwriteContext'
 import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { Account, AppwriteException } from 'appwrite'
-import Avatar from '@/components/profile/Avatar'
-import ProjectLogo from '@/components/logos/ProjectLogo'
-import { toast } from 'react-hot-toast'
 
 interface NavbarProps {
   sections?: Section[]

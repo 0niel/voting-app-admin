@@ -1,6 +1,7 @@
-import { appDescription, appName } from '@/constants/constants'
-import React from 'react'
 import Head from 'next/head'
+import React from 'react'
+
+import { appDescription, appName } from '@/constants/constants'
 
 export default function AdminPanelHead() {
   return (

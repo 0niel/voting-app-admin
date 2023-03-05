@@ -1,16 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react'
+import 'react-datepicker/dist/react-datepicker.css'
+
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Databases, ID } from 'appwrite'
+import ru from 'date-fns/locale/ru'
+import { router } from 'next/client'
+import React, { useEffect, useRef, useState } from 'react'
+import ReactDatePicker, { registerLocale } from 'react-datepicker'
+import { toast } from 'react-hot-toast'
+
+import Modal from '@/components/modal/Modal'
+import { appwritePollsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
-import { appwritePollsCollection, appwriteVotingDatabase } from '@/constants/constants'
-import 'react-datepicker/dist/react-datepicker.css'
-import ReactDatePicker, { registerLocale } from 'react-datepicker'
-import ru from 'date-fns/locale/ru'
-import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import useUser from '@/lib/useUser'
-import { router } from 'next/client'
-import { toast } from 'react-hot-toast'
-import Modal from '@/components/Modal'
 
 export default function CreatePollModal() {
   const dialogPanelRef = useRef(null)

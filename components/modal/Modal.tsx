@@ -1,15 +1,26 @@
-import { useAppwrite } from '@/context/AppwriteContext'
-import React, { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { useRouter } from 'next/router'
-import { Account } from 'appwrite'
+import React, { Fragment, MouseEventHandler, useRef } from 'react'
+import { useOnClickOutside } from 'usehooks-ts'
 
-export default function UndefinedAppwriteContextModal() {
-  const { client } = useAppwrite()
-  const router = useRouter()
+interface ModalProps {
+  isOpen: boolean
+  onAccept: MouseEventHandler<HTMLButtonElement>
+  acceptButtonName: string
+  onCancel: () => {}
+  cancelButtonName?: string
+  title: string
+  children?: React.ReactNode
+}
+
+export default function Modal(props: ModalProps) {
+  const dialogPanelRef = useRef(null)
+
+  useOnClickOutside(dialogPanelRef, () => {
+    props.onCancel()
+  })
 
   return (
-    <Transition appear show={client === undefined} as={Fragment}>
+    <Transition appear show={props.isOpen} as={Fragment}>
       <Dialog as='div' className='relative z-10' onClose={() => {}}>
         <Transition.Child
           as={Fragment}
@@ -22,7 +33,6 @@ export default function UndefinedAppwriteContextModal() {
         >
           <div className='fixed inset-0 bg-black bg-opacity-25' />
         </Transition.Child>
-
         <div className='fixed inset-0 overflow-y-auto'>
           <div className='flex min-h-full items-center justify-center p-4 text-center'>
             <Transition.Child
@@ -34,23 +44,24 @@ export default function UndefinedAppwriteContextModal() {
               leaveFrom='opacity-100 scale-100'
               leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel className='rounded-box w-full max-w-md transform overflow-hidden bg-base-100 p-6 text-left align-middle ring-1 ring-secondary transition-all'>
+              <Dialog.Panel
+                ref={dialogPanelRef}
+                className='rounded-box w-full max-w-md transform bg-base-100 p-6 text-left align-middle ring-1 ring-secondary transition-all hover:ring-2 hover:ring-secondary-focus'
+              >
                 <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
-                  Сессия недействительна
+                  {props.title}
                 </Dialog.Title>
-                <div className='mt-2'>
-                  <p className='text-sm text-base-content'>Введите учетные данные заново.</p>
-                </div>
-
-                <div className='mt-4'>
+                {props.children}
+                <div className='mt-6 flex justify-end'>
+                  <button type='button' className='btn-primary btn' onClick={props.onCancel}>
+                    {props.cancelButtonName || 'Отменить'}
+                  </button>
                   <button
                     type='button'
-                    className='btn-primary btn px-4 py-2'
-                    onClick={async () => {
-                      await router.push('/login')
-                    }}
+                    className='btn-outline btn-primary btn'
+                    onClick={props.onAccept}
                   >
-                    Войти
+                    {props.acceptButtonName}
                   </button>
                 </div>
               </Dialog.Panel>

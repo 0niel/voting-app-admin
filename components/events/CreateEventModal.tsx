@@ -1,8 +1,8 @@
 import { Databases, ID, Permission, Role, Teams } from 'appwrite'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 
-import Modal from '@/components/Modal'
+import Modal from '@/components/modal/Modal'
 import {
   appwriteEventsCollection,
   appwriteSuperUsersTeam,
@@ -67,7 +67,6 @@ export default function CreateEventModal() {
   return (
     <Modal
       isOpen={createEvent}
-      setOpen={setCreateEvent}
       onAccept={addEventToDatabase}
       acceptButtonName='Создать'
       onCancel={() => setCreateEvent(false)}

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
 import { Models, Teams } from 'appwrite'
-import { useAppwrite } from '@/context/AppwriteContext'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
+
+import { useAppwrite } from '@/context/AppwriteContext'
 
 interface TeamNavigationProps {
   className?: string

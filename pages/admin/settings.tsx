@@ -1,5 +1,6 @@
-import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import { ReactElement } from 'react'
+
+import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 
 const Settings = () => {
   return <span>settings</span>

@@ -8,7 +8,7 @@ export interface Column {
 }
 
 export interface Cell {
-  value: string
+  value: string | JSX.Element
   className?: string
   onClick?: () => void
 }

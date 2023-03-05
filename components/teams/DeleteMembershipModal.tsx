@@ -1,9 +1,10 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { Models, Teams } from 'appwrite'
-import { useAppwrite } from '@/context/AppwriteContext'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useOnClickOutside } from 'usehooks-ts'
+
+import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 
 export default function DeleteMembershipModal() {

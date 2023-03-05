@@ -1,23 +1,24 @@
-import React, { FormEvent, useState } from 'react'
-import AdminPanelHead from '@/components/Head'
-import { useRouter } from 'next/router'
-import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
-  Bars3Icon,
-  HomeIcon,
-  XMarkIcon,
-  UserCircleIcon,
   ArrowLeftOnRectangleIcon,
+  Bars3Icon,
   CalendarIcon,
+  HomeIcon,
+  UserCircleIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline'
-import NinjaXUnion from './NinjaXUnion'
-import Avatar from './profile/Avatar'
+import { Account, AppwriteException } from 'appwrite'
+import { useRouter } from 'next/router'
+import React, { FormEvent, Fragment, useState } from 'react'
+import { toast, Toaster } from 'react-hot-toast'
+
+import AdminPanelHead from '@/components/Head'
+import { useAppwrite } from '@/context/AppwriteContext'
 import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { Account, AppwriteException } from 'appwrite'
-import { Toaster, toast } from 'react-hot-toast'
+
+import NinjaXUnion from './NinjaXUnion'
+import Avatar from './profile/Avatar'
 
 export interface LayoutProps {
   children: React.ReactNode
@@ -38,8 +39,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const router = useRouter()
 
-  const { mutateUser } = useUser()
-  const { user } = useUser()
+  const { mutateUser, user } = useUser()
   const { client } = useAppwrite()
 
   async function logout(event: FormEvent) {
@@ -48,7 +48,7 @@ export default function LayoutWithDrawer(props: LayoutProps) {
       await new Account(client).deleteSession('current')
     } catch (error: any) {
       if (error instanceof AppwriteException) {
-      } // session does not exists
+      } // session does not exist
       else {
         toast.error(error.message)
       }
