@@ -47,11 +47,8 @@ export default function DeleteAccessModeratorModal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [membershipIDToDelete])
   async function deleteAccessModeratorFromDatabase() {
-    await new Teams(client!).deleteMembership(
-      event!.access_moderators_team_id,
-      membershipIDToDelete!,
-    )
-    const memberships = await new Teams(client!).listMemberships(event!.participants_team_id, [
+    await teams.deleteMembership(event!.access_moderators_team_id, membershipIDToDelete!)
+    const memberships = await teams.listMemberships(event!.participants_team_id, [
       Query.equal('userId', membership!.userId),
     ])
     memberships.memberships.map(async (membership) => {

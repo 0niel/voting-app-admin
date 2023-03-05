@@ -6,7 +6,7 @@ import { toast } from 'react-hot-toast'
 
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import PanelWindow from '@/components/PanelWindow'
-import CreatePollModal from '@/components/polls/CreatePollModal'
+import CreatePollModal from '@/components/poll-list/CreatePollModal'
 import DeleteMembershipModal from '@/components/teams/DeleteMembershipModal'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
 import {

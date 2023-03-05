@@ -8,6 +8,7 @@ import Modal from '@/components/modal/Modal'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
+import { handleFetchError } from '@/lib/handleFetchError'
 
 export default function CreateAccessModeratorModal() {
   const { createMembership, setCreateMembership } = useMembership()
@@ -49,7 +50,7 @@ export default function CreateAccessModeratorModal() {
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
             jwt,
           }),
-        })
+        }).then(handleFetchError)
         await fetch('/api/teams/create-membership', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -60,7 +61,7 @@ export default function CreateAccessModeratorModal() {
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
             jwt,
           }),
-        })
+        }).then(handleFetchError)
         setEmail('')
         setCreateMembership(false)
       } else {

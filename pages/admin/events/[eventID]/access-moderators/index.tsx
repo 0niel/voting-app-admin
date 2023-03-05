@@ -1,29 +1,19 @@
-import { TrashIcon } from '@heroicons/react/24/outline'
 import { Databases, Models, Teams } from 'appwrite'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
-import CreateAccessModeratorModal from '@/components/access-moderators/CreateAccessModeratorModal'
-import DeleteAccessModeratorModal from '@/components/access-moderators/DeleteAccessModeratorModal'
+import CreateAccessModeratorModal from '@/components/events/access-moderators/CreateAccessModeratorModal'
+import DeleteAccessModeratorModal from '@/components/events/access-moderators/DeleteAccessModeratorModal'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import Table, { Cell, Column } from '@/components/Table'
 import TeamsNavigation from '@/components/teams/TeamsNavigation'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
-import { formatDate } from '@/lib/formatDate'
+import { GetMembershipRows, membershipColumns } from '@/lib/memberships'
 import { EventDocument } from '@/lib/models/EventDocument'
 import usePermitted from '@/lib/usePermitted'
-
-const columns: Column[] = [
-  { title: 'id' },
-  { title: 'Имя' },
-  { title: 'Почта' },
-  { title: 'Роли' },
-  { title: 'Приглашен' },
-  { title: '' },
-]
 
 const AccessModerators = () => {
   const { client } = useAppwrite()
@@ -67,28 +57,7 @@ const AccessModerators = () => {
     }
   }
 
-  const rows: Cell[][] = memberships.map((membership) => {
-    return [
-      { value: membership.$id },
-      { value: membership.userName },
-      { value: membership.userEmail },
-      { value: membership.roles.join(', ') },
-      { value: formatDate(membership.invited) },
-      {
-        value:
-          !membership.roles.includes('owner') && isPermitted ? (
-            <button
-              className='btn-outline btn-secondary btn'
-              onClick={() => setMembershipIDToDelete(membership.$id)}
-            >
-              <TrashIcon className='h-6 w-6' />
-            </button>
-          ) : (
-            <div />
-          ),
-      },
-    ]
-  })
+  const rows: Cell[][] = GetMembershipRows(memberships, isPermitted)
 
   return (
     <>
@@ -97,7 +66,7 @@ const AccessModerators = () => {
         title='Список модераторов доступа'
         description={`Списко модераторов доступа ${event?.name}`}
         action='Пригласить'
-        columns={columns}
+        columns={membershipColumns}
         rows={rows}
         onActionClick={() => setCreateMembership(true)}
       />

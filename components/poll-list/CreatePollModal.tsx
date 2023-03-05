@@ -15,7 +15,6 @@ import { usePoll } from '@/context/PollContext'
 import useUser from '@/lib/useUser'
 
 export default function CreatePollModal() {
-  const dialogPanelRef = useRef(null)
   const { client } = useAppwrite()
   const { user } = useUser()
   const { eventID } = router.query
@@ -63,7 +62,6 @@ export default function CreatePollModal() {
   return (
     <Modal
       isOpen={createPoll!}
-      setOpen={setCreatePoll!}
       onAccept={createEvent}
       acceptButtonName='Создать'
       onCancel={() => setCreatePoll(false)}
