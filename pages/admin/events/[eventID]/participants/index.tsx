@@ -73,8 +73,8 @@ const Participants = () => {
       <TeamsNavigation className='place-item-center col-span-4' event={event} />
       <Table
         title='Список участников'
-        description={`Списко участников ${event?.name}`}
-        action='Пригласить'
+        description={`Список участников ${event?.name}`}
+        action='Пригласить участника'
         columns={membershipColumns}
         rows={rows}
         onActionClick={() => setCreateMembership(true)}

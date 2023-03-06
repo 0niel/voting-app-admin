@@ -1,5 +1,6 @@
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { Databases, ID, Models, Permission, Role, Teams } from 'appwrite'
+import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
@@ -19,6 +20,7 @@ import useUser from '@/lib/useUser'
 
 const Events = () => {
   const { user } = useUser()
+  const router = useRouter()
   const { client } = useAppwrite()
   const { setEventIdToUpdate, setEventIdToDelete } = useEvent()
   const [events, setEvents] = useState<Models.Document[]>([])
@@ -122,7 +124,13 @@ const Events = () => {
         : {
             value: '-',
           },
-      { value: event.votings ? event.votings.length : 0 },
+      {
+        value: event.votings ? event.votings.length : 0,
+        onClick: () => {
+          window.open(`/admin/events/${event.$id}/polls`)
+        },
+        className: clickableClassName,
+      },
 
       {
         value: (

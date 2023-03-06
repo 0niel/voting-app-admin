@@ -43,6 +43,7 @@ export default function CreateEventModal() {
             access_moderators_team_id: accessModeratorsTeamID,
             voting_moderators_team_id: votingModeratorsTeamID,
             participants_team_id: participantsTeamID,
+            is_active: true,
           },
           [
             Permission.read(Role.team(appwriteSuperUsersTeam)),

@@ -76,7 +76,7 @@ const AccessModerators = () => {
       <Table
         title='Список модераторов доступа'
         description={`Списко модераторов доступа ${event?.name}`}
-        action='Пригласить'
+        action='Пригласить модер. дост.'
         columns={membershipColumns}
         rows={rows}
         onActionClick={() => setCreateMembership(true)}
