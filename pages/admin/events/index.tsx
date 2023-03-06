@@ -1,6 +1,5 @@
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
-import { Databases, ID, Models, Permission, Role, Teams } from 'appwrite'
-import { useRouter } from 'next/router'
+import { Databases, Teams } from 'appwrite'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
@@ -11,19 +10,21 @@ import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import Table, { Cell, Column } from '@/components/Table'
 import {
   appwriteEventsCollection,
+  appwritePollsCollection,
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
 } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
+import { EventDocument } from '@/lib/models/EventDocument'
+import { PollDocument } from '@/lib/models/PollDocument'
 import useUser from '@/lib/useUser'
 
 const Events = () => {
-  const { user } = useUser()
-  const router = useRouter()
   const { client } = useAppwrite()
   const { setEventIdToUpdate, setEventIdToDelete } = useEvent()
-  const [events, setEvents] = useState<Models.Document[]>([])
+  const [events, setEvents] = useState<EventDocument[]>([])
+  const [polls, setPolls] = useState<PollDocument[]>([])
   const databases = new Databases(client)
   const teams = new Teams(client)
   const [userTeamIDs, setUserTeamIDs] = useState<string[]>()
@@ -57,10 +58,14 @@ const Events = () => {
 
   async function updateEventList() {
     try {
+      setPolls(
+        (await databases.listDocuments(appwriteVotingDatabase, appwritePollsCollection))
+          .documents as PollDocument[],
+      )
       setEvents(
         (
           await databases.listDocuments(appwriteVotingDatabase, appwriteEventsCollection)
-        ).documents.reverse(),
+        ).documents.reverse() as EventDocument[],
       )
       setUserTeamIDs((await teams.list()).teams.map((team) => team.$id))
     } catch (error: any) {
@@ -124,14 +129,17 @@ const Events = () => {
         : {
             value: '-',
           },
-      {
-        value: event.votings ? event.votings.length : 0,
-        onClick: () => {
-          window.open(`/admin/events/${event.$id}/polls`)
-        },
-        className: clickableClassName,
-      },
-
+      isUserHasTeamAccess(event.voting_moderators_team_id)
+        ? {
+            value: polls.filter((poll) => poll.event_id === event.$id).length.toString(),
+            onClick: () => {
+              window.open(`/admin/events/${event.$id}/polls`)
+            },
+            className: clickableClassName,
+          }
+        : {
+            value: '-',
+          },
       {
         value: (
           <div className='flex space-x-2'>

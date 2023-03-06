@@ -1,4 +1,4 @@
-import { TrashIcon } from '@heroicons/react/24/outline'
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { Databases, Models, Query, Teams } from 'appwrite'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast'
 
 import CreatePollModal from '@/components/events/polls/CreatePollModal'
 import DeletePollModal from '@/components/events/polls/DeletePollModal'
+import UpdatePollModal from '@/components/events/polls/UpdatePollModal'
 import TeamsNavigation from '@/components/events/TeamsNavigation'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import Table, { Cell, Column } from '@/components/Table'
@@ -16,7 +17,7 @@ import {
 } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
-import { membershipColumns } from '@/lib/memberships'
+import { formatDate } from '@/lib/formatDate'
 
 const columns: Column[] = [
   { title: 'id' },
@@ -34,7 +35,7 @@ const PollList = () => {
   const [polls, setPolls] = useState<Models.Document[]>([])
   const databases = new Databases(client)
   const [event, setEvent] = useState<Models.Document>()
-  const { setCreatePoll, setPollIdToDelete } = usePoll()
+  const { setCreatePoll, setPollIdToUpdate, setPollIdToDelete } = usePoll()
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -71,8 +72,8 @@ const PollList = () => {
   const rows: Cell[][] = polls.map((poll) => [
     { value: poll.$id },
     { value: poll.question },
-    { value: poll.start_at },
-    { value: poll.end_at },
+    { value: formatDate(poll.start_at) },
+    { value: formatDate(poll.end_at) },
     {
       value: poll.poll_options.map((option: string, index: number) => (
         <li key={index}>{option}</li>
@@ -80,12 +81,20 @@ const PollList = () => {
     },
     {
       value: (
-        <button
-          className='btn-outline btn-secondary btn'
-          onClick={() => setPollIdToDelete(poll.$id)}
-        >
-          <TrashIcon className='h-6 w-6' />
-        </button>
+        <div className='flex space-x-2'>
+          <button
+            className='btn-outline btn-secondary btn'
+            onClick={() => setPollIdToUpdate(poll.$id)}
+          >
+            <PencilIcon className='h-6 w-6' />
+          </button>
+          <button
+            className='btn-outline btn-secondary btn'
+            onClick={() => setPollIdToDelete(poll.$id)}
+          >
+            <TrashIcon className='h-6 w-6' />
+          </button>
+        </div>
       ),
     },
   ])
@@ -102,6 +111,7 @@ const PollList = () => {
         onActionClick={() => setCreatePoll(true)}
       />
       <CreatePollModal />
+      <UpdatePollModal />
       <DeletePollModal />
     </>
   )

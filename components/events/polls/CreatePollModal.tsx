@@ -1,24 +1,18 @@
-import 'react-datepicker/dist/react-datepicker.css'
-
-import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Databases, ID, Permission, Role } from 'appwrite'
+import { Account, Databases } from 'appwrite'
 import ru from 'date-fns/locale/ru'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-import ReactDatePicker, { registerLocale } from 'react-datepicker'
+import { registerLocale } from 'react-datepicker'
 import { toast } from 'react-hot-toast'
 
+import PollFormForModal from '@/components/events/polls/PollFormForModal'
 import Modal from '@/components/modal/Modal'
-import {
-  appwriteEventsCollection,
-  appwritePollsCollection,
-  appwriteSuperUsersTeam,
-  appwriteVotingDatabase,
-} from '@/constants/constants'
+import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
+import { handleFetchError } from '@/lib/handleFetchError'
+import { isValidPoll } from '@/lib/isValidPoll'
 import { EventDocument } from '@/lib/models/EventDocument'
-import useUser from '@/lib/useUser'
 
 export default function CreatePollModal() {
   const initialQuestion = ''
@@ -28,7 +22,6 @@ export default function CreatePollModal() {
 
   const router = useRouter()
   const { client } = useAppwrite()
-  const { user } = useUser()
   const { eventID } = router.query
   const databases = new Databases(client)
   const { createPoll, setCreatePoll } = usePoll()
@@ -37,6 +30,7 @@ export default function CreatePollModal() {
   const [finishDate, setFinishDate] = useState(initialFinishDate)
   const [pollOptions, setPollOptions] = useState<string[]>(initialPollOptions)
   const [event, setEvent] = useState<EventDocument>()
+  const account = new Account(client)
 
   useEffect(() => {
     setQuestion(initialQuestion)
@@ -62,126 +56,44 @@ export default function CreatePollModal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady])
 
-  async function createEvent() {
-    if (question.length === 0) {
-      toast.error('Не указан вопрос голосования.')
+  async function addPollToDatabase() {
+    if (!isValidPoll(question, startDate, finishDate, pollOptions)) {
       return
     }
-    if (startDate > finishDate) {
-      toast.error('Дата начала голосования позже его окончания.')
-      return
-    }
-    if (pollOptions.length < 2) {
-      toast.error('Укажите хотя бы два варианта голосования.')
-      return
-    }
-    if (pollOptions.some((option) => option.length == 0)) {
-      toast.error('Не оставляйте поля вариантов голосования пустыми.')
-      return
-    }
-    await databases.createDocument(
-      appwriteVotingDatabase,
-      appwritePollsCollection,
-      ID.unique(),
-      {
+    const jwt = (await account.createJWT()).jwt
+    fetch('/api/polls/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         question: question,
-        creator_id: user?.userData?.$id,
-        start_at: startDate.toISOString(),
-        end_at: finishDate.toISOString(),
-        event_id: eventID,
-        poll_options: pollOptions,
-      },
-      [
-        Permission.read(Role.team(event?.participants_team_id!)),
-        Permission.read(Role.team(event?.voting_moderators_team_id!)),
-        Permission.read(Role.team(appwriteSuperUsersTeam)),
-        Permission.update(Role.team(event?.voting_moderators_team_id!)),
-        Permission.update(Role.team(appwriteSuperUsersTeam)),
-        Permission.delete(Role.team(event?.voting_moderators_team_id!)),
-        Permission.delete(Role.team(appwriteSuperUsersTeam)),
-      ],
-    )
+        startAt: startDate.toISOString(),
+        endAt: finishDate.toISOString(),
+        pollOptions: pollOptions,
+        eventID: event!.$id,
+        jwt,
+      }),
+    }).then(handleFetchError)
     setCreatePoll(false)
   }
 
   return (
     <Modal
       isOpen={createPoll!}
-      onAccept={createEvent}
-      acceptButtonName='Создать голосование'
+      onAccept={addPollToDatabase}
+      acceptButtonName='Создать'
       onCancel={() => setCreatePoll(false)}
-      title='Голосования'
+      title='Создать голосование'
     >
-      <div className='p-2'>
-        <label className='mb-2 block text-sm font-medium text-neutral'>Вопрос</label>
-        <input
-          className='block w-full rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
-          placeholder='Захватывать ли РАНХиГС дронами?'
-          value={question}
-          required
-          onChange={(event) => setQuestion(event.target.value)}
-        />
-      </div>
-      <div className='p-2'>
-        <label className='mb-2 block text-sm font-medium text-neutral'>Начало голосования</label>
-        <ReactDatePicker
-          selected={startDate}
-          onChange={(date) => date && setStartDate(date)}
-          locale='ru'
-          showTimeSelect
-          timeFormat='p'
-          timeIntervals={5}
-          dateFormat='Pp'
-          shouldCloseOnSelect
-        />
-      </div>
-      <div className='p-2'>
-        <label className='mb-2 block text-sm font-medium text-neutral'>
-          Завершение голосования
-        </label>
-        <ReactDatePicker
-          selected={finishDate}
-          onChange={(date) => date && setFinishDate(date)}
-          locale='ru'
-          showTimeSelect
-          timeFormat='p'
-          timeIntervals={5}
-          dateFormat='Pp'
-          shouldCloseOnSelect
-        />
-      </div>
-      <div className='p-2'>
-        <label className='mb-2 block text-sm font-medium text-neutral'>Варианты выбора</label>
-        {pollOptions.map((pollOption, index) => {
-          return (
-            <div key={index} className='flex pb-2'>
-              <input
-                className='block w-full rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
-                value={pollOption}
-                onChange={(event) => {
-                  const options = pollOptions.slice()
-                  options[index] = event.target.value
-                  setPollOptions(options)
-                }}
-              />
-              <button
-                onClick={() =>
-                  setPollOptions([...pollOptions.slice(0, index), ...pollOptions.slice(index + 1)])
-                }
-              >
-                <XMarkIcon className='ml-3 h-6 w-6' />
-              </button>
-            </div>
-          )
-        })}
-        <button
-          className='btn-neutral btn-outline btn'
-          onClick={() => setPollOptions([...pollOptions, ''])}
-        >
-          <PlusIcon className='h-5 w-5' />
-          Добавить вариант выбора
-        </button>
-      </div>
+      <PollFormForModal
+        question={question}
+        setQuestion={setQuestion}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        finishDate={finishDate}
+        setFinishDate={setFinishDate}
+        pollOptions={pollOptions}
+        setPollOptions={setPollOptions}
+      />
     </Modal>
   )
 }
