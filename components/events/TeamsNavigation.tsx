@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
 import { Models, Teams } from 'appwrite'
-import { useAppwrite } from '@/context/AppwriteContext'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
+
+import { useAppwrite } from '@/context/AppwriteContext'
 
 interface TeamNavigationProps {
   className?: string
@@ -55,8 +56,8 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
       )}
       {teamIDs?.includes(props.event?.voting_moderators_team_id) && (
         <Link
-          href={props.event?.$id ? `/admin/events/${props.event.$id}/poll-list` : ''}
-          className={`tab-bordered tab ${router.pathname.includes('poll-list') && 'tab-active'}`}
+          href={props.event?.$id ? `/admin/events/${props.event.$id}/polls` : ''}
+          className={`tab-bordered tab ${router.pathname.includes('polls') && 'tab-active'}`}
         >
           Голосования
         </Link>

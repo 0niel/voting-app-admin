@@ -1,13 +1,13 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { Databases, Models, Teams } from 'appwrite'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
-import { toast } from 'react-hot-toast'
-import { useEvent } from '@/context/EventContext'
-import { useOnClickOutside } from 'usehooks-ts'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import Modal from '@/components/Modal'
+import { Databases, Models, Teams } from 'appwrite'
+import React, { useEffect, useRef, useState } from 'react'
+import { toast } from 'react-hot-toast'
+import { useOnClickOutside } from 'usehooks-ts'
+
+import Modal from '@/components/modal/Modal'
+import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
+import { useAppwrite } from '@/context/AppwriteContext'
+import { useEvent } from '@/context/EventContext'
 
 export default function DeleteEventModal() {
   const dialogPanelRef = useRef(null)
@@ -61,7 +61,6 @@ export default function DeleteEventModal() {
   return (
     <Modal
       isOpen={eventIdToDelete !== undefined}
-      setOpen={setOpen}
       onAccept={deleteEvent}
       acceptButtonName='Удалить'
       onCancel={() => setEventIdToDelete(undefined)}

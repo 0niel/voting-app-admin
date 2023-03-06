@@ -1,10 +1,11 @@
-import Link from 'next/link'
-import useUser from '@/lib/useUser'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { useEffect, useState } from 'react'
 import { Models, Teams } from 'appwrite'
-import Avatar from '@/components/profile/Avatar'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+
 import PanelWindow from '@/components/PanelWindow'
+import Avatar from '@/components/profile/Avatar'
+import { useAppwrite } from '@/context/AppwriteContext'
+import useUser from '@/lib/useUser'
 
 export default function PersonalInformationCard() {
   const { user } = useUser()

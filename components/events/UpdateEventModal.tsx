@@ -1,15 +1,14 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
 import { Databases, Models } from 'appwrite'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { useEvent } from '@/context/EventContext'
 import { useOnClickOutside } from 'usehooks-ts'
-import Modal from '@/components/Modal'
+
+import Modal from '@/components/modal/Modal'
+import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
+import { useAppwrite } from '@/context/AppwriteContext'
+import { useEvent } from '@/context/EventContext'
 
 export default function UpdateEventModal() {
-  const dialogPanelRef = useRef(null)
   const [eventNewName, setEventNewName] = useState('')
   const [eventToUpdate, setEventToUpdate] = useState<Models.Document>()
   const { eventIdToUpdate, setEventIdToUpdate } = useEvent()
@@ -50,7 +49,6 @@ export default function UpdateEventModal() {
   return (
     <Modal
       isOpen={eventIdToUpdate !== undefined}
-      setOpen={setOpen}
       onAccept={updateEvent}
       acceptButtonName='Обновить'
       onCancel={() => setEventIdToUpdate(undefined)}

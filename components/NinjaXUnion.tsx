@@ -1,9 +1,10 @@
-import Image from 'next/image'
 import { XMarkIcon } from '@heroicons/react/20/solid'
-import React from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
-import { mireaNinjaURL, studentUnionURL } from '@/constants/constants'
+import React from 'react'
+
 import MNLogo from '@/components/logos/MNLogo'
+import { mireaNinjaURL, studentUnionURL } from '@/constants/constants'
 
 interface NinjaXUnionProps {
   withLinks?: boolean
