@@ -75,7 +75,23 @@ const Events = () => {
 
   const isUserHasTeamAccess = (teamID: string) => {
     if (userTeamIDs) {
-      return userTeamIDs.includes(teamID) || userTeamIDs.includes(appwriteSuperUsersTeam)
+      return userTeamIDs.includes(teamID)
+    }
+    return false
+  }
+
+  const isUserEventOwner = (
+    accessModeratorsTeamID: string,
+    votingModeratorsTeamID: string,
+    participantsTeamID: string,
+  ) => {
+    if (userTeamIDs) {
+      return (
+        userTeamIDs.includes(accessModeratorsTeamID) &&
+        userTeamIDs.includes(votingModeratorsTeamID) &&
+        userTeamIDs.includes(participantsTeamID) &&
+        userTeamIDs.includes(appwriteSuperUsersTeam)
+      )
     }
     return false
   }
@@ -141,7 +157,11 @@ const Events = () => {
             value: '-',
           },
       {
-        value: (
+        value: isUserEventOwner(
+          event.access_moderators_team_id,
+          event.voting_moderators_team_id,
+          event.participants_team_id,
+        ) ? (
           <div className='flex space-x-2'>
             <button
               className='btn-outline btn-secondary btn'
@@ -156,6 +176,8 @@ const Events = () => {
               <TrashIcon className='h-6 w-6' />
             </button>
           </div>
+        ) : (
+          ''
         ),
       },
     ]
