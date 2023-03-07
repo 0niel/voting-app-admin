@@ -40,12 +40,12 @@ export default async function pollTimeLeft(req: NextApiRequest, res: NextApiResp
     }
     if (start_time > now_time) {
       // future poll
-      res.status(200).json({ secondsLeft: '-1' })
+      res.status(200).json({ secondsLeft: -1 })
       return
     }
     if (now_time >= end_time) {
       // past poll
-      res.status(200).json({ secondsLeft: '-2' })
+      res.status(200).json({ secondsLeft: -2 })
       return
     }
   } catch (error) {

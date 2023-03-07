@@ -74,8 +74,8 @@ const VotingModerators = () => {
     <>
       <TeamsNavigation className='place-item-center col-span-4' event={event} />
       <Table
-        title='Список модераторов доступа'
-        description={`Списко модераторов доступа ${event?.name}`}
+        title='Список модераторов голосования'
+        description={`Списко модераторов голосования ${event?.name}`}
         action='Пригласить модер. голос.'
         columns={membershipColumns}
         rows={rows}
