@@ -52,7 +52,7 @@ export default function Modal(props: ModalProps) {
                   {props.title}
                 </Dialog.Title>
                 {props.children}
-                <div className='mt-6 flex justify-end'>
+                <div className='mt-6 flex justify-end gap-4'>
                   <button type='button' className='btn-primary btn' onClick={props.onCancel}>
                     {props.cancelButtonName || 'Отменить'}
                   </button>
