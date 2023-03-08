@@ -8,6 +8,7 @@ import Modal from '@/components/modal/Modal'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
+import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 
 export default function DeleteEventModal() {
   const dialogPanelRef = useRef(null)
@@ -39,8 +40,20 @@ export default function DeleteEventModal() {
   async function deleteEvent() {
     try {
       await teams.delete(eventToDelete!.access_moderators_team_id)
+    } catch (error: any) {
+      toast.error(mapAppwriteErroToMessage(error.message))
+    }
+    try {
       await teams.delete(eventToDelete!.voting_moderators_team_id)
+    } catch (error: any) {
+      toast.error(mapAppwriteErroToMessage(error.message))
+    }
+    try {
       await teams.delete(eventToDelete!.participants_team_id)
+    } catch (error: any) {
+      toast.error(mapAppwriteErroToMessage(error.message))
+    }
+    try {
       await databases.deleteDocument(
         appwriteVotingDatabase,
         appwriteEventsCollection,

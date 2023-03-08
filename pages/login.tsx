@@ -9,15 +9,7 @@ import NinjaXUnion from '@/components/NinjaXUnion'
 import { useAppwrite } from '@/context/AppwriteContext'
 import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
-
-const alerts: { [englishAlert: string]: string } = {
-  'Invalid credentials. Please check the email and password.': 'Неверные почта или пароль.',
-  'Rate limit for the current endpoint has been exceeded. Please try again after some time.':
-    'Превышен лимит попыток входа. Повторите попытку через некоторое время.',
-  'Network request failed': 'Проверьте подключение к Интернету',
-  'The current user is not authorized to perform the requested action.':
-    'Недостаточно прав для выполнения этого действия.',
-}
+import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -53,12 +45,7 @@ export default function Login() {
       )
       await router.push('/admin/dashboard')
     } catch (error: any) {
-      toast.error(
-        alerts[error?.data?.message] ||
-          alerts[error.message] ||
-          error?.data?.message ||
-          error.message,
-      )
+      toast.error(mapAppwriteErroToMessage(error.message))
     }
     setLoginProgress(false)
   }
