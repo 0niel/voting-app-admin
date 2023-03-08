@@ -19,6 +19,7 @@ import { useEvent } from '@/context/EventContext'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import useUser from '@/lib/useUser'
+import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 
 const Events = () => {
   const { client } = useAppwrite()
@@ -99,6 +100,7 @@ const Events = () => {
 
   const columns: Column[] = [
     { title: 'id' },
+    { title: 'Состояние' },
     { title: 'Название' },
     { title: 'Модер. доступа' },
     { title: 'Модер. голос.' },
@@ -111,6 +113,38 @@ const Events = () => {
     'text-blue-500 hover:text-blue-700 cursor-pointer underline after:content-["_↗"]'
   const rows: Cell[][] = events.map((event) => {
     return [
+      { value: event.$id },
+      {
+        value: event.is_active ? 'Активно' : 'Неактивно',
+        onClick: () => {
+          try {
+            if (
+              isUserEventOwner(
+                event.access_moderators_team_id,
+                event.voting_moderators_team_id,
+                event.participants_team_id,
+              )
+            ) {
+              databases.updateDocument(
+                appwriteVotingDatabase,
+                appwriteEventsCollection,
+                event.$id,
+                {
+                  is_active: !event.is_active,
+                },
+              )
+            } else {
+              toast.error('Недостаточно прав на изменение состояния события')
+            }
+          } catch (error: any) {
+            toast.error(mapAppwriteErroToMessage(error.message))
+          }
+        },
+        className: event.is_active
+          ? 'hover:text-green-700 cursor-pointer text-green-500 bg-green-100 before:content-["✅"] uppercase'
+          : 'hover:text-red-700 cursor-pointer text-red-500 bg-red-100 before:content-["❌"] uppercase',
+      },
+
       { value: event.$id },
       { value: event.name },
       isUserHasTeamAccess(event.access_moderators_team_id)
