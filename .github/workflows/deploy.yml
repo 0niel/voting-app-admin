@@ -9,6 +9,7 @@ env:
   JOB_STARTED_AT: ${{ github.event.created_at }}
   CR_REGISTRY: ${{ secrets.CR_REGISTRY }}
   CR_IMAGE_FRONTEND: ${{ secrets.CR_IMAGE_FRONTEND }}
+  PROD_URL: ${{ secrets.PROD_URL }}
 
 jobs:
   build-frontend:
@@ -24,6 +25,7 @@ jobs:
         run: |
           docker build \
           --pull \
+          --build-arg NEXT_PUBLIC_REDIRECT_HOSTNAME=${{ env.PROD_URL }} \
           --cache-from cr.yandex/${{ env.CR_REGISTRY }}/${{ env.CR_IMAGE_FRONTEND }}:latest \
           --label "org.image.title=${{ github.repository }}" \
           --label "org.image.url=${{ github.repositoryUrl }}" \
