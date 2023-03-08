@@ -13,7 +13,6 @@ import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
 
 export default function Login() {
-  const { publicRuntimeConfig } = getConfig()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loginProgress, setLoginProgress] = useState(false)
@@ -56,8 +55,8 @@ export default function Login() {
     event.preventDefault()
     new Account(client).createOAuth2Session(
       'mirea',
-      `${publicRuntimeConfig.redirectHostname}/oauth2`,
-      `${publicRuntimeConfig.redirectHostname}/login`,
+      `${process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME}/oauth2`,
+      `${process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME}/login`,
     )
   }
 

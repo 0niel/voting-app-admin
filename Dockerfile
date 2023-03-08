@@ -17,6 +17,10 @@ RUN \
 
 # Rebuild the source code only when needed
 FROM base AS builder
+
+ARG NEXT_PUBLIC_REDIRECT_HOSTNAME
+ENV NEXT_PUBLIC_REDIRECT_HOSTNAME=$NEXT_PUBLIC_REDIRECT_HOSTNAME
+
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
