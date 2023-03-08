@@ -45,4 +45,5 @@ jobs:
       - name: Deploy
         run: |
           cd ${{ secrets.PRODUCTION_FOLDER }}
-          docker compose pull && docker compose up -d
+          docker compose --env-file .env.production pull
+          docker compose docker compose --env-file up -d
