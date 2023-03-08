@@ -17,6 +17,7 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
+RUN echo "NEXT_PUBLIC_REDIRECT_HOSTNAME=$NEXT_PUBLIC_REDIRECT_HOSTNAME" >> .env.local
 
 # Rebuild the source code only when needed
 FROM base AS builder
