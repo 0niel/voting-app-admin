@@ -10,7 +10,6 @@ env:
   CR_REGISTRY: ${{ secrets.CR_REGISTRY }}
   CR_IMAGE_FRONTEND: ${{ secrets.CR_IMAGE_FRONTEND }}
 
-
 jobs:
   build-frontend:
     runs-on: ubuntu-latest

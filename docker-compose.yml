@@ -1,11 +1,11 @@
-version: "3.9"
+version: '3.9'
 
 services:
   proxy:
     image: jwilder/nginx-proxy
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     volumes:
       - conf:/etc/nginx/conf.d
       - vhost:/etc/nginx/vhost.d
@@ -34,17 +34,16 @@ services:
       - proxy
       - default
     environment:
-        SECRET_COOKIE_PASSWORD: ${SECRET_COOKIE_PASSWORD}
-        NEXT_PUBLIC_REDIRECT_HOSTNAME: ${NEXT_PUBLIC_REDIRECT_HOSTNAME}
+      SECRET_COOKIE_PASSWORD: ${SECRET_COOKIE_PASSWORD}
+      NEXT_PUBLIC_REDIRECT_HOSTNAME: ${NEXT_PUBLIC_REDIRECT_HOSTNAME}
 
-        APPWRITE_API_KEY: ${APPWRITE_API_KEY}
+      APPWRITE_API_KEY: ${APPWRITE_API_KEY}
 
-        VIRTUAL_HOST: ${DOMAIN}
-        LETSENCRYPT_HOST: ${DOMAIN}
-        VIRTUAL_PORT: "3000"
+      VIRTUAL_HOST: ${DOMAIN}
+      LETSENCRYPT_HOST: ${DOMAIN}
+      VIRTUAL_PORT: '3000'
 
 volumes:
-  broker:
   conf:
   vhost:
   dhparam:
@@ -53,5 +52,4 @@ volumes:
 
 networks:
   proxy:
-    external:
-      true
+    external: true
