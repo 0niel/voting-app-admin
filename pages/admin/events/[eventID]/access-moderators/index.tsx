@@ -74,8 +74,8 @@ const AccessModerators = () => {
     <>
       <TeamsNavigation className='place-item-center col-span-4' event={event} />
       <Table
-        title='Список модераторов доступа'
-        description={`Списко модераторов доступа ${event?.name}`}
+        title={`Список модераторов доступа ${event?.name}`}
+        description='Модераторы доступа могут приглашать новых участников в мероприятие.'
         action='Пригласить модер. дост.'
         columns={membershipColumns}
         rows={rows}

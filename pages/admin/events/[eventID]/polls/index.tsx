@@ -59,6 +59,7 @@ const CountDown = ({
       }
     }, 1000)
     return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTimeLeft])
 
   const handleAddTime = (secondsToAdd: number) => {
@@ -197,6 +198,7 @@ const PollList = () => {
         }
       },
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event])
 
   useEffect(() => {
@@ -283,8 +285,8 @@ const PollList = () => {
     <>
       <TeamsNavigation className='place-item-center col-span-4' event={event} />
       <Table
-        title='Список голосований'
-        description={`Голосования ${event?.name}`}
+        title={`Список голосований ${event?.name}`}
+        description='Создайте новое голосование, чтобы участники мероприятия смогли оставить свой голос.'
         action='Создать голосование'
         columns={columns}
         rows={rows}

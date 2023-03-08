@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Account, Client, Databases, Teams } from 'node-appwrite'
+import { Client, Databases } from 'node-appwrite'
 
 import {
   appwriteEndpoint,
@@ -21,9 +21,7 @@ export default async function pollTimeLeft(req: NextApiRequest, res: NextApiResp
       .setProject(appwriteProjectId)
       .setJWT(jwt)
 
-    const userID = (await new Account(client).get()).$id
     const databases = new Databases(client)
-    const teams = new Teams(client)
 
     const poll = (await databases.getDocument(
       appwriteVotingDatabase,

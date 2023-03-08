@@ -144,8 +144,6 @@ const Events = () => {
           ? 'hover:text-green-700 cursor-pointer text-green-500 bg-green-100 before:content-["✅"] uppercase'
           : 'hover:text-red-700 cursor-pointer text-red-500 bg-red-100 before:content-["❌"] uppercase',
       },
-
-      { value: event.$id },
       { value: event.name },
       isUserHasTeamAccess(event.access_moderators_team_id)
         ? {
