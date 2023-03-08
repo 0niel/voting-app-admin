@@ -14,6 +14,9 @@ const nextConfig = {
       },
     ]
   },
+  publicRuntimeConfig: {
+    redirectHostname: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
+  },
 }
 
 module.exports = nextConfig

@@ -10,8 +10,10 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
+import getConfig from 'next/config'
 
 export default function Login() {
+  const { publicRuntimeConfig } = getConfig()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loginProgress, setLoginProgress] = useState(false)
@@ -54,8 +56,8 @@ export default function Login() {
     event.preventDefault()
     new Account(client).createOAuth2Session(
       'mirea',
-      `${process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME}/oauth2`,
-      `${process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME}/login`,
+      `${publicRuntimeConfig.redirectHostname}/oauth2`,
+      `${publicRuntimeConfig.redirectHostname}/login`,
     )
   }
 
