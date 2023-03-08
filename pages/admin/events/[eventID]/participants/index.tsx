@@ -72,8 +72,8 @@ const Participants = () => {
     <>
       <TeamsNavigation className='place-item-center col-span-4' event={event} />
       <Table
-        title='Список участников'
-        description={`Список участников ${event?.name}`}
+        title={`Список участников ${event?.name}`}
+        description='Участники могут принимать участие в голосованиях.'
         action='Пригласить участника'
         columns={membershipColumns}
         rows={rows}

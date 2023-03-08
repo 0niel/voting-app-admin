@@ -60,7 +60,6 @@ async function createPoll(req: NextApiRequest, res: NextApiResponse) {
         [
           Permission.read(Role.team(event!.participants_team_id)),
           Permission.read(Role.team(event!.voting_moderators_team_id)),
-          Permission.read(Role.team(appwriteSuperUsersTeam)),
           Permission.update(Role.team(event!.voting_moderators_team_id)),
           Permission.delete(Role.team(event!.voting_moderators_team_id)),
         ],

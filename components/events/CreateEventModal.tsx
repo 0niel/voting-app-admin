@@ -46,13 +46,9 @@ export default function CreateEventModal() {
             is_active: true,
           },
           [
-            Permission.read(Role.team(appwriteSuperUsersTeam)),
             Permission.read(Role.team(accessModeratorsTeamID)),
             Permission.read(Role.team(votingModeratorsTeamID)),
             Permission.read(Role.team(participantsTeamID)),
-            Permission.read(Role.team(accessModeratorsTeamID)),
-            Permission.update(Role.user(user?.userData?.$id!)),
-            Permission.delete(Role.user(user?.userData?.$id!)),
           ],
         )
         setNewEventName('')
