@@ -1,0 +1,49 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  JOB_STARTED_AT: ${{ github.event.created_at }}
+  CR_REGISTRY: ${{ secrets.CR_REGISTRY }}
+  CR_IMAGE_FRONTEND: ${{ secrets.CR_IMAGE_FRONTEND }}
+
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Registry
+        uses: yc-actions/yc-cr-login@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+      - name: Build and Push Image
+        run: |
+          docker build \
+          --pull \
+          --cache-from cr.yandex/${{ env.CR_REGISTRY }}/${{ env.CR_IMAGE_FRONTEND }}:latest \
+          --label "org.image.title=${{ github.repository }}" \
+          --label "org.image.url=${{ github.repositoryUrl }}" \
+          --label "org.image.created=${{ env.JOB_STARTED_AT }}" \
+          --label "org.image.revision=${{ github.ref_name }}" \
+          --label "org.image.version=${{ github.sha }}" \
+          --tag cr.yandex/${{ env.CR_REGISTRY }}/${{ env.CR_IMAGE_FRONTEND }}:${{ github.sha }} \
+          .
+          docker push cr.yandex/${{ env.CR_REGISTRY }}/${{ env.CR_IMAGE_FRONTEND }}:${{ github.sha }}
+          docker tag cr.yandex/${{ env.CR_REGISTRY }}/${{ env.CR_IMAGE_FRONTEND }}:${{ github.sha }} \
+            cr.yandex/${{ env.CR_REGISTRY }}/${{ env.CR_IMAGE_FRONTEND }}:latest
+          docker push cr.yandex/${{ env.CR_REGISTRY }}/${{ env.CR_IMAGE_FRONTEND }}:latest
+  deploy:
+    runs-on: mn-voting-app-runner
+    needs: [build-frontend]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy
+        run: |
+          cd ${{ secrets.PRODUCTION_FOLDER }}
+          docker compose pull && docker compose up -d
