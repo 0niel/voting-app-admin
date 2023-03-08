@@ -1,4 +1,4 @@
-import { Databases, ID, Permission, Role, Teams } from 'appwrite'
+import { Account, Databases, ID, Permission, Role, Teams } from 'appwrite'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 
@@ -19,6 +19,7 @@ export default function CreateEventModal() {
   const { user } = useUser()
   const teams = new Teams(client)
   const databases = new Databases(client)
+  const account = new Account(client)
 
   async function addEventToDatabase() {
     try {
@@ -33,6 +34,40 @@ export default function CreateEventModal() {
         const participantsTeamID = (
           await teams.create(ID.unique(), `Участники ${eventName}`, ['owner'])
         ).$id
+        const allNewTeamIDs = [accessModeratorsTeamID, votingModeratorsTeamID, participantsTeamID]
+        const superusersTeamEmails = (
+          await teams.listMemberships(appwriteSuperUsersTeam)
+        ).memberships.map((team) => team.userEmail)
+
+        // invite all superusers
+        const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
+        await Promise.all(
+          superusersTeamEmails.map(async (email) => {
+            await Promise.all(
+              allNewTeamIDs.map(async (teamID) => {
+                await fetch('/api/teams/create-membership', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    teamID: teamID,
+                    email: email,
+                    roles: ['owner'],
+                    url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
+                    jwt,
+                  }),
+                }).catch((error: any) => {
+                  if (
+                    error.message ===
+                    'User has already been invited or is already a member of this team'
+                  ) {
+                  } else {
+                    throw Error(error.message)
+                  }
+                })
+              }),
+            )
+          }),
+        )
         await databases.createDocument(
           appwriteVotingDatabase,
           appwriteEventsCollection,
