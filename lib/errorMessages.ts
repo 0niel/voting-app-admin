@@ -10,6 +10,8 @@ export const mapAppwriteErroToMessage = (error: string) => {
       return 'Превышен лимит попыток входа. Повторите попытку через некоторое время.'
     case 'Network request failed':
       return 'Проверьте подключение к Интернету'
+    case 'Team with the requested ID could not be found.':
+      return 'Команда с указанным ID не найдена.'
     default:
       return `Произошла ошибка: ${error}`
   }
