@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - conf:/etc/nginx/conf.d
+      - vhost:/etc/nginx/vhost.d
+      - dhparam:/etc/nginx/dhparam
+      - certs:/etc/nginx/certs:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /usr/share/nginx/html
+      - acme:/etc/acme.sh
+    networks:
+      - proxy
+    restart: always
+
+  letsencrypt:
+    image: nginxproxy/acme-companion:latest
+    volumes_from:
+      - proxy
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - acme:/etc/acme.sh
+    restart: always
+
+  frontend:
+    image: ${IMAGE_FRONTEND}
+    networks:
+      - proxy
+      - default
+    environment:
+        SECRET_COOKIE_PASSWORD: ${SECRET_COOKIE_PASSWORD}
+        NEXT_PUBLIC_REDIRECT_HOSTNAME: ${NEXT_PUBLIC_REDIRECT_HOSTNAME}
+
+        APPWRITE_API_KEY: ${APPWRITE_API_KEY}
+
+        VIRTUAL_HOST: ${DOMAIN}
+        LETSENCRYPT_HOST: ${DOMAIN}
+        VIRTUAL_PORT: "3000"
+
+volumes:
+  broker:
+  conf:
+  vhost:
+  dhparam:
+  certs:
+  acme:
+
+networks:
+  proxy:
+    external:
+      true
