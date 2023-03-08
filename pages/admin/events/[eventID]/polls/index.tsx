@@ -18,6 +18,7 @@ import {
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
 import { formatDate } from '@/lib/formatDate'
+import { pluralForm } from '@/lib/pluralForm'
 
 const columns: Column[] = [
   { title: 'id' },
@@ -25,8 +26,107 @@ const columns: Column[] = [
   { title: 'Начало' },
   { title: 'Конец' },
   { title: 'Варианты голосования' },
+  { title: 'Времени осталось' },
   { title: '' },
 ]
+
+const CountDown = ({
+  pollId,
+  timeLeft,
+  setTimeEnd,
+}: {
+  pollId: string
+  timeLeft: number
+  setTimeEnd: (time: number, pollId: string) => void
+}) => {
+  const [days, setDays] = useState(0)
+  const [hours, setHours] = useState(0)
+  const [minutes, setMinutes] = useState(0)
+  const [seconds, setSeconds] = useState(0)
+  const [currentTimeLeft, setCurrentTimeLeft] = useState(0)
+
+  useEffect(() => {
+    setCurrentTimeLeft(timeLeft)
+  }, [timeLeft])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (currentTimeLeft > 0) {
+        setDays(Math.floor(timeLeft / (60 * 60 * 24)))
+        setHours(Math.floor((timeLeft / (60 * 60)) % 24))
+        setMinutes(Math.floor((timeLeft / 60) % 60))
+        setSeconds(Math.floor(timeLeft % 60))
+      }
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [currentTimeLeft])
+
+  const handleAddTime = (secondsToAdd: number) => {
+    updateTimeLeft(currentTimeLeft + secondsToAdd)
+  }
+
+  const handleStop = () => {
+    updateTimeLeft(0)
+  }
+
+  const updateTimeLeft = (newTimeLeft: number) => {
+    setCurrentTimeLeft(newTimeLeft)
+    if (newTimeLeft > 0) {
+      setTimeEnd(Date.now() + newTimeLeft * 1000, pollId)
+    }
+  }
+
+  return (
+    <div className='flex flex-col items-center'>
+      <div className='flex items-center'>
+        {days > 0 && (
+          <>
+            {days} {pluralForm(days, ['день', 'дня', 'дней'])}{' '}
+          </>
+        )}
+        {hours > 0 && (
+          <>
+            {hours} {pluralForm(hours, ['час', 'часа', 'часов'])}{' '}
+          </>
+        )}
+        {minutes > 0 && (
+          <>
+            {minutes} {pluralForm(minutes, ['минута', 'минуты', 'минут'])}{' '}
+          </>
+        )}
+        {seconds > 0 && (
+          <>
+            {seconds} {pluralForm(seconds, ['секунда', 'секунды', 'секунд'])}{' '}
+          </>
+        )}
+      </div>
+      <div className='flex items-center'>
+        <ul className='flex'>
+          <li>
+            <button className='btn-ghost btn' onClick={() => handleAddTime(30)}>
+              +30 сек
+            </button>
+          </li>
+          <li>
+            <button className='btn-ghost btn' onClick={() => handleAddTime(60)}>
+              +1 мин
+            </button>
+          </li>
+          <li>
+            <button className='btn-ghost btn' onClick={() => handleAddTime(300)}>
+              +5 мин
+            </button>
+          </li>
+          <li>
+            <button className='btn-ghost btn' onClick={() => handleStop()}>
+              Стоп
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  )
+}
 
 const PollList = () => {
   const { client } = useAppwrite()
@@ -36,6 +136,68 @@ const PollList = () => {
   const databases = new Databases(client)
   const [event, setEvent] = useState<Models.Document>()
   const { setCreatePoll, setPollIdToUpdate, setPollIdToDelete } = usePoll()
+
+  const [timeLeft, setTimeLeft] = useState<number[]>([])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // обновляем состояние timeLeft каждую секунду
+      console.log('Update timeLeft: ', timeLeft)
+      setTimeLeft((prevTimeLeft) => prevTimeLeft.map((time) => time - 1))
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [timeLeft])
+
+  useEffect(() => {
+    const pollTimes = polls.map((poll) => {
+      const startAt = new Date(poll.start_at)
+      const endAt = new Date(poll.end_at)
+      const now = new Date()
+      let timeLeft = endAt.getTime() - now.getTime()
+
+      if (timeLeft < 0) {
+        timeLeft = 0
+      }
+
+      console.log('Poll', poll.$id, 'timeLeft', timeLeft, 'ms')
+
+      return Math.floor(timeLeft / 1000) // переводим в секунды
+    })
+    setTimeLeft(pollTimes)
+  }, [polls])
+
+  useEffect(() => {
+    client.subscribe(
+      [`databases.${appwriteVotingDatabase}.collections.${appwritePollsCollection}.documents`],
+      async (response) => {
+        console.log('Received event', response.events[0], 'with payload', response.payload)
+        const event = response.events[0]
+        const eventAction = event.split('.').pop()
+
+        const doc = response.payload as Models.Document
+
+        if (doc.$collectionId === appwritePollsCollection) {
+          if (doc.event_id === eventID) {
+            if (eventAction === 'create') {
+              setPolls((polls) => [doc, ...polls])
+            } else if (eventAction === 'update') {
+              setPolls((polls) =>
+                polls.map((poll) => {
+                  if (poll.$id === doc.$id) {
+                    return doc
+                  }
+                  return poll
+                }),
+              )
+            } else if (eventAction === 'delete') {
+              setPolls((polls) => polls.filter((poll) => poll.$id !== doc.$id))
+            }
+          }
+        }
+      },
+    )
+  }, [event])
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -69,7 +231,16 @@ const PollList = () => {
     }
   }
 
-  const rows: Cell[][] = polls.map((poll) => [
+  const setTimeEnd = (time: number, pollIdToUpdate: string) => {
+    console.log('setTimeEnd', time, pollIdToUpdate)
+    const timeEnd = new Date(time).toISOString()
+
+    databases.updateDocument(appwriteVotingDatabase, appwritePollsCollection, pollIdToUpdate, {
+      end_at: timeEnd,
+    })
+  }
+
+  const rows: Cell[][] = polls.map((poll: Models.Document) => [
     { value: poll.$id },
     { value: poll.question },
     { value: formatDate(poll.start_at) },
@@ -78,6 +249,15 @@ const PollList = () => {
       value: poll.poll_options.map((option: string, index: number) => (
         <li key={index}>{option}</li>
       )),
+    },
+    {
+      value: (
+        <CountDown
+          pollId={poll.$id}
+          setTimeEnd={setTimeEnd}
+          timeLeft={timeLeft[polls.indexOf(poll)]}
+        />
+      ),
     },
     {
       value: (

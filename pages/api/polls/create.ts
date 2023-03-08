@@ -69,7 +69,7 @@ async function createPoll(req: NextApiRequest, res: NextApiResponse) {
     } else {
       res
         .status(403)
-        .json({ message: 'Client is not super user or voting moderator of this event.' })
+        .json({ message: 'Вы не суперюзер и не модератор голосования для этого мероприятия.' })
     }
   } catch (error) {
     res.status(500).json({ message: (error as Error).message })
