@@ -18,7 +18,7 @@ export default function CreatePollModal() {
   const initialQuestion = ''
   const initialStartDate = new Date()
   const initialFinishDate = new Date()
-  const initialPollOptions = ['да', 'нет']
+  const initialPollOptions = ['За', 'Против', 'Воздержусь']
 
   const router = useRouter()
   const { client } = useAppwrite()
