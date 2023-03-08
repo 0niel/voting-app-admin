@@ -75,8 +75,9 @@ const Events = () => {
 
   const isUserHasTeamAccess = (teamID: string) => {
     if (userTeamIDs) {
-      return userTeamIDs.includes(teamID)
+      return userTeamIDs.includes(teamID) || userTeamIDs.includes(appwriteSuperUsersTeam)
     }
+
     return false
   }
 
@@ -87,9 +88,9 @@ const Events = () => {
   ) => {
     if (userTeamIDs) {
       return (
-        userTeamIDs.includes(accessModeratorsTeamID) &&
-        userTeamIDs.includes(votingModeratorsTeamID) &&
-        userTeamIDs.includes(participantsTeamID) &&
+        (userTeamIDs.includes(accessModeratorsTeamID) &&
+          userTeamIDs.includes(votingModeratorsTeamID) &&
+          userTeamIDs.includes(participantsTeamID)) ||
         userTeamIDs.includes(appwriteSuperUsersTeam)
       )
     }
@@ -121,7 +122,7 @@ const Events = () => {
             className: clickableClassName,
           }
         : {
-            value: '-',
+            value: 'Нет прав',
           },
       isUserHasTeamAccess(event.voting_moderators_team_id)
         ? {
@@ -132,7 +133,7 @@ const Events = () => {
             className: clickableClassName,
           }
         : {
-            value: '-',
+            value: 'Нет прав',
           },
       isUserHasTeamAccess(event.access_moderators_team_id)
         ? {
@@ -143,7 +144,7 @@ const Events = () => {
             className: clickableClassName,
           }
         : {
-            value: '-',
+            value: 'Нет прав',
           },
       isUserHasTeamAccess(event.voting_moderators_team_id)
         ? {
@@ -154,7 +155,7 @@ const Events = () => {
             className: clickableClassName,
           }
         : {
-            value: '-',
+            value: 'Нет прав',
           },
       {
         value: isUserEventOwner(
