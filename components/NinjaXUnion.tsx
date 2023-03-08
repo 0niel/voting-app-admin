@@ -4,22 +4,12 @@ import Link from 'next/link'
 import React from 'react'
 
 import MNLogo from '@/components/logos/MNLogo'
+import SuMireaLogo from '@/components/logos/SuMireaLogo'
 import { mireaNinjaURL, studentUnionURL } from '@/constants/constants'
 
 interface NinjaXUnionProps {
   withLinks?: boolean
 }
-
-const studentUnionImage = (
-  <Image
-    src='/assets/student-union-logo.png'
-    alt='Логотип студенческого союза РТУ МИРЭА'
-    width={55}
-    height={55}
-    className='w-30 h-30 pr-2'
-    priority
-  />
-)
 
 export default function NinjaXUnion(props: NinjaXUnionProps) {
   return (
@@ -34,10 +24,10 @@ export default function NinjaXUnion(props: NinjaXUnionProps) {
       <XMarkIcon className='h-7 w-7 px-1 text-neutral dark:text-slate-400' />
       {props.withLinks ? (
         <Link target='_blank' href={studentUnionURL}>
-          {studentUnionImage}
+          <SuMireaLogo className='w-100 h-100' />
         </Link>
       ) : (
-        studentUnionImage
+        <SuMireaLogo className='w-30 h-30' />
       )}
     </div>
   )
