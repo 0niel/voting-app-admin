@@ -16,10 +16,10 @@ import {
 } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
+import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import useUser from '@/lib/useUser'
-import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 
 const Events = () => {
   const { client } = useAppwrite()
