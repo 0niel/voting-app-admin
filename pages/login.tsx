@@ -1,4 +1,5 @@
 import { Account } from 'appwrite'
+import getConfig from 'next/config'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
@@ -10,7 +11,6 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
-import getConfig from 'next/config'
 
 export default function Login() {
   const { publicRuntimeConfig } = getConfig()
