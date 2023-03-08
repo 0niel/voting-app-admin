@@ -9,11 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "docker": "docker build -t voting-app-admin . && docker run -p 127.0.0.1:3000:3000 voting-app-admin",
-    "docker:build": "docker build -t voting-app-admin .",
-    "docker:run": "docker run -p 127.0.0.1:3000:3000 voting-app-admin",
-    "docker:cr-push": "docker buildx build --platform linux/amd64 -t cr.yandex/crpi1cf1kcv47hpc0aq7/voting-app-admin:latest . && docker push cr.yandex/crpi1cf1kcv47hpc0aq7/voting-app-admin:latest"
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@headlessui/react": "^1.7.12",

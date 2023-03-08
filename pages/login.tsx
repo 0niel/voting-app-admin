@@ -7,9 +7,9 @@ import { toast } from 'react-hot-toast'
 import LayoutWithoutDrawer from '@/components/LayoutWithoutDrawer'
 import NinjaXUnion from '@/components/NinjaXUnion'
 import { useAppwrite } from '@/context/AppwriteContext'
+import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
-import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 
 export default function Login() {
   const [email, setEmail] = useState('')
