@@ -1,50 +1,39 @@
 import { Account } from 'appwrite'
-import getConfig from 'next/config'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 import LayoutWithoutDrawer from '@/components/LayoutWithoutDrawer'
 import NinjaXUnion from '@/components/NinjaXUnion'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
-import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loginProgress, setLoginProgress] = useState(false)
-  const { client, setClient } = useAppwrite()
+  const { client } = useAppwrite()
   const router = useRouter()
+  const account = new Account(client)
 
   const { mutateUser } = useUser()
-
-  useEffect(() => {
-    if (client !== undefined) {
-      router.push('/admin/dashboard').then((r) => {})
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   async function login(event: FormEvent<EventTarget>) {
     event.preventDefault()
     setLoginProgress(true)
     try {
-      const account = new Account(client)
       await account.createEmailSession(email, password)
       const userData = await account.get()
-      setClient(client)
       await mutateUser(
-        await fetchJson('/api/login', {
+        await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userData }),
-        }),
-        false,
+        }).then((res) => res.json()),
       )
-      await router.push('/admin/dashboard')
+      router.push('admin/dashboard').then(() => {})
     } catch (error: any) {
       toast.error(mapAppwriteErroToMessage(error.message))
     }
