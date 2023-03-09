@@ -1,3 +1,4 @@
+import { Query } from 'appwrite'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Account, Client, Teams } from 'node-appwrite'
@@ -15,12 +16,11 @@ async function createMembership(req: NextApiRequest, res: NextApiResponse) {
       .setProject(appwriteProjectId)
       .setJWT(jwt)
 
+    const account = await new Account(client).get()
     // Получаем список членов команды.
     const memberships = await new Teams(client)
-      .listMemberships(teamID)
+      .listMemberships(teamID, [Query.equal('userId', account.$id)])
       .then((membershipList) => membershipList.memberships)
-
-    const account = await new Account(client).get()
 
     if (
       memberships.filter(

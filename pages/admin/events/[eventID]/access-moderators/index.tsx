@@ -72,7 +72,7 @@ const AccessModerators = () => {
 
   return (
     <>
-      <TeamsNavigation className='place-item-center col-span-4' event={event} />
+      {event && <TeamsNavigation className='place-item-center col-span-4' event={event} />}
       <Table
         title={`Список модераторов доступа ${event?.name}`}
         description='Модераторы доступа могут приглашать новых участников в мероприятие.'

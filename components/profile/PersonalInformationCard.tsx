@@ -16,6 +16,7 @@ export default function PersonalInformationCard() {
     async function getTeams() {
       const teams = (await new Teams(client!).list()).teams
       setTeams(teams)
+      console.log(teams.length)
     }
     getTeams().then(() => {})
   }, [client])

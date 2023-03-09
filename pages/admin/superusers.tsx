@@ -28,7 +28,7 @@ const Superusers = () => {
   }, [])
 
   async function updateMemberships() {
-    setMemberships((await teams.listMemberships(appwriteSuperUsersTeam)).memberships)
+    setMemberships((await teams.listMemberships(appwriteSuperUsersTeam)).memberships.reverse())
   }
   const rows = memberships.map((membership) => {
     return [

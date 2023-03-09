@@ -1,13 +1,12 @@
 import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Account, Client, Databases, ID, Permission, Role, Teams } from 'node-appwrite'
+import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from 'node-appwrite'
 
 import {
   appwriteEndpoint,
   appwriteEventsCollection,
   appwritePollsCollection,
   appwriteProjectId,
-  appwriteSuperUsersTeam,
   appwriteVotingDatabase,
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
@@ -33,11 +32,8 @@ async function createPoll(req: NextApiRequest, res: NextApiResponse) {
       eventID,
     )) as EventDocument
 
-    const clientMembershipIDs = (await teams.list()).teams.map((team) => team.$id)
-    // const isSuperUser = clientMembershipIDs.includes(appwriteSuperUsersTeam)
-    // const isAccessModerator = clientMembershipIDs.includes(event.access_moderators_team_id) // with superuser event creator
-    const isVotingModerator = clientMembershipIDs.includes(event.voting_moderators_team_id) // with superuser event creator
-    // const isParticipant = clientMembershipIDs.includes(event.participants_team_id) // with voting moderators and superuser creator
+    const isVotingModerator =
+      (await teams.list([Query.equal('$id', event.voting_moderators_team_id)])).total == 1
 
     if (isVotingModerator) {
       const server = new Client()

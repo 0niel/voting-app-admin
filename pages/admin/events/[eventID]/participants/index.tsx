@@ -70,7 +70,7 @@ const Participants = () => {
 
   return (
     <>
-      <TeamsNavigation className='place-item-center col-span-4' event={event} />
+      {event && <TeamsNavigation className='place-item-center col-span-4' event={event} />}
       <Table
         title={`Список участников ${event?.name}`}
         description='Участники могут принимать участие в голосованиях.'

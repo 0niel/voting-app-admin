@@ -18,6 +18,7 @@ import {
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
 import { formatDate } from '@/lib/formatDate'
+import { EventDocument } from '@/lib/models/EventDocument'
 import { pluralForm } from '@/lib/pluralForm'
 
 const columns: Column[] = [
@@ -135,7 +136,7 @@ const PollList = () => {
   const { eventID } = router.query
   const [polls, setPolls] = useState<Models.Document[]>([])
   const databases = new Databases(client)
-  const [event, setEvent] = useState<Models.Document>()
+  const [event, setEvent] = useState<EventDocument>()
   const { setCreatePoll, setPollIdToUpdate, setPollIdToDelete } = usePoll()
 
   const [timeLeft, setTimeLeft] = useState<number[]>([])
@@ -208,7 +209,7 @@ const PollList = () => {
         appwriteEventsCollection,
         eventID as string,
       )
-      setEvent(_event)
+      setEvent(_event as EventDocument)
       await updatePolls(_event.$id)
       client.subscribe('documents', async (response) => {
         await updatePolls(_event.$id)
@@ -283,7 +284,7 @@ const PollList = () => {
 
   return (
     <>
-      <TeamsNavigation className='place-item-center col-span-4' event={event} />
+      {event && <TeamsNavigation className='place-item-center col-span-4' event={event} />}
       <Table
         title={`Список голосований ${event?.name}`}
         description='Создайте новое голосование, чтобы участники мероприятия смогли оставить свой голос.'
