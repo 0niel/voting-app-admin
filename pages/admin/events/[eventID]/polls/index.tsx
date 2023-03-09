@@ -73,7 +73,7 @@ const CountDown = ({
 
   const updateTimeLeft = (newTimeLeft: number) => {
     setCurrentTimeLeft(newTimeLeft)
-    if (newTimeLeft > 0) {
+    if (newTimeLeft > 0 || newTimeLeft === 0) {
       setTimeEnd(Date.now() + newTimeLeft * 1000, pollId)
     }
   }
