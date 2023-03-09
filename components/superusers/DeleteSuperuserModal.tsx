@@ -3,7 +3,7 @@ import { Account } from 'appwrite'
 import Modal from '@/components/modal/Modal'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
-import { handleFetchError } from '@/lib/handleFetchError'
+import fetchJson from '@/lib/fetchJson'
 
 export default function DeleteSuperuserModal() {
   const { membershipIDToDelete, setMembershipIDToDelete } = useMembership()
@@ -12,14 +12,14 @@ export default function DeleteSuperuserModal() {
 
   async function deleteParticipantFromDatabase() {
     const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
-    await fetch('/api/teams/delete-superuser', {
+    await fetchJson('/api/teams/delete-superuser', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userID: membershipIDToDelete,
         jwt,
       }),
-    }).then(handleFetchError)
+    })
     setMembershipIDToDelete(undefined)
   }
 
