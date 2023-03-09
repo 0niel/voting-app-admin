@@ -1,3 +1,5 @@
+import { toast } from 'react-hot-toast'
+
 export default async function fetchJson<JSON = unknown>(
   input: RequestInfo,
   init?: RequestInit,
@@ -13,7 +15,7 @@ export default async function fetchJson<JSON = unknown>(
   if (response.ok) {
     return data
   }
-
+  toast.error(response.statusText)
   throw new FetchError({
     message: response.statusText,
     response,

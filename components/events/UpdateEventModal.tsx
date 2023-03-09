@@ -1,7 +1,6 @@
 import { Databases, Models } from 'appwrite'
-import React, { Fragment, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { useOnClickOutside } from 'usehooks-ts'
 
 import Modal from '@/components/modal/Modal'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
@@ -37,12 +36,6 @@ export default function UpdateEventModal() {
         .finally(() => setEventNewName(''))
     } else {
       toast.error('Введите название события.')
-    }
-  }
-
-  function setOpen(open: boolean) {
-    if (!open) {
-      setEventIdToUpdate(undefined)
     }
   }
 

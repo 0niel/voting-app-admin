@@ -20,7 +20,7 @@ const VotingModerators = () => {
   const { client } = useAppwrite()
   const router = useRouter()
   const { eventID } = router.query
-  const [event, setEvent] = useState<Models.Document>()
+  const [event, setEvent] = useState<EventDocument>()
   const [memberships, setMemberships] = useState<Models.Membership[]>([])
   const { setCreateMembership } = useMembership()
   const databases = new Databases(client)
@@ -72,7 +72,7 @@ const VotingModerators = () => {
 
   return (
     <>
-      <TeamsNavigation className='place-item-center col-span-4' event={event} />
+      {event && <TeamsNavigation className='place-item-center col-span-4' event={event} />}
       <Table
         title={`Список модераторов голосования ${event?.name}`}
         description='Модераторы голосования могут создавать новые голосования.'

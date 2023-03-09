@@ -8,7 +8,8 @@ import Modal from '@/components/modal/Modal'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
-import { handleFetchError } from '@/lib/handleFetchError'
+import fetchJson from '@/lib/fetchJson'
+import { validateEmail } from '@/lib/validateEmail'
 
 export default function CreateAccessModeratorModal() {
   const { createMembership, setCreateMembership } = useMembership()
@@ -38,9 +39,9 @@ export default function CreateAccessModeratorModal() {
   async function addMembershipToDatabase() {
     const fetchCreate = async function () {
       const newEmail = email?.trim()
-      if (newEmail && newEmail.length > 0) {
+      if (validateEmail(newEmail)) {
         const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
-        await fetch('/api/teams/create-membership', {
+        await fetchJson('/api/teams/create-membership', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -50,8 +51,8 @@ export default function CreateAccessModeratorModal() {
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
             jwt,
           }),
-        }).then(handleFetchError)
-        await fetch('/api/teams/create-membership', {
+        })
+        await fetchJson('/api/teams/create-membership', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -61,7 +62,7 @@ export default function CreateAccessModeratorModal() {
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
             jwt,
           }),
-        }).then(handleFetchError)
+        })
         setEmail('')
         setCreateMembership(false)
       } else {

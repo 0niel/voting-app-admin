@@ -8,7 +8,7 @@ import Modal from '@/components/modal/Modal'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
-import { handleFetchError } from '@/lib/handleFetchError'
+import fetchJson from '@/lib/fetchJson'
 import { EventDocument } from '@/lib/models/EventDocument'
 
 export default function CreateParticipantsModal() {
@@ -41,7 +41,7 @@ export default function CreateParticipantsModal() {
       const newEmail = email?.trim()
       if (newEmail && newEmail.length > 0) {
         const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
-        await fetch('/api/teams/create-membership', {
+        await fetchJson('/api/teams/create-membership', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -51,7 +51,7 @@ export default function CreateParticipantsModal() {
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
             jwt,
           }),
-        }).then(handleFetchError)
+        }).catch((error: any) => toast.error(error.message))
         setEmail('')
         setCreateMembership(false)
       } else {

@@ -1,7 +1,6 @@
-import { Models } from 'appwrite'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Account, Client, Databases, ID, Teams } from 'node-appwrite'
+import { Client, Databases, ID, Teams } from 'node-appwrite'
 
 import {
   appwriteEndpoint,

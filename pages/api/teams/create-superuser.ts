@@ -4,9 +4,10 @@ import { Client, Query, Teams } from 'node-appwrite'
 import { appwriteEndpoint, appwriteProjectId, appwriteSuperUsersTeam } from '@/constants/constants'
 
 export function handleAlreadyInvitedException(error: any) {
+  console.log(error.message)
   if (error.message === 'User has already been invited or is already a member of this team') {
   } else {
-    throw Error(error.message)
+    // throw Error(error.message)
   }
 }
 

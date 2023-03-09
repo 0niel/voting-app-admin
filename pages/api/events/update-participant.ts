@@ -1,4 +1,3 @@
-import { Models } from 'appwrite'
 import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Account, Client, Databases, ID, Teams } from 'node-appwrite'
@@ -11,14 +10,13 @@ import {
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
 } from '@/constants/constants'
-import { AccessLogDocument } from '@/lib/models/AccessLogDocument'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { sessionOptions } from '@/lib/session'
 
 export default withIronSessionApiRoute(updateParticipant, sessionOptions)
 
 async function updateParticipant(req: NextApiRequest, res: NextApiResponse) {
-  const { userId, eventId, redirectUrl, jwt } = await req.body
+  const { eventId, redirectUrl, jwt } = await req.body
 
   const client = new Client()
     .setEndpoint(appwriteEndpoint)
@@ -26,6 +24,7 @@ async function updateParticipant(req: NextApiRequest, res: NextApiResponse) {
     .setJWT(jwt)
 
   const account = await new Account(client).get()
+  const userId = account.$id
 
   const teams = new Teams(client)
   const memberships = await teams.listMemberships(appwriteSuperUsersTeam)
