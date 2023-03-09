@@ -8,8 +8,8 @@ import Modal from '@/components/modal/Modal'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
-import { EventDocument } from '@/lib/models/EventDocument'
 import fetchJson from '@/lib/fetchJson'
+import { EventDocument } from '@/lib/models/EventDocument'
 
 export default function CreateParticipantsModal() {
   const { createMembership, setCreateMembership } = useMembership()
