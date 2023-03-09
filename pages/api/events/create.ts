@@ -34,10 +34,10 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
       const serverDatabases = new Databases(server)
 
       const accessModeratorsTeamID = (
-        await serverTeams.create(ID.unique(), `Модераторы доступа ${eventName}`, ['owner'])
+        await serverTeams.create(ID.unique(), `Модер. дост. ${eventName}`, ['owner'])
       ).$id
       const votingModeratorsTeamID = (
-        await serverTeams.create(ID.unique(), `Модераторы голосования ${eventName}`, ['owner'])
+        await serverTeams.create(ID.unique(), `Модер. голос. ${eventName}`, ['owner'])
       ).$id
       const participantsTeamID = (
         await serverTeams.create(ID.unique(), `Участники ${eventName}`, ['owner'])

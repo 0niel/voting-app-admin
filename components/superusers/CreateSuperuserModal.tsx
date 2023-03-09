@@ -6,7 +6,7 @@ import CreateMembershipModalContent from '@/components/modal/CreateMembershipMod
 import Modal from '@/components/modal/Modal'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
-import { handleFetchError } from '@/lib/handleFetchError'
+import fetchJson from '@/lib/fetchJson'
 
 export default function CreateSuperuserModal() {
   const { createMembership, setCreateMembership } = useMembership()
@@ -19,14 +19,14 @@ export default function CreateSuperuserModal() {
       const newEmail = email?.trim()
       if (newEmail && newEmail.length > 0) {
         const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
-        await fetch('/api/teams/create-superuser', {
+        await fetchJson('/api/teams/create-superuser', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             email: newEmail,
             jwt,
           }),
-        }).then(handleFetchError)
+        })
         setEmail('')
         setCreateMembership(false)
       } else {
