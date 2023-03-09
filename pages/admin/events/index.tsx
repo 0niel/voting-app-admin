@@ -1,4 +1,4 @@
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { DocumentChartBarIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { Databases, Teams } from 'appwrite'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -147,7 +147,7 @@ const Events = () => {
       { value: event.name },
       isUserHasTeamAccess(event.access_moderators_team_id)
         ? {
-            value: event.access_moderators_team_id,
+            value: 'Открыть',
             onClick: () => {
               window.open(`/admin/events/${event.$id}/access-moderators`)
             },
@@ -158,7 +158,7 @@ const Events = () => {
           },
       isUserHasTeamAccess(event.voting_moderators_team_id)
         ? {
-            value: event.voting_moderators_team_id,
+            value: 'Открыть',
             onClick: () => {
               window.open(`/admin/events/${event.$id}/voting-moderators`)
             },
@@ -169,7 +169,7 @@ const Events = () => {
           },
       isUserHasTeamAccess(event.access_moderators_team_id)
         ? {
-            value: event.participants_team_id,
+            value: 'Открыть',
             onClick: () => {
               window.open(`/admin/events/${event.$id}/participants`)
             },
@@ -196,6 +196,12 @@ const Events = () => {
           event.participants_team_id,
         ) ? (
           <div className='flex space-x-2'>
+            <button
+              className='btn-outline btn-secondary btn'
+              onClick={() => window.open(`/events/${event.$id}/realtime`)}
+            >
+              <DocumentChartBarIcon className='h-6 w-6' />
+            </button>
             <button
               className='btn-outline btn-secondary btn'
               onClick={() => setEventIdToUpdate(event.$id)}
