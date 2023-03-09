@@ -1,4 +1,4 @@
-import { Databases } from 'appwrite'
+import { Account, Databases } from 'appwrite'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -18,11 +18,12 @@ export default function UpdatePollModal() {
   const { user } = useUser()
   const { pollIdToUpdate, setPollIdToUpdate } = usePoll()
   const [question, setQuestion] = useState<string>()
-  const [startDate, setStartDate] = useState<Date>()
-  const [finishDate, setFinishDate] = useState<Date>()
+  const [startDate, setStartDate] = useState<Date>(new Date())
+  const [finishDate, setFinishDate] = useState<Date>(new Date())
   const [pollOptions, setPollOptions] = useState<string[]>([])
   const { client } = useAppwrite()
   const databases = new Databases(client)
+  const account = new Account(client)
 
   useEffect(() => {
     const fetchPoll = async () => {
@@ -47,16 +48,20 @@ export default function UpdatePollModal() {
     if (!isValidPoll(question!, startDate!, finishDate!, pollOptions)) {
       return
     }
-    await databases
-      .updateDocument(appwriteVotingDatabase, appwritePollsCollection, pollIdToUpdate!, {
-        question,
-        creator_id: user?.userData?.$id,
-        start_at: startDate!.toISOString(),
-        end_at: finishDate!.toISOString(),
-        event_id: eventID,
-        poll_options: pollOptions,
-      })
-      .catch((error: any) => toast.error(error.message))
+    const jwt = (await account.createJWT()).jwt
+    fetch('/api/polls/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: question,
+        startAt: startDate.toISOString(),
+        endAt: finishDate.toISOString(),
+        pollOptions,
+        eventID,
+        pollID: pollIdToUpdate,
+        jwt,
+      }),
+    }).catch((error: any) => toast.error(error.message))
     setPollIdToUpdate(undefined)
   }
 
