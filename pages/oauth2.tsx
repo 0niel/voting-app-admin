@@ -24,7 +24,7 @@ export default function OAuth2() {
           body: JSON.stringify({ userData, jwt }),
         }),
         false,
-      ).then(() => router.push('/admin/dashboard'))
+      ).then(() => router.push('/admin/events'))
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
