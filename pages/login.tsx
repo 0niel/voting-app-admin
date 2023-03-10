@@ -27,14 +27,13 @@ export default function Login() {
     try {
       await account.createEmailSession(email, password)
       const userData = await account.get()
-      await mutateUser(
-        await fetchJson('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userData }),
-        }),
-      )
-      router.push('admin/events').then(() => {})
+      await fetchJson('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userData }),
+      })
+      await mutateUser({ userData, isLoggedIn: true })
+      router.push('/admin/events').then(() => {})
     } catch (error: any) {
       toast.error(mapAppwriteErroToMessage(error.message))
     }
