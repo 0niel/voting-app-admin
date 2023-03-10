@@ -10,6 +10,7 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import fetchJson from '@/lib/fetchJson'
 import { EventDocument } from '@/lib/models/EventDocument'
+import { validateEmail } from '@/lib/validateEmail'
 
 export default function CreateParticipantsModal() {
   const { createMembership, setCreateMembership } = useMembership()
@@ -39,7 +40,7 @@ export default function CreateParticipantsModal() {
   async function addMembershipToDatabase() {
     try {
       const newEmail = email?.trim()
-      if (newEmail && newEmail.length > 0) {
+      if (validateEmail(newEmail)) {
         const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
         await fetchJson('/api/teams/create-membership', {
           method: 'POST',
@@ -51,7 +52,7 @@ export default function CreateParticipantsModal() {
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
             jwt,
           }),
-        }).catch((error: any) => toast.error(error.message))
+        })
         setEmail('')
         setCreateMembership(false)
       } else {

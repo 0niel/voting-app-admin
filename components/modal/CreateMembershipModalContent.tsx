@@ -30,12 +30,12 @@ export default function CreateMembershipModalContent(props: CreateTeamModalConte
 
   const { client } = useAppwrite()
   const account = new Account(client)
-  
+
   async function searchUsers() {
     setSearchResultsLoading(true)
     const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
 
-    const response = await fetchJson<SearchUserResponse>('/api/users/search', {
+    const response = await fetch('/api/users/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -44,6 +44,8 @@ export default function CreateMembershipModalContent(props: CreateTeamModalConte
         jwt: jwt,
       }),
     })
+      .then((response) => response.json())
+      .catch((error: any) => toast.error(error))
 
     console.log(`response: ${JSON.stringify(response)}`)
     setSearchResults(response)

@@ -8,6 +8,7 @@ import Modal from '@/components/modal/Modal'
 import { appwritePollsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
+import fetchJson from '@/lib/fetchJson'
 import { isValidPoll } from '@/lib/isValidPoll'
 import { PollDocument } from '@/lib/models/PollDocument'
 import useUser from '@/lib/useUser'
@@ -49,7 +50,7 @@ export default function UpdatePollModal() {
       return
     }
     const jwt = (await account.createJWT()).jwt
-    fetch('/api/polls/update', {
+    await fetchJson('/api/polls/update', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -61,7 +62,7 @@ export default function UpdatePollModal() {
         pollID: pollIdToUpdate,
         jwt,
       }),
-    }).catch((error: any) => toast.error(error.message))
+    })
     setPollIdToUpdate(undefined)
   }
 

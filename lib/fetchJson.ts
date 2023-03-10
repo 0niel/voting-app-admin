@@ -1,4 +1,4 @@
-import { toast } from 'react-hot-toast'
+import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 
 export default async function fetchJson<JSON = unknown>(
   input: RequestInfo,
@@ -15,9 +15,8 @@ export default async function fetchJson<JSON = unknown>(
   if (response.ok) {
     return data
   }
-  toast.error(response.statusText)
   throw new FetchError({
-    message: response.statusText,
+    message: mapAppwriteErroToMessage(data.message),
     response,
     data,
   })

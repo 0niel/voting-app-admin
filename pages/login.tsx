@@ -8,6 +8,7 @@ import LayoutWithoutDrawer from '@/components/LayoutWithoutDrawer'
 import NinjaXUnion from '@/components/NinjaXUnion'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
+import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
 
 export default function Login() {
@@ -27,11 +28,11 @@ export default function Login() {
       await account.createEmailSession(email, password)
       const userData = await account.get()
       await mutateUser(
-        await fetch('/api/login', {
+        await fetchJson('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userData }),
-        }).then((res) => res.json()),
+        }),
       )
       router.push('admin/events').then(() => {})
     } catch (error: any) {

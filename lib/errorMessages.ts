@@ -1,7 +1,5 @@
 export const mapAppwriteErroToMessage = (error: string) => {
   switch (error) {
-    case 'Team with the requested ID could not be found.':
-      return 'Произошла ошибка при удалении какой-то из команд.'
     case 'The current user is not authorized to perform the requested action.':
       return 'Произошла ошибка при выполнении запроса. У вас нет прав на выполнение этого действия.'
     case 'Invalid credentials. Please check the email and password.':
@@ -12,6 +10,8 @@ export const mapAppwriteErroToMessage = (error: string) => {
       return 'Проверьте подключение к Интернету'
     case 'Team with the requested ID could not be found.':
       return 'Команда с указанным ID не найдена.'
+    case 'User has already been invited or is already a member of this team':
+      return 'Пользователь уже находится в команде.'
     default:
       return `Произошла ошибка: ${error}`
   }

@@ -16,12 +16,12 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
   const router = useRouter()
   const { client } = useAppwrite()
   const teams = new Teams(client)
-  const [teamIDs, setTeamIDs] = useState<string[]>([])
 
   const [hasAccessToAccessModeratorsTeam, setHasAccessToAccessModeratorsTeam] = useState(false)
   const [hasAccessToVotingModeratorsTeam, setHasAccessToVotingModeratorsTeam] = useState(false)
   const [hasAccessToParticipantsTeam, setHasAccessToParticipantsTeam] = useState(false)
   const [hasAccessToPolls, setHasAccessToPolls] = useState(false)
+
   useEffect(() => {
     const fetchTeam = async function (teamID: string) {
       return (await teams.list([Query.equal('$id', teamID)])).total

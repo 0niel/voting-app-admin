@@ -10,6 +10,7 @@ import Modal from '@/components/modal/Modal'
 import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
+import fetchJson from '@/lib/fetchJson'
 import { isValidPoll } from '@/lib/isValidPoll'
 import { EventDocument } from '@/lib/models/EventDocument'
 
@@ -60,7 +61,7 @@ export default function CreatePollModal() {
       return
     }
     const jwt = (await account.createJWT()).jwt
-    fetch('/api/polls/create', {
+    await fetchJson('/api/polls/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -71,7 +72,7 @@ export default function CreatePollModal() {
         eventID: event!.$id,
         jwt,
       }),
-    }).catch((error: any) => toast.error(error.message))
+    })
     setCreatePoll(false)
   }
 

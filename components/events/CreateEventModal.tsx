@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast'
 import Modal from '@/components/modal/Modal'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
+import fetchJson from '@/lib/fetchJson'
 
 export default function CreateEventModal() {
   const { createEvent, setCreateEvent } = useEvent()
@@ -17,7 +18,7 @@ export default function CreateEventModal() {
       const eventName = newEventName?.trim()
       if (eventName && eventName.length > 0) {
         const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
-        await fetch('/api/events/create', {
+        await fetchJson('/api/events/create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

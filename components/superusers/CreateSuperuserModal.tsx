@@ -1,4 +1,5 @@
 import { Account } from 'appwrite'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 
@@ -13,6 +14,8 @@ export default function CreateSuperuserModal() {
   const [email, setEmail] = useState('')
   const { client } = useAppwrite()
   const account = new Account(client)
+  const router = useRouter()
+  const { eventID } = router.query
 
   async function addSuperuser() {
     try {
@@ -45,7 +48,7 @@ export default function CreateSuperuserModal() {
       onCancel={() => setCreateMembership(false)}
       title='Пригласить участника'
     >
-      <CreateMembershipModalContent email={email} setEmail={setEmail} />
+      <CreateMembershipModalContent email={email} setEmail={setEmail} eventID={eventID as string} />
     </Modal>
   )
 }
