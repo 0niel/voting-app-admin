@@ -3,16 +3,17 @@ import {
   ArrowLeftOnRectangleIcon,
   Bars3Icon,
   CalendarIcon,
-  HomeIcon,
+  ShieldCheckIcon,
   UserCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
-import { Account, AppwriteException } from 'appwrite'
+import { Account, AppwriteException, Query, Teams } from 'appwrite'
 import { useRouter } from 'next/router'
-import React, { FormEvent, Fragment, useState } from 'react'
+import React, { FormEvent, Fragment, useEffect, useState } from 'react'
 import { toast, Toaster } from 'react-hot-toast'
 
 import AdminPanelHead from '@/components/Head'
+import { appwriteSuperUsersTeam } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
@@ -24,12 +25,51 @@ export interface LayoutProps {
   children: React.ReactNode
 }
 
-export const hamburgerMenuId = 'hamburger-menu'
+interface NavigationItemI {
+  name: string
+  href: string
+  icon: React.ForwardRefExoticComponent<
+    React.SVGProps<SVGSVGElement> & { title?: string | undefined; titleId?: string | undefined }
+  >
+  current?: boolean
+}
 
-const navigation = [
-  { name: 'Дашборды', href: '/admin/dashboard', icon: HomeIcon, current: true },
-  { name: 'Мероприятия', href: '/admin/events', icon: CalendarIcon },
+const navigation: NavigationItemI[] = [
+  // { name: 'Дашборды', href: '/admin/dashboard', icon: HomeIcon },
+  { name: 'Мероприятия', href: '/admin/events', icon: CalendarIcon, current: true },
 ]
+
+const superuserNavigation: NavigationItemI[] = [
+  {
+    name: 'Суперпользователи',
+    href: '/admin/superusers',
+    icon: ShieldCheckIcon,
+  },
+]
+
+function formatNavigation(navigation: NavigationItemI[]) {
+  return navigation.map((item) => (
+    <a
+      key={item.name}
+      href={item.href}
+      className={classNames(
+        item.current
+          ? 'bg-gray-100 text-gray-900'
+          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+        'group flex items-center rounded-md px-2 py-2 text-base font-medium',
+      )}
+    >
+      <item.icon
+        className={classNames(
+          item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
+          'mr-4 h-6 w-6 flex-shrink-0',
+        )}
+        aria-hidden='true'
+      />
+      {item.name}
+    </a>
+  ))
+}
 
 function classNames(...classes: (string | undefined)[]) {
   return classes.filter(Boolean).join(' ')
@@ -38,9 +78,27 @@ function classNames(...classes: (string | undefined)[]) {
 export default function LayoutWithDrawer(props: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const router = useRouter()
+  const [isSuperuser, setSuperuser] = useState(false)
 
   const { mutateUser, user } = useUser()
   const { client } = useAppwrite()
+  const teams = new Teams(client)
+
+  useEffect(() => {
+    const fetchSuperuser = async () => {
+      setSuperuser((await teams.list([Query.equal('$id', appwriteSuperUsersTeam)])).total === 1)
+    }
+    fetchSuperuser().catch((error: any) => toast.error(error.message))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // set current page in navigation
+  navigation.forEach((item) => {
+    item.current = router.pathname === item.href
+  })
+  superuserNavigation.forEach((item) => {
+    item.current = router.pathname === item.href
+  })
 
   async function logout(event: FormEvent) {
     event.preventDefault()
@@ -57,11 +115,6 @@ export default function LayoutWithDrawer(props: LayoutProps) {
       await router.push('/login')
     }
   }
-
-  // set current page in navigation
-  navigation.forEach((item) => {
-    item.current = router.pathname === item.href
-  })
 
   return (
     <>
@@ -202,27 +255,8 @@ export default function LayoutWithDrawer(props: LayoutProps) {
                 <NinjaXUnion />
               </div>
               <nav className='mt-5 flex-1 space-y-1 bg-white px-2'>
-                {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className={classNames(
-                      item.current
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                      'group flex items-center rounded-md px-2 py-2 text-sm font-medium',
-                    )}
-                  >
-                    <item.icon
-                      className={classNames(
-                        item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
-                        'mr-3 h-6 w-6 flex-shrink-0',
-                      )}
-                      aria-hidden='true'
-                    />
-                    {item.name}
-                  </a>
-                ))}
+                {formatNavigation(navigation)}
+                {isSuperuser && formatNavigation(superuserNavigation)}
               </nav>
             </div>
             <div className='flex flex-shrink-0 border-t border-gray-200 p-2'>

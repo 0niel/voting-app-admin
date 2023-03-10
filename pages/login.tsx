@@ -33,7 +33,7 @@ export default function Login() {
           body: JSON.stringify({ userData }),
         }).then((res) => res.json()),
       )
-      router.push('admin/dashboard').then(() => {})
+      router.push('admin/events').then(() => {})
     } catch (error: any) {
       toast.error(mapAppwriteErroToMessage(error.message))
     }
