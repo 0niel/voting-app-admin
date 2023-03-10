@@ -12,10 +12,8 @@ import {
 import { EventDocument } from '@/lib/models/EventDocument'
 import { sessionOptions } from '@/lib/session'
 
-export default withIronSessionApiRoute(searchUser, sessionOptions)
-
 // Поиск пользователей по email или name (только для модераторов доступа и суперпользователей)
-async function searchUser(req: NextApiRequest, res: NextApiResponse) {
+export default async function searchUser(req: NextApiRequest, res: NextApiResponse) {
   const { eventID, substring, jwt } = await req.body
 
   const client = new Client()
@@ -25,9 +23,6 @@ async function searchUser(req: NextApiRequest, res: NextApiResponse) {
 
   const databases = new Databases(client)
   const teams = new Teams(client)
-  const account = await new Account(client).get()
-
-  const userId = account.$id
 
   try {
     const event: EventDocument = await databases.getDocument(
@@ -36,15 +31,20 @@ async function searchUser(req: NextApiRequest, res: NextApiResponse) {
       eventID,
     )
 
-    const superuserMembership = await teams.listMemberships(appwriteSuperUsersTeam)
+    var isAccessModerator = true
+    var isSuperUser = true
 
-    const isSuperUser = superuserMembership.memberships.some(
-      (membership) => membership.userId === userId,
-    )
-    const accessModeratorsMembership = await teams.listMemberships(event.access_moderators_team_id)
-    const isAccessModerator = accessModeratorsMembership.memberships.some(
-      (membership) => membership.userId === userId,
-    )
+    try {
+      await teams.get(event.access_moderators_team_id)
+    } catch (error) {
+      isAccessModerator = false
+    }
+
+    try {
+      await teams.get(appwriteSuperUsersTeam)
+    } catch (error) {
+      isSuperUser = false
+    }
 
     if (isSuperUser || isAccessModerator) {
       const server = new Client()
