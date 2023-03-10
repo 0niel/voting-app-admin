@@ -44,6 +44,22 @@ services:
       LETSENCRYPT_HOST: ${DOMAIN}
       VIRTUAL_PORT: '3000'
 
+  frontend_dev:
+    image: ${IMAGE_FRONTEND_DEV}
+    networks:
+      - proxy
+      - default
+    environment:
+      SECRET_COOKIE_PASSWORD: ${SECRET_COOKIE_PASSWORD}
+      NEXT_PUBLIC_REDIRECT_HOSTNAME: ${DEV_REDIRECT_HOSTNAME}
+      SENTRY_DSN: ${SENTRY_DSN}
+
+      APPWRITE_API_KEY: ${APPWRITE_API_KEY}
+
+      VIRTUAL_HOST: ${DEV_DOMAIN}
+      LETSENCRYPT_HOST: ${DEV_DOMAIN}
+      VIRTUAL_PORT: '3001'
+
 volumes:
   conf:
   vhost:
