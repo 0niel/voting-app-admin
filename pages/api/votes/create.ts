@@ -1,6 +1,6 @@
 import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Account, Client, Databases, ID, Teams } from 'node-appwrite'
+import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from 'node-appwrite'
 
 import {
   appwriteEndpoint,
@@ -13,11 +13,8 @@ import {
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
-import { sessionOptions } from '@/lib/session'
 
-export default withIronSessionApiRoute(createVote, sessionOptions)
-
-async function createVote(req: NextApiRequest, res: NextApiResponse) {
+export default async function createVote(req: NextApiRequest, res: NextApiResponse) {
   const { eventId, pollId, vote, jwt } = await req.body
 
   const client = new Client()
@@ -27,14 +24,19 @@ async function createVote(req: NextApiRequest, res: NextApiResponse) {
 
   const account = new Account(client)
 
-  const userId = await (await account.get()).$id
+  const userId = (await account.get()).$id
 
   const teams = new Teams(client)
-  const memberships = await teams.listMemberships(appwriteSuperUsersTeam)
+
+  var isSuperUser = true
+  var isParticipant = true
+  try {
+    await teams.get(appwriteSuperUsersTeam)
+  } catch (error) {
+    isSuperUser = false
+  }
 
   try {
-    const isSuperUser = memberships.memberships.some((membership) => membership.userId === userId)
-
     // Получаем информацию о событии из базы данных
     const database = new Databases(client)
     const event: EventDocument = await database.getDocument(
@@ -49,15 +51,18 @@ async function createVote(req: NextApiRequest, res: NextApiResponse) {
     )
 
     // Проверяем, является ли пользователь участником события
-    const participantMembership = await teams.listMemberships(event.participants_team_id)
-    const isParticipant = participantMembership.memberships.some(
-      (membership) => membership.userId === userId,
-    )
+    try {
+      await teams.get(event.participants_team_id)
+    } catch (error) {
+      isParticipant = false
+    }
+
     if (isSuperUser || isParticipant) {
       const server = new Client()
         .setEndpoint(appwriteEndpoint)
         .setProject(appwriteProjectId)
         .setKey(process.env.APPWRITE_API_KEY!)
+
       const serverDatabase = new Databases(server)
 
       // Проверяем, что `vote` соответсвтует одному из poll.vote_options
@@ -70,8 +75,8 @@ async function createVote(req: NextApiRequest, res: NextApiResponse) {
 
       // Проверяем, что пользователь еще не голосовал
       const votes = await database.listDocuments(appwriteVotingDatabase, appwriteEventsCollection, [
-        `user_id=${userId}`,
-        `poll_id=${pollId}`,
+        Query.equal('voter_id', userId),
+        Query.equal('poll_id', pollId),
       ])
 
       if (votes.total > 0) {
@@ -83,8 +88,11 @@ async function createVote(req: NextApiRequest, res: NextApiResponse) {
           appwriteVotingDatabase,
           appwriteVotesCollection,
           voteDocument.$id,
-          voteDocument,
+          {
+            vote: vote,
+          },
         )
+
         if (!voteId) {
           res.status(500).json({ message: 'Не удалось обновить голос.' })
           return
@@ -104,6 +112,11 @@ async function createVote(req: NextApiRequest, res: NextApiResponse) {
         appwriteVotesCollection,
         ID.unique(),
         voteDocument,
+        [
+          Permission.read(Role.team(event.access_moderators_team_id)),
+          Permission.read(Role.team(event.voting_moderators_team_id)),
+          Permission.read(Role.team(event.participants_team_id)),
+        ],
       )
       if (!voteId) {
         res.status(500).json({ message: 'Не удалось создать голос.' })
