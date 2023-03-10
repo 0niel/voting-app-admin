@@ -67,7 +67,7 @@ export default function CreateVotingModeratorModal() {
       onCancel={() => setCreateMembership(false)}
       title='Пригласить модератора доступа'
     >
-      <CreateMembershipModalContent email={email} setEmail={setEmail} />
+      <CreateMembershipModalContent email={email} setEmail={setEmail} eventID={eventID as string} />
     </Modal>
   )
 }

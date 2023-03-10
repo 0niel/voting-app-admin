@@ -70,7 +70,7 @@ export default function CreateParticipantsModal() {
       onCancel={() => setCreateMembership(false)}
       title='Пригласить участника'
     >
-      <CreateMembershipModalContent email={email} setEmail={setEmail} />
+      <CreateMembershipModalContent email={email} setEmail={setEmail} eventID={eventID as string} />
     </Modal>
   )
 }
