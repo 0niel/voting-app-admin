@@ -1,10 +1,10 @@
-import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from 'node-appwrite'
 
 import {
   appwriteEndpoint,
   appwriteEventsCollection,
+  appwritePollsCollection,
   appwriteProjectId,
   appwriteSuperUsersTeam,
   appwriteVotesCollection,
@@ -46,9 +46,15 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
     )
     const poll: PollDocument = await database.getDocument(
       appwriteVotingDatabase,
-      appwriteEventsCollection,
+      appwritePollsCollection,
       pollId,
     )
+
+    const isPollActive = new Date(poll.start_at) < new Date() && new Date(poll.end_at) > new Date()
+    if (!isPollActive) {
+      res.status(400).json({ message: 'Голосование не активно.' })
+      return
+    }
 
     // Проверяем, является ли пользователь участником события
     try {
@@ -74,12 +80,13 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
       }
 
       // Проверяем, что пользователь еще не голосовал
-      const votes = await database.listDocuments(appwriteVotingDatabase, appwriteEventsCollection, [
+      const votes = await database.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
         Query.equal('voter_id', userId),
         Query.equal('poll_id', pollId),
       ])
 
       if (votes.total > 0) {
+        console.log(`Пользователь уже голосовал: ${JSON.stringify(votes)}!`)
         // Пользователь уже голосовал, обновляем его голос
         const voteDocument: VoteDocument = votes.documents[0] as VoteDocument
         voteDocument.vote = vote
@@ -97,6 +104,8 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
           res.status(500).json({ message: 'Не удалось обновить голос.' })
           return
         }
+
+        res.status(200).json({ message: 'ok' })
         return
       }
 
@@ -107,7 +116,9 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
         vote: vote,
       }
 
-      const voteId = await serverDatabase.createDocument(
+      console.log(`Vote: ${JSON.stringify(voteDocument)}`)
+
+      await serverDatabase.createDocument(
         appwriteVotingDatabase,
         appwriteVotesCollection,
         ID.unique(),
@@ -118,10 +129,6 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
           Permission.read(Role.team(event.participants_team_id)),
         ],
       )
-      if (!voteId) {
-        res.status(500).json({ message: 'Не удалось создать голос.' })
-        return
-      }
 
       res.status(200).json({ message: 'ok' })
     }
