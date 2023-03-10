@@ -1,6 +1,6 @@
 import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Client, Databases, ID, Teams } from 'node-appwrite'
+import { Account, Client, Databases, ID, Teams } from 'node-appwrite'
 
 import {
   appwriteEndpoint,
@@ -18,12 +18,16 @@ import { sessionOptions } from '@/lib/session'
 export default withIronSessionApiRoute(createVote, sessionOptions)
 
 async function createVote(req: NextApiRequest, res: NextApiResponse) {
-  const { userId, eventId, pollId, vote, jwt } = await req.body
+  const { eventId, pollId, vote, jwt } = await req.body
 
   const client = new Client()
     .setEndpoint(appwriteEndpoint)
     .setProject(appwriteProjectId)
     .setJWT(jwt)
+
+  const account = new Account(client)
+
+  const userId = await (await account.get()).$id
 
   const teams = new Teams(client)
   const memberships = await teams.listMemberships(appwriteSuperUsersTeam)
