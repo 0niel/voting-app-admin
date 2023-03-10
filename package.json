@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "cidev": "next dev -p 3001",
     "test": "next test",
     "build": "next build",
     "start": "next start",
