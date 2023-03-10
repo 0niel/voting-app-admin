@@ -31,10 +31,9 @@ export default async function deleteSuperuser(req: NextApiRequest, res: NextApiR
               await serverTeams.listMemberships(team.$id, [Query.equal('userId', userID)]),
           ),
         )
-      ).map((membershipList) => membershipList.memberships[0].$id)
-      console.log(userMembershipIDs)
+      ).map((membershipList) => membershipList.memberships.pop()?.$id)
       userMembershipIDs.map(async (membershipID, index) => {
-        await serverTeams.deleteMembership(teams[index].$id, membershipID)
+        membershipID && (await serverTeams.deleteMembership(teams[index].$id, membershipID))
       })
 
       res.status(200).json({ message: 'ok' })
