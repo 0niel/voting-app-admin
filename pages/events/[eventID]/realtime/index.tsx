@@ -62,8 +62,10 @@ const Realtime = () => {
       )) as { documents: PollDocument[] }
       const _poll = getActiveOrLastPoll(_polls.documents)
       setPoll(_poll)
+      console.log('We have poll: ', _poll)
 
       if (_poll) {
+        console.log('Poll ID: ', _poll.$id)
         const _votes = (await databases.listDocuments(
           appwriteVotingDatabase,
           appwriteVotesCollection,
@@ -129,6 +131,9 @@ const Realtime = () => {
           }
 
           if (doc.$collectionId === appwriteVotesCollection) {
+            console.log('Received vote: ', doc)
+            console.log('Current poll: ', poll) 
+
             if (doc.poll_id === poll?.$id) {
               console.log('Votes changed')
               // в зависимости от ивента (update, create, delete) обновляем список голосов
@@ -172,7 +177,7 @@ const Realtime = () => {
         }
       },
     )
-  }, [event])
+  }, [event, poll, votes])
 
   return (
     <div className='flex min-h-screen flex-col items-center justify-center bg-gray-100'>
