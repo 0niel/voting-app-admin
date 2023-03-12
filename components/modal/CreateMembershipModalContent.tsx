@@ -1,10 +1,10 @@
 import { Account } from 'appwrite'
 import React from 'react'
+import { Simulate } from 'react-dom/test-utils'
 import { toast } from 'react-hot-toast'
 
 import { useAppwrite } from '@/context/AppwriteContext'
 import fetchJson from '@/lib/fetchJson'
-import { Simulate } from 'react-dom/test-utils'
 import error = Simulate.error
 
 interface CreateTeamModalContentProps {

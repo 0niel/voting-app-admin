@@ -132,7 +132,7 @@ const Realtime = () => {
 
           if (doc.$collectionId === appwriteVotesCollection) {
             console.log('Received vote: ', doc)
-            console.log('Current poll: ', poll) 
+            console.log('Current poll: ', poll)
 
             if (doc.poll_id === poll?.$id) {
               console.log('Votes changed')
