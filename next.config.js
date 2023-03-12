@@ -22,11 +22,7 @@ const nextConfig = {
 }
 
 const sentryWebpackPluginOptions = {
-  url: 'https://error-monitoring.mirea.ru',
-  org: 'mirea-ninja',
-  project: 'voting-app-admin',
   silent: true,
-  authToken: process.env.SENTRY_AUTH_TOKEN,
 }
 
 module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions)

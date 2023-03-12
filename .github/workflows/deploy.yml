@@ -11,11 +11,14 @@ env:
   CR_IMAGE_FRONTEND: ${{ secrets.CR_IMAGE_FRONTEND }}
   CR_IMAGE_FRONTEND_DEV: ${{ secrets.CR_IMAGE_FRONTEND_DEV }}
   PROD_URL: ${{ secrets.PROD_URL }}
+  SENTRY_URL: ${{ secrets.SENTRY_URL }}
+  SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+  SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
 jobs:
   build-frontend-prod:
-    runs-on: ubuntu-latest
+    runs-on: mn-sbr-gh-runner
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -28,6 +31,10 @@ jobs:
           docker build \
           --pull \
           --build-arg NEXT_PUBLIC_REDIRECT_HOSTNAME=${{ env.PROD_URL }} \
+          --build-arg SENTRY_URL=${{ env.SENTRY_URL }} \
+          --build-arg SENTRY_ORG=${{ env.SENTRY_ORG }} \
+          --build-arg SENTRY_PROJECT=${{ env.SENTRY_PROJECT }} \
+          --build-arg SENTRY_AUTH_TOKEN=${{ env.SENTRY_AUTH_TOKEN }} \
           --cache-from cr.yandex/${{ env.CR_REGISTRY }}/${{ env.CR_IMAGE_FRONTEND }}:latest \
           --label "org.image.title=${{ github.repository }}" \
           --label "org.image.url=${{ github.repositoryUrl }}" \
