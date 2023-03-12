@@ -69,7 +69,7 @@ const Realtime = () => {
         const _votes = (await databases.listDocuments(
           appwriteVotingDatabase,
           appwriteVotesCollection,
-          [Query.equal('poll_id', _poll.$id)],
+          [Query.equal('poll_id', _poll.$id), Query.limit(300)],
         )) as { documents: VoteDocument[] }
         console.log('Votes: ', _votes.documents)
         setVotes(_votes.documents)
