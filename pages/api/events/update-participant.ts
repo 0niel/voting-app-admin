@@ -1,4 +1,3 @@
-import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Account, Client, Databases, ID, Teams } from 'node-appwrite'
 
@@ -11,49 +10,59 @@ import {
   appwriteVotingDatabase,
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
-import { sessionOptions } from '@/lib/session'
 
-export default withIronSessionApiRoute(updateParticipant, sessionOptions)
+export default async function updateParticipant(req: NextApiRequest, res: NextApiResponse) {
+  const { eventID, redirectUrl, jwt, receivedId } = await req.body
 
-async function updateParticipant(req: NextApiRequest, res: NextApiResponse) {
-  const { eventId, redirectUrl, jwt } = await req.body
-
-  const client = new Client()
-    .setEndpoint(appwriteEndpoint)
-    .setProject(appwriteProjectId)
-    .setJWT(jwt)
-
-  const account = await new Account(client).get()
-  const userId = account.$id
-
-  const teams = new Teams(client)
-  const memberships = await teams.listMemberships(appwriteSuperUsersTeam)
-
-  async function isMemberOfTeam(teamId: string, userId: string) {
-    const memberships = await teams.listMemberships(teamId)
-    return memberships.memberships.some((membership) => membership.userId === userId)
+  if (!eventID || !redirectUrl || !jwt || !receivedId) {
+    res.status(400).json({ message: 'Неверный запрос' })
+    return
   }
 
-  try {
-    const isSuperUser = memberships.memberships.some((membership) => membership.userId === userId)
+  if (req.method !== 'POST' && req.method !== 'DELETE') {
+    res.status(405).json({ message: 'Метод не поддерживается' })
+    return
+  }
 
-    // Получаем информацию о событии из базы данных
+  const accessType = req.method === 'POST' ? 'выдан' : 'отозван'
+
+  try {
+    const client = new Client()
+      .setEndpoint(appwriteEndpoint)
+      .setProject(appwriteProjectId)
+      .setJWT(jwt)
+
+    const account = await new Account(client).get()
     const database = new Databases(client)
+    const teams = new Teams(client)
+
+    let isSuperUser = true
+    let isAccessModerator = true
+    let isCreator = true
+
+    try {
+      await teams.get(appwriteSuperUsersTeam)
+    } catch (error) {
+      isSuperUser = false
+    }
+
     const event: EventDocument = await database.getDocument(
       appwriteVotingDatabase,
       appwriteEventsCollection,
-      eventId,
+      eventID,
     )
 
-    // Проверяем, является ли пользователь создателем события или модератором доступа к нему
-    const isCreator = event.creator_id === userId
-    const isAccessModerator =
-      event.access_moderators_team_id &&
-      (await isMemberOfTeam(event.access_moderators_team_id, userId))
+    if (!isSuperUser) {
+      try {
+        await teams.get(event.access_moderators_team_id)
+      } catch (error) {
+        isAccessModerator = false
+      }
+    }
+
+    isCreator = event.creator_id === account.$id
 
     if (isSuperUser || isCreator || isAccessModerator) {
-      // Добавляем пользователя в список участников события (participants_team_id)
-
       const server = new Client()
         .setEndpoint(appwriteEndpoint)
         .setProject(appwriteProjectId)
@@ -66,12 +75,11 @@ async function updateParticipant(req: NextApiRequest, res: NextApiResponse) {
         redirectUrl,
       )
 
-      // Добавляем запись в accessLogs коллекцию
       const accessLog = {
-        event_id: eventId,
-        given_by_id: userId,
-        access_type: 'выдан',
-        received_id: account.$id,
+        event_id: eventID,
+        given_by_id: account.$id,
+        access_type: accessType,
+        received_id: receivedId,
       }
 
       const adminDatabase = new Databases(server)
