@@ -4,9 +4,11 @@ import { toast } from 'react-hot-toast'
 
 import { useAppwrite } from '@/context/AppwriteContext'
 import fetchJson from '@/lib/fetchJson'
+import { Simulate } from 'react-dom/test-utils'
+import error = Simulate.error
 
 interface CreateTeamModalContentProps {
-  eventID: string
+  eventID?: string
   email: string
   setEmail: Function
 }
@@ -33,22 +35,25 @@ export default function CreateMembershipModalContent(props: CreateTeamModalConte
 
   async function searchUsers() {
     setSearchResultsLoading(true)
-    const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
 
-    const response = await fetch('/api/users/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        eventID: props.eventID,
-        substring: searchName,
-        jwt: jwt,
-      }),
-    })
-      .then((response) => response.json())
-      .catch((error: any) => toast.error(error))
+    try {
+      const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
 
-    console.log(`response: ${JSON.stringify(response)}`)
-    setSearchResults(response)
+      const response = await fetchJson<SearchUserResponse>('/api/users/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventID: props.eventID,
+          substring: searchName,
+          jwt: jwt,
+        }),
+      })
+
+      console.log(`response: ${JSON.stringify(response)}`)
+      setSearchResults(response)
+    } catch (error: any) {
+      toast.error(error.message)
+    }
     setSearchResultsLoading(false)
   }
 
