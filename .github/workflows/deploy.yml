@@ -11,6 +11,7 @@ env:
   CR_IMAGE_FRONTEND: ${{ secrets.CR_IMAGE_FRONTEND }}
   CR_IMAGE_FRONTEND_DEV: ${{ secrets.CR_IMAGE_FRONTEND_DEV }}
   PROD_URL: ${{ secrets.PROD_URL }}
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
 jobs:
   build-frontend-prod:
