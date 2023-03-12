@@ -54,7 +54,7 @@ export default async function searchUser(req: NextApiRequest, res: NextApiRespon
 
       const users = new Users(server)
 
-      const usersList = await users.list([], substring)
+      const usersList = await users.list([Query.limit(5)], substring)
 
       const usersRes: {
         name: string

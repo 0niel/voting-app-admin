@@ -1,4 +1,5 @@
 # voting-app-admin
+
 Админ-панель [приложения](https://github.com/mirea-ninja/face-to-face-voting-app) для отчётно-выборных конференций студенческого союза РТУ МИРЭА.
 
 ## Скриншоты
@@ -13,8 +14,6 @@
   <img width="300" src="https://user-images.githubusercontent.com/70258211/224477371-5308b9dd-9231-4480-a62c-1e6edf4aeb27.png"/>
   <img width="300" src="https://user-images.githubusercontent.com/70258211/224478024-0602e20d-6fff-4518-86b7-8dd0758a7dd3.png">
 </p>
-
-
 
 ## Сборка проекта
 
