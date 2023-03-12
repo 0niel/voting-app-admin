@@ -1,6 +1,5 @@
-import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Account, Client, Databases, ID, Query, Teams, Users } from 'node-appwrite'
+import { Client, Databases, Query, Teams, Users } from 'node-appwrite'
 
 import {
   appwriteEndpoint,
@@ -10,7 +9,6 @@ import {
   appwriteVotingDatabase,
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
-import { sessionOptions } from '@/lib/session'
 
 // Поиск пользователей по email или name (только для модераторов доступа и суперпользователей)
 export default async function searchUser(req: NextApiRequest, res: NextApiResponse) {
@@ -25,28 +23,31 @@ export default async function searchUser(req: NextApiRequest, res: NextApiRespon
   const teams = new Teams(client)
 
   try {
-    const event: EventDocument = await databases.getDocument(
-      appwriteVotingDatabase,
-      appwriteEventsCollection,
-      eventID,
-    )
-
-    var isAccessModerator = true
-    var isSuperUser = true
-
-    try {
-      await teams.get(event.access_moderators_team_id)
-    } catch (error) {
-      isAccessModerator = false
-    }
+    let isAccessModerator = true
+    let isSuperUser = true
 
     try {
       await teams.get(appwriteSuperUsersTeam)
     } catch (error) {
       isSuperUser = false
     }
+    if (!isSuperUser && eventID) {
+      const event: EventDocument = await databases.getDocument(
+        appwriteVotingDatabase,
+        appwriteEventsCollection,
+        eventID,
+      )
+      try {
+        await teams.get(event.access_moderators_team_id)
+      } catch (error) {
+        isAccessModerator = false
+      }
+    }
 
     if (isSuperUser || isAccessModerator) {
+      if (!substring || substring.length === 0) {
+        return res.status(400).json({ message: 'Не указана строка поиска.' })
+      }
       const server = new Client()
         .setEndpoint(appwriteEndpoint)
         .setProject(appwriteProjectId)
@@ -81,7 +82,7 @@ export default async function searchUser(req: NextApiRequest, res: NextApiRespon
 
       res.status(200).json({ users: usersRes })
     } else {
-      res.status(403).json({ message: 'У вас нет доступа к этому действию' })
+      res.status(403).json({ message: 'У Вас нет доступа к этому действию.' })
     }
   } catch (error) {
     console.error(error)
