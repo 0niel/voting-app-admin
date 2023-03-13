@@ -12,6 +12,7 @@ import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/co
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import { GetMembershipRows, membershipColumns } from '@/lib/memberships'
+import { membershipsRealtimeResponseCallback } from '@/lib/membershipsRealtimeResponseCallback'
 import { EventDocument } from '@/lib/models/EventDocument'
 import usePermitted from '@/lib/usePermitted'
 import useUser from '@/lib/useUser'
@@ -31,15 +32,19 @@ const AccessModerators = () => {
 
   useEffect(() => {
     const fetchEvent = async () => {
-      const _event = await databases.getDocument(
+      const _event = (await databases.getDocument(
         appwriteVotingDatabase,
         appwriteEventsCollection,
         eventID as string,
-      )
-      setEvent(_event as EventDocument)
+      )) as EventDocument
+      setEvent(_event)
       await updateMemberships(_event.access_moderators_team_id)
       client.subscribe('memberships', async (response) => {
-        await updateMemberships(_event.access_moderators_team_id)
+        membershipsRealtimeResponseCallback(
+          response,
+          setMemberships,
+          _event.access_moderators_team_id,
+        )
       })
     }
     if (router.isReady) {
