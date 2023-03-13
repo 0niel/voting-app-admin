@@ -12,6 +12,7 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import { formatDate } from '@/lib/formatDate'
 import { membershipColumns } from '@/lib/memberships'
+import { membershipsRealtimeResponseCallback } from '@/lib/membershipsRealtimeResponseCallback'
 
 const Superusers = () => {
   const [memberships, setMemberships] = useState<Models.Membership[]>([])
@@ -22,7 +23,7 @@ const Superusers = () => {
   useEffect(() => {
     updateMemberships().catch((error: any) => toast.error(error.message))
     client.subscribe('memberships', async (response) => {
-      await updateMemberships()
+      membershipsRealtimeResponseCallback(response, setMemberships, appwriteSuperUsersTeam)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
