@@ -14,6 +14,35 @@ import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
 
+const BarChart = ({ data }: { data: { name: string; votes: number }[] }): ReactElement => {
+  const totalVotes = data.reduce((acc, option) => acc + option.votes, 0)
+  return (
+    <div className='flex items-center justify-center'>
+      <div className='w-full max-w-4xl rounded-md bg-white p-4 '>
+        {data.map((option) => (
+          <div key={option.name} className='mb-4'>
+            <div className='flex items-center justify-between'>
+              <span
+                className='text-lg font-medium text-gray-700
+              '
+              >
+                {option.name}
+              </span>
+              <span className='text-2xl font-bold text-gray-700'>{option.votes}</span>
+            </div>
+            <div className='mt-1 h-4 rounded-md bg-gray-300'>
+              <div
+                className='h-4 rounded-md bg-blue-500'
+                style={{ width: `${(option.votes / totalVotes) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 const Realtime = () => {
   const { client } = useAppwrite()
   const databases = new Databases(client)
@@ -79,6 +108,7 @@ const Realtime = () => {
     if (router.isReady) {
       fetchEvent().catch((error) => toast.error(error.message))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady])
 
   useEffect(() => {
@@ -110,17 +140,14 @@ const Realtime = () => {
         `databases.${appwriteVotingDatabase}.collections.${appwriteVotesCollection}.documents`,
       ],
       async (response) => {
-        console.log('New event: ', response)
         const event = response.events[0]
         const eventAction = event.split('.').pop()
 
         if (eventAction === 'create' || eventAction === 'update' || eventAction === 'delete') {
-          console.log('Event action: ', eventAction)
           const doc = response.payload as Models.Document
 
           if (doc.$collectionId === appwritePollsCollection) {
             if (doc.event_id === eventID) {
-              console.log('Poll changed')
               const _polls = (await databases.listDocuments(
                 appwriteVotingDatabase,
                 appwritePollsCollection,
@@ -131,11 +158,7 @@ const Realtime = () => {
           }
 
           if (doc.$collectionId === appwriteVotesCollection) {
-            console.log('Received vote: ', doc)
-            console.log('Current poll: ', poll)
-
             if (doc.poll_id === poll?.$id) {
-              console.log('Votes changed')
               // в зависимости от ивента (update, create, delete) обновляем список голосов
               // если документ изменился, то надо найти его в массиве и обновить
               // если документ удален, то надо найти его в массиве и удалить
@@ -177,41 +200,36 @@ const Realtime = () => {
         }
       },
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event, poll, votes])
 
   return (
     <div className='flex min-h-screen flex-col items-center justify-center bg-gray-100'>
-      {event && (
-        <div className='w-full max-w-3xl rounded-md bg-white px-4 py-8 shadow-md'>
-          <h1 className='mb-4 text-xl font-bold text-gray-900'>{event.name}</h1>
-          <p className='mb-8 text-gray-700'>{event.description}</p>
-          {poll && (
-            <div className='mb-8'>
-              <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
-              <p className='mb-4 text-gray-700'>{poll.description}</p>
-              <ul className='space-y-4'>
-                {poll.poll_options.map((option) => (
-                  <li
-                    key={option}
-                    className='flex items-center justify-between rounded-md border border-gray-200 bg-white p-4'
-                  >
-                    <span className='text-gray-700'>{option}</span>
-                    <span className='font-bold text-gray-700'>
-                      {votes.filter((vote) => vote.vote === option).length}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {poll && timeLeft > 0 && (
-            <p className='mb-4 text-gray-700'>
+      {poll && (
+        <div className='w-full max-w-3xl rounded-lg bg-white px-4 py-8 shadow-lg'>
+          <h1 className='mb-4 text-center text-3xl font-bold text-gray-900'>{poll?.question}</h1>
+          <p className='mb-8 text-gray-700'>{poll.description}</p>
+          {timeLeft > 0 && (
+            <p className='mb-4 text-center font-bold text-gray-700'>
               До окончания: {Math.floor(timeLeft / 1000 / 60)} минут{' '}
               {Math.floor((timeLeft / 1000) % 60)} секунд
             </p>
           )}
-          {poll && timeLeft <= 0 && <p className='mb-4 text-gray-700'>Голосование завершено 🎉</p>}
-          {!poll && <p className='mb-4 text-gray-700'>Голосование не начато.</p>}
+          <div className='mb-4 text-center text-gray-700'>
+            {timeLeft === 0 && <p>Голосование завершено 🎉</p>}
+            {timeLeft < 0 && <p>Голосование не начато.</p>}
+          </div>
+          {poll.poll_options && (
+            <>
+              <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
+              <BarChart
+                data={poll.poll_options.map((option) => ({
+                  name: option,
+                  votes: votes.filter((vote) => vote.vote === option).length,
+                }))}
+              />
+            </>
+          )}
         </div>
       )}
     </div>
