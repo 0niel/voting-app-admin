@@ -118,7 +118,7 @@ const Events = () => {
             ) {
               if (!event.is_active && events.some((e) => e.is_active && e.$id !== event.$id)) {
                 toast.error(
-                  'Нельзя активировать несколько событий одновременно. Сначала деактивируйте другое событие',
+                  'Нельзя активировать несколько мероприятий одновременно. Сначала деактивируйте другое.',
                 )
                 return
               }
@@ -132,7 +132,7 @@ const Events = () => {
                 },
               )
             } else {
-              toast.error('Недостаточно прав на изменение состояния события')
+              toast.error('Недостаточно прав на изменение состояния мероприятия')
             }
           } catch (error: any) {
             toast.error(mapAppwriteErroToMessage(error.message))
@@ -226,7 +226,7 @@ const Events = () => {
           columns={columns}
           rows={rows}
           title='Список мероприятий'
-          description='Список всех мероприятий, созданных в системе. Меропрития - это события, в рамках которых проводятся голосования'
+          description='Список всех мероприятий, созданных в системе. Меропрития — это события, в рамках которых проводятся голосования'
           action='Создать мероприятие'
           onActionClick={() => setCreateEvent(true)}
           isDisabledAction={!hasPermissionToCreteEvent}

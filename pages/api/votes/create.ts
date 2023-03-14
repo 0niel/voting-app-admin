@@ -37,7 +37,7 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
   }
 
   try {
-    // Получаем информацию о событии из базы данных
+    // Получаем информацию о мероприятии из базы данных
     const database = new Databases(client)
     const event: EventDocument = await database.getDocument(
       appwriteVotingDatabase,
@@ -56,7 +56,7 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
       return
     }
 
-    // Проверяем, является ли пользователь участником события
+    // Проверяем, является ли пользователь участником мероприятия
     try {
       await teams.get(event.participants_team_id)
     } catch (error) {

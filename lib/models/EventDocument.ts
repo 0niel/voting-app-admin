@@ -18,7 +18,7 @@ export interface EventDocument extends Models.Document {
    */
   participants_team_id: string
   /**
-   * ID создателя события.
+   * ID создателя мероприятия.
    */
   creator_id: string
   /**

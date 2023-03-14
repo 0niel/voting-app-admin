@@ -6,7 +6,6 @@ import ReactDatePicker from 'react-datepicker'
 import { toast } from 'react-hot-toast'
 
 import Modal from '@/components/modal/Modal'
-import { inputModalClassName } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
 import fetchJson from '@/lib/fetchJson'
@@ -34,7 +33,7 @@ export default function CreateEventModal() {
         setNewEventName('')
         setCreateEvent(false)
       } else {
-        toast.error('Введите название события.')
+        toast.error('Введите название мероприятия.')
       }
     } catch (error: any) {
       toast.error(error.message)
@@ -57,7 +56,7 @@ export default function CreateEventModal() {
           type='text'
           value={newEventName}
           onChange={(e) => setNewEventName(e.target.value)}
-          className={inputModalClassName}
+          className='z-50 block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
         />
         <label className='label'>
           <span className='label-text'>Дата начала</span>
@@ -71,7 +70,7 @@ export default function CreateEventModal() {
             timeIntervals={5}
             timeCaption='Время'
             dateFormat='dd.MM.yyyy HH:mm'
-            className={inputModalClassName}
+            className='z-50 block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
             locale='ru'
           />
         </div>
