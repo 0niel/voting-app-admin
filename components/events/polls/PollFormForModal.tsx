@@ -5,6 +5,8 @@ import { ru } from 'date-fns/locale'
 import React from 'react'
 import ReactDatePicker from 'react-datepicker'
 
+import { inputModalClassName } from '@/constants/constants'
+
 interface PollFormForModalProps {
   question: string
   setQuestion: Function

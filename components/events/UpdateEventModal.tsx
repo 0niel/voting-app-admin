@@ -6,7 +6,11 @@ import ReactDatePicker from 'react-datepicker'
 import { toast } from 'react-hot-toast'
 
 import Modal from '@/components/modal/Modal'
-import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
+import {
+  appwriteEventsCollection,
+  appwriteVotingDatabase,
+  inputModalClassName,
+} from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
 import { EventDocument } from '@/lib/models/EventDocument'

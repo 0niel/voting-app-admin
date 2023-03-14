@@ -6,6 +6,7 @@ import ReactDatePicker from 'react-datepicker'
 import { toast } from 'react-hot-toast'
 
 import Modal from '@/components/modal/Modal'
+import { inputModalClassName } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
 import fetchJson from '@/lib/fetchJson'
