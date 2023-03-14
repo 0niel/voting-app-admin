@@ -82,16 +82,11 @@ const Events = () => {
     return false
   }
 
-  const isUserEventOwner = (
-    accessModeratorsTeamID: string,
-    votingModeratorsTeamID: string,
-    participantsTeamID: string,
-  ) => {
+  const isUserEventOwner = (accessModeratorsTeamID: string, votingModeratorsTeamID: string) => {
     if (userTeamIDs) {
       return (
         (userTeamIDs.includes(accessModeratorsTeamID) &&
-          userTeamIDs.includes(votingModeratorsTeamID) &&
-          userTeamIDs.includes(participantsTeamID)) ||
+          userTeamIDs.includes(votingModeratorsTeamID)) ||
         userTeamIDs.includes(appwriteSuperUsersTeam)
       )
     }
@@ -119,12 +114,15 @@ const Events = () => {
         onClick: () => {
           try {
             if (
-              isUserEventOwner(
-                event.access_moderators_team_id,
-                event.voting_moderators_team_id,
-                event.participants_team_id,
-              )
+              isUserEventOwner(event.access_moderators_team_id, event.voting_moderators_team_id)
             ) {
+              if (!event.is_active && events.some((e) => e.is_active && e.$id !== event.$id)) {
+                toast.error(
+                  'Нельзя активировать несколько событий одновременно. Сначала деактивируйте другое событие',
+                )
+                return
+              }
+
               databases.updateDocument(
                 appwriteVotingDatabase,
                 appwriteEventsCollection,
@@ -193,7 +191,6 @@ const Events = () => {
         value: isUserEventOwner(
           event.access_moderators_team_id,
           event.voting_moderators_team_id,
-          event.participants_team_id,
         ) ? (
           <div className='flex space-x-2'>
             <button

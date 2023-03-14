@@ -1,7 +1,6 @@
 import 'react-datepicker/dist/react-datepicker.css'
 
 import { Databases, Teams } from 'appwrite'
-import ru from 'date-fns/locale/ru'
 import React, { useEffect, useState } from 'react'
 import ReactDatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
 import { toast } from 'react-hot-toast'
@@ -11,8 +10,6 @@ import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/co
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
 import { EventDocument } from '@/lib/models/EventDocument'
-
-registerLocale('ru', ru)
 
 export default function UpdateEventModal() {
   const [eventNewName, setEventNewName] = useState('')
