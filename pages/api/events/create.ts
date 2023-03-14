@@ -51,10 +51,6 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
         superusersTeamEmails.map(async (email) => {
           await Promise.all(
             allNewTeamIDs.map(async (teamID) => {
-              // Не добавляем суперюзеров в команду участников для избежания путаницы
-              // и отображения лишних участников в списке в приложении.
-              if (teamID == participantsTeamID) return
-
               await serverTeams.createMembership(
                 teamID,
                 email,

@@ -5,6 +5,8 @@ import { ru } from 'date-fns/locale'
 import React from 'react'
 import ReactDatePicker from 'react-datepicker'
 
+import { inputModalClassName } from '@/constants/constants'
+
 interface PollFormForModalProps {
   question: string
   setQuestion: Function
@@ -21,7 +23,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
       <div className='p-2'>
         <label className='mb-2 block text-sm font-medium text-neutral'>Вопрос</label>
         <input
-          className='block w-full rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className={inputModalClassName}
           placeholder='Захватывать ли РАНХиГС дронами?'
           value={props.question}
           required
@@ -39,6 +41,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
           timeIntervals={5}
           dateFormat='Pp'
           shouldCloseOnSelect
+          className={inputModalClassName}
         />
       </div>
       <div className='p-2'>
@@ -54,6 +57,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
           timeIntervals={1}
           dateFormat='Pp'
           shouldCloseOnSelect
+          className={inputModalClassName}
         />
       </div>
       <div className='p-2'>
@@ -62,7 +66,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
           return (
             <div key={index} className='flex pb-2'>
               <input
-                className='block w-full rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+                className={inputModalClassName}
                 value={pollOption}
                 onChange={(event) => {
                   const options = props.pollOptions.slice()

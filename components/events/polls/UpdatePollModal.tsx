@@ -16,7 +16,6 @@ import useUser from '@/lib/useUser'
 export default function UpdatePollModal() {
   const router = useRouter()
   const { eventID } = router.query
-  const { user } = useUser()
   const { pollIdToUpdate, setPollIdToUpdate } = usePoll()
   const [question, setQuestion] = useState<string>()
   const [startDate, setStartDate] = useState<Date>(new Date())

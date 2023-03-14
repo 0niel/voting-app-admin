@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast'
 import { useAppwrite } from '@/context/AppwriteContext'
 import fetchJson from '@/lib/fetchJson'
 import error = Simulate.error
+import { inputModalClassName } from '@/constants/constants'
 
 interface CreateTeamModalContentProps {
   eventID?: string
@@ -64,7 +65,7 @@ export default function CreateMembershipModalContent(props: CreateTeamModalConte
       </label>
       <div className='mt-1 flex flex-row items-center'>
         <input
-          className='input-bordered input w-full'
+          className={inputModalClassName}
           type='text'
           placeholder='Введите ФИО'
           value={searchName}
@@ -116,7 +117,7 @@ export default function CreateMembershipModalContent(props: CreateTeamModalConte
           <span className='label-text'>Email для приглашения</span>
         </label>
         <input
-          className='input-bordered input w-full'
+          className={inputModalClassName}
           type='text'
           placeholder='Введите email'
           value={props.email}
