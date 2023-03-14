@@ -40,7 +40,10 @@ const Participants = () => {
       setEvent(_event)
       await updateMemberships(_event.participants_team_id)
       client.subscribe('memberships', async (response) => {
-        membershipsRealtimeResponseCallback(response, setMemberships, _event.participants_team_id)
+        // @ts-ignore
+        if (!response.payload?.roles?.includes('owner')) {
+          membershipsRealtimeResponseCallback(response, setMemberships, _event.participants_team_id)
+        }
       })
     }
     if (router.isReady) {
@@ -67,7 +70,10 @@ const Participants = () => {
     }
   }
 
-  const rows: Cell[][] = GetMembershipRows(memberships, isPermitted)
+  const rows: Cell[][] = GetMembershipRows(
+    memberships.filter((membership) => !membership.roles.includes('owner')),
+    isPermitted,
+  )
 
   return (
     <>

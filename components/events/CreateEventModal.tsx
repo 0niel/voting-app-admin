@@ -6,6 +6,7 @@ import ReactDatePicker from 'react-datepicker'
 import { toast } from 'react-hot-toast'
 
 import Modal from '@/components/modal/Modal'
+import { inputModalClassName } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
 import fetchJson from '@/lib/fetchJson'
@@ -13,7 +14,7 @@ import fetchJson from '@/lib/fetchJson'
 export default function CreateEventModal() {
   const { createEvent, setCreateEvent } = useEvent()
   const [newEventName, setNewEventName] = useState('')
-  const [startAtDateTime, setStartAtDateTime] = useState<Date | null>(null)
+  const [startAtDateTime, setStartAtDateTime] = useState<Date>()
   const { client } = useAppwrite()
   const account = new Account(client)
 
@@ -56,7 +57,7 @@ export default function CreateEventModal() {
           type='text'
           value={newEventName}
           onChange={(e) => setNewEventName(e.target.value)}
-          className='block w-full rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className={inputModalClassName}
         />
         <label className='label'>
           <span className='label-text'>Дата начала</span>
@@ -64,14 +65,14 @@ export default function CreateEventModal() {
         <div className='mt-1'>
           <ReactDatePicker
             selected={startAtDateTime}
-            onChange={(date) => setStartAtDateTime(date)}
+            onChange={(date) => date && setStartAtDateTime(date)}
             showTimeSelect
             timeFormat='HH:mm'
             timeIntervals={5}
             timeCaption='Время'
             dateFormat='dd.MM.yyyy HH:mm'
-            className='z-50 block w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
-            locale={'ru'}
+            className={inputModalClassName}
+            locale='ru'
           />
         </div>
       </div>
