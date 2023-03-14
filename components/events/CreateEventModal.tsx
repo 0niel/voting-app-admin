@@ -1,5 +1,8 @@
+import 'react-datepicker/dist/react-datepicker.css'
+
 import { Account } from 'appwrite'
 import { useState } from 'react'
+import ReactDatePicker from 'react-datepicker'
 import { toast } from 'react-hot-toast'
 
 import Modal from '@/components/modal/Modal'
@@ -10,6 +13,7 @@ import fetchJson from '@/lib/fetchJson'
 export default function CreateEventModal() {
   const { createEvent, setCreateEvent } = useEvent()
   const [newEventName, setNewEventName] = useState('')
+  const [startAtDateTime, setStartAtDateTime] = useState<Date | null>(null)
   const { client } = useAppwrite()
   const account = new Account(client)
 
@@ -42,7 +46,7 @@ export default function CreateEventModal() {
       onAccept={addEventToDatabase}
       acceptButtonName='Создать'
       onCancel={() => setCreateEvent(false)}
-      title='Создать событие'
+      title='Создать мероприятие'
     >
       <div className='form-control w-full max-w-xs pt-5'>
         <label className='label'>
@@ -54,6 +58,22 @@ export default function CreateEventModal() {
           onChange={(e) => setNewEventName(e.target.value)}
           className='block w-full rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
         />
+        <label className='label'>
+          <span className='label-text'>Дата начала</span>
+        </label>
+        <div className='mt-1'>
+          <ReactDatePicker
+            selected={startAtDateTime}
+            onChange={(date) => setStartAtDateTime(date)}
+            showTimeSelect
+            timeFormat='HH:mm'
+            timeIntervals={5}
+            timeCaption='Время'
+            dateFormat='dd.MM.yyyy HH:mm'
+            className='z-50 block w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+            locale={'ru'}
+          />
+        </div>
       </div>
     </Modal>
   )

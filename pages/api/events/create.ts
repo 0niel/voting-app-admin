@@ -10,7 +10,7 @@ import {
 } from '@/constants/constants'
 
 export default async function create(req: NextApiRequest, res: NextApiResponse) {
-  const { eventName, jwt } = await req.body
+  const { eventName, startAtDateTime, jwt } = req.body
   try {
     const client = new Client()
       .setEndpoint(appwriteEndpoint)
@@ -51,6 +51,10 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
         superusersTeamEmails.map(async (email) => {
           await Promise.all(
             allNewTeamIDs.map(async (teamID) => {
+              // Не добавляем суперюзеров в команду участников для избежания путаницы
+              // и отображения лишних участников в списке в приложении.
+              if (teamID == participantsTeamID) return
+
               await serverTeams.createMembership(
                 teamID,
                 email,
@@ -72,7 +76,8 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
           access_moderators_team_id: accessModeratorsTeamID,
           voting_moderators_team_id: votingModeratorsTeamID,
           participants_team_id: participantsTeamID,
-          is_active: true,
+          is_active: false,
+          start_at: startAtDateTime,
         },
         [
           Permission.read(Role.team(accessModeratorsTeamID)),

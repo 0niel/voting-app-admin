@@ -1,6 +1,7 @@
 import 'react-datepicker/dist/react-datepicker.css'
 
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { ru } from 'date-fns/locale'
 import React from 'react'
 import ReactDatePicker from 'react-datepicker'
 
@@ -50,7 +51,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
           locale='ru'
           showTimeSelect
           timeFormat='p'
-          timeIntervals={5}
+          timeIntervals={1}
           dateFormat='Pp'
           shouldCloseOnSelect
         />

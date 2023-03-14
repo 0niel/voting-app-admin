@@ -25,4 +25,9 @@ export interface EventDocument extends Models.Document {
    * URL логотипа мероприятия.
    */
   logo: string
+
+  /**
+   * Дата и время начала мероприятия.
+   */
+  start_at: Date
 }
