@@ -77,14 +77,14 @@ export default function DeleteEventModal() {
       onAccept={deleteEvent}
       acceptButtonName='Удалить'
       onCancel={() => setEventIdToDelete(undefined)}
-      title={`Удалить событие ${eventToDelete?.name}`}
+      title={`Удалить мероприятие ${eventToDelete?.name}`}
     >
       <div className='pt-5'>
         <div className='alert alert-warning shadow-sm'>
           <div>
             <ExclamationTriangleIcon className='h-8 w-8' />
             <span>
-              При удалении события списки модераторов доступа и голосования, участников также будут
+              При удалении мероприятия списки модераторов доступа и голосования, участников также
               удалены.
             </span>
           </div>

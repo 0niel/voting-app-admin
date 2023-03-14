@@ -2,8 +2,6 @@ export const appName = 'ОВК админ-панель'
 export const shortAppName = 'ОВК'
 export const appDescription =
   'Админ-панель отчётно-выборных конференций студенческого союза РТУ МИРЭА'
-export const inputModalClassName =
-  'block w-full rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
 export const mireaNinjaURL = 'https://mirea.ninja/'
 export const studentUnionURL = 'https://sumirea.ru/'
 export const appwriteEndpoint = 'https://appwrite.mirea.ninja/v1'

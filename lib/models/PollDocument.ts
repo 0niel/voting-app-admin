@@ -18,7 +18,7 @@ export interface PollDocument extends Models.Document {
    */
   end_at: Date
   /**
-   * ID события, к которому относится голосование.
+   * ID мероприятия, к которому относится голосование.
    */
   event_id: string
   /**

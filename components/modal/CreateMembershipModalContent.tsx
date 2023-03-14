@@ -1,12 +1,9 @@
 import { Account } from 'appwrite'
 import React from 'react'
-import { Simulate } from 'react-dom/test-utils'
 import { toast } from 'react-hot-toast'
 
 import { useAppwrite } from '@/context/AppwriteContext'
 import fetchJson from '@/lib/fetchJson'
-import error = Simulate.error
-import { inputModalClassName } from '@/constants/constants'
 
 interface CreateTeamModalContentProps {
   eventID?: string
@@ -65,14 +62,14 @@ export default function CreateMembershipModalContent(props: CreateTeamModalConte
       </label>
       <div className='mt-1 flex flex-row items-center'>
         <input
-          className={inputModalClassName}
+          className='z-50 block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
           type='text'
           placeholder='Введите ФИО'
           value={searchName}
           onChange={(e) => setSearchName(e.target.value)}
         />
         <div className='ml-2'>
-          <button className='btn-primary btn' onClick={() => searchUsers()}>
+          <button className='btn-primary btn' onClick={searchUsers}>
             Найти
           </button>
         </div>
@@ -117,7 +114,7 @@ export default function CreateMembershipModalContent(props: CreateTeamModalConte
           <span className='label-text'>Email для приглашения</span>
         </label>
         <input
-          className={inputModalClassName}
+          className='z-50 block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
           type='text'
           placeholder='Введите email'
           value={props.email}
