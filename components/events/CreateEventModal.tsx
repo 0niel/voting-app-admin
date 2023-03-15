@@ -56,7 +56,7 @@ export default function CreateEventModal() {
           type='text'
           value={newEventName}
           onChange={(e) => setNewEventName(e.target.value)}
-          className='z-50 block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className='block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
         />
         <label className='label'>
           <span className='label-text'>Дата начала</span>
@@ -70,7 +70,7 @@ export default function CreateEventModal() {
             timeIntervals={5}
             timeCaption='Время'
             dateFormat='dd.MM.yyyy HH:mm'
-            className='z-50 block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+            className='block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
             locale='ru'
           />
         </div>
