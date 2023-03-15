@@ -6,10 +6,15 @@ import { Account, Client, Teams } from 'node-appwrite'
 import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
 import { sessionOptions } from '@/lib/session'
 
+export enum TeamAppointment {
+  accessModerators,
+  votingModerators,
+  participants,
+}
 export default withIronSessionApiRoute(createMembership, sessionOptions)
 
 async function createMembership(req: NextApiRequest, res: NextApiResponse) {
-  const { teamID, email, roles, url, jwt } = await req.body
+  const { teamAppointment, teamID, email, roles, url, jwt } = await req.body
   try {
     const client = new Client()
       .setEndpoint(appwriteEndpoint)
@@ -38,9 +43,28 @@ async function createMembership(req: NextApiRequest, res: NextApiResponse) {
       await new Teams(server).createMembership(teamID, email, roles || [], url)
       res.status(200).json({ message: 'ok' })
     } else {
-      res.status(403).json({ message: 'Client is not owner of the team.' })
+      res.status(403).json({ message: 'Пользователь не является.' })
     }
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message })
+    let message = (error as Error).message
+    if (message === 'User has already been invited or is already a member of this team') {
+      switch (teamAppointment) {
+        case TeamAppointment.accessModerators.valueOf(): {
+          message =
+            'Пользователь является суперпользователем или уже состоит в командре модераторов доступа.'
+          break
+        }
+        case TeamAppointment.votingModerators.valueOf(): {
+          message =
+            'Пользователь является суперпользователем или уже состоит в командре модераторов голосования.'
+          break
+        }
+        case TeamAppointment.participants.valueOf(): {
+          message =
+            'Пользователь является суперпользователем, модератором доступа или уже состоит в командре участников.'
+        }
+      }
+    }
+    res.status(500).json({ message })
   }
 }

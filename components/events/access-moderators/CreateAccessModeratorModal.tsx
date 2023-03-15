@@ -10,6 +10,7 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import fetchJson from '@/lib/fetchJson'
 import { validateEmail } from '@/lib/validateEmail'
+import { TeamAppointment } from '@/pages/api/teams/create-membership'
 
 export default function CreateAccessModeratorModal() {
   const { createMembership, setCreateMembership } = useMembership()
@@ -46,6 +47,7 @@ export default function CreateAccessModeratorModal() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             teamID: event!.access_moderators_team_id,
+            teamAppointment: TeamAppointment.accessModerators.valueOf(),
             email: newEmail,
             roles: [],
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
@@ -57,6 +59,7 @@ export default function CreateAccessModeratorModal() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             teamID: event!.participants_team_id,
+            teamAppointment: TeamAppointment.accessModerators.valueOf(),
             email: newEmail,
             roles: ['owner'],
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,

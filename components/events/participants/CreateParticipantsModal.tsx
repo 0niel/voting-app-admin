@@ -11,6 +11,7 @@ import { useMembership } from '@/context/MembershipContext'
 import fetchJson from '@/lib/fetchJson'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { validateEmail } from '@/lib/validateEmail'
+import { TeamAppointment } from '@/pages/api/teams/create-membership'
 
 export default function CreateParticipantsModal() {
   const { createMembership, setCreateMembership } = useMembership()
@@ -47,6 +48,7 @@ export default function CreateParticipantsModal() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             teamID: event?.participants_team_id,
+            teamAppointment: TeamAppointment.participants.valueOf(),
             email: newEmail,
             roles: [],
             url: process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME,
