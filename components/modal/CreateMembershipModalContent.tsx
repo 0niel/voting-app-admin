@@ -62,7 +62,7 @@ export default function CreateMembershipModalContent(props: CreateTeamModalConte
       </label>
       <div className='mt-1 flex flex-row items-center'>
         <input
-          className='z-50 block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className='block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
           type='text'
           placeholder='Введите ФИО'
           value={searchName}
@@ -114,7 +114,7 @@ export default function CreateMembershipModalContent(props: CreateTeamModalConte
           <span className='label-text'>Email для приглашения</span>
         </label>
         <input
-          className='z-50 block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className='block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
           type='text'
           placeholder='Введите email'
           value={props.email}
