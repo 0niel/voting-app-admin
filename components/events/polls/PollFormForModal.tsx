@@ -20,7 +20,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
       <div className='p-2'>
         <label className='mb-2 block text-sm font-medium text-neutral'>Вопрос</label>
         <input
-          className='z-50 block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className=' block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
           placeholder='Захватывать ли РАНХиГС дронами?'
           value={props.question}
           required
@@ -38,7 +38,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
           timeIntervals={5}
           dateFormat='Pp'
           shouldCloseOnSelect
-          className='z-50 block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className=' block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
         />
       </div>
       <div className='p-2'>
@@ -54,7 +54,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
           timeIntervals={1}
           dateFormat='Pp'
           shouldCloseOnSelect
-          className='z-50 block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className=' block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
         />
       </div>
       <div className='p-2'>
@@ -63,7 +63,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
           return (
             <div key={index} className='flex pb-2'>
               <input
-                className='z-50 block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+                className=' block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
                 value={pollOption}
                 onChange={(event) => {
                   const options = props.pollOptions.slice()
