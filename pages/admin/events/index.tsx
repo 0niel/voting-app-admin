@@ -1,5 +1,5 @@
 import { DocumentChartBarIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
-import { Databases, Teams } from 'appwrite'
+import { Databases, Query, Teams } from 'appwrite'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
@@ -19,7 +19,6 @@ import { useEvent } from '@/context/EventContext'
 import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
-import useUser from '@/lib/useUser'
 
 const Events = () => {
   const { client } = useAppwrite()
@@ -60,8 +59,11 @@ const Events = () => {
   async function updateEventList() {
     try {
       setPolls(
-        (await databases.listDocuments(appwriteVotingDatabase, appwritePollsCollection))
-          .documents as PollDocument[],
+        (
+          await databases.listDocuments(appwriteVotingDatabase, appwritePollsCollection, [
+            Query.limit(500),
+          ])
+        ).documents as PollDocument[],
       )
       setEvents(
         (
