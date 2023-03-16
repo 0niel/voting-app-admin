@@ -70,7 +70,7 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
 
         res.status(200).json({ user: user })
       } catch (error) {
-        res.status(404).json({ message: 'Пользователь не найден.' })
+        res.status(404).json({ message: `Пользователь не найден. Запрашиваемый ID: ${userId}` })
       }
     } else {
       res.status(403).json({ message: 'У Вас нет доступа к этому действию.' })
