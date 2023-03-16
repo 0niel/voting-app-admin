@@ -10,20 +10,14 @@ import {
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
 
+import UserResponseType from './UserResponseType'
+
 // Поиск пользователей по email или name (только для модераторов доступа и суперпользователей)
 export default async function searchUser(req: NextApiRequest, res: NextApiResponse) {
-  let substring: string
-  let eventID: string
-  let jwt: string
+  const { eventID, substring, jwt } = await req.body
 
-  if (req.method === 'POST') {
-    substring = req.body.substring
-    eventID = req.body.eventID
-    jwt = req.body.jwt
-  } else {
-    substring = req.query.substring as string
-    eventID = req.query.eventID as string
-    jwt = req.query.jwt as string
+  if (!eventID || !substring || !jwt) {
+    return res.status(400).json({ message: 'Неверный запрос' })
   }
 
   const client = new Client()
@@ -69,14 +63,7 @@ export default async function searchUser(req: NextApiRequest, res: NextApiRespon
 
       const usersList = await users.list([Query.limit(5)], substring)
 
-      const usersRes: {
-        id: string
-        name: string
-        email: string
-        prefs: {
-          [key: string]: string
-        }
-      }[] = []
+      const usersRes: UserResponseType[] = []
 
       usersList.users.map(async (user) => {
         const name = user.name

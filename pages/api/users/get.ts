@@ -10,20 +10,10 @@ import {
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
 
-export default async function getUserById(req: NextApiRequest, res: NextApiResponse) {
-  let userId: string
-  let eventId: string
-  let jwt: string
+import UserResponseType from './UserResponseType'
 
-  if (req.method === 'POST') {
-    userId = req.body.userId
-    eventId = req.body.eventId
-    jwt = req.body.jwt
-  } else {
-    userId = req.query.userId as string
-    eventId = req.query.eventId as string
-    jwt = req.query.jwt as string
-  }
+export default async function getUserById(req: NextApiRequest, res: NextApiResponse) {
+  const { userId, eventId, jwt } = await req.body
 
   if (!userId || !eventId || !jwt) {
     return res.status(400).json({ message: 'Неверный запрос' })
@@ -36,6 +26,11 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
 
   const databases = new Databases(client)
   const teams = new Teams(client)
+  const event: EventDocument = await databases.getDocument(
+    appwriteVotingDatabase,
+    appwriteEventsCollection,
+    eventId,
+  )
 
   try {
     let isAccessModerator = true
@@ -47,11 +42,6 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
       isSuperUser = false
     }
     if (!isSuperUser && eventId) {
-      const event: EventDocument = await databases.getDocument(
-        appwriteVotingDatabase,
-        appwriteEventsCollection,
-        eventId,
-      )
       try {
         await teams.get(event.access_moderators_team_id)
       } catch (error) {
@@ -67,6 +57,8 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
 
       const users = new Users(server)
 
+      const serverTeams = new Teams(server)
+
       try {
         const userRes = await users.get(userId)
 
@@ -74,8 +66,11 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
           id: userRes.$id,
           name: userRes.name,
           email: userRes.email,
+          isParticipant: (
+            await serverTeams.listMemberships(event.participants_team_id)
+          ).memberships.some((membership) => membership.userId === userId),
           prefs: userRes.prefs,
-        }
+        } as UserResponseType
 
         res.status(200).json({ user: user })
       } catch (error) {
