@@ -67,9 +67,6 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
           id: userRes.$id,
           name: userRes.name,
           email: userRes.email,
-          isParticipant: (
-            await serverTeams.listMemberships(event.participants_team_id)
-          ).memberships.some((membership) => membership.userId === userId),
           prefs: userRes.prefs,
         } as UserResponseType
 
