@@ -69,8 +69,11 @@ export default async function updateParticipant(req: NextApiRequest, res: NextAp
         .setProject(appwriteProjectId)
         .setKey(process.env.APPWRITE_API_KEY!)
 
+      const serverTeams = new Teams(server)
+      const serverDatabase = new Databases(server)
+
       if (req.method === 'POST') {
-        await new Teams(server).createMembership(
+        await serverTeams.createMembership(
           event.participants_team_id,
           account.email,
           [],
@@ -78,14 +81,14 @@ export default async function updateParticipant(req: NextApiRequest, res: NextAp
         )
       } else {
         try {
-          const memberships = await new Teams(server).listMemberships(event.participants_team_id)
+          const memberships = await serverTeams.listMemberships(event.participants_team_id)
           const membership = memberships.memberships.find((m) => m.userId === receivedId)
           if (!membership) {
             res.status(404).json({ message: 'Участник не найден' })
             return
           }
 
-          await new Teams(server).deleteMembership(event.participants_team_id, membership.$id)
+          await serverTeams.deleteMembership(event.participants_team_id, membership.$id)
         } catch (error) {
           res.status(500).json({ message: mapAppwriteErroToMessage((error as Error).message) })
           return
@@ -99,8 +102,7 @@ export default async function updateParticipant(req: NextApiRequest, res: NextAp
         received_id: receivedId,
       }
 
-      const adminDatabase = new Databases(server)
-      await adminDatabase.createDocument(
+      await serverDatabase.createDocument(
         appwriteVotingDatabase,
         appwriteAccessLogsCollection,
         ID.unique(),
