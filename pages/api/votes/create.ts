@@ -10,6 +10,7 @@ import {
   appwriteVotesCollection,
   appwriteVotingDatabase,
 } from '@/constants/constants'
+import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
@@ -133,6 +134,6 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
       res.status(200).json({ message: 'ok' })
     }
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message })
+    res.status(500).json({ message: mapAppwriteErroToMessage((error as Error).message) })
   }
 }

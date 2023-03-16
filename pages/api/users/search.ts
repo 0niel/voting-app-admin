@@ -8,6 +8,7 @@ import {
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
 } from '@/constants/constants'
+import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 import { EventDocument } from '@/lib/models/EventDocument'
 
 import UserResponseType from './UserResponseType'
@@ -88,6 +89,6 @@ export default async function searchUser(req: NextApiRequest, res: NextApiRespon
     }
   } catch (error) {
     console.error(error)
-    res.status(500).json({ message: (error as Error).message })
+    res.status(500).json({ message: mapAppwriteErroToMessage((error as Error).message) })
   }
 }

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Account, Client, Databases, ID, Teams } from 'node-appwrite'
+import { Account, Client, Databases, ID, Permission, Role, Teams } from 'node-appwrite'
 
 import {
   appwriteAccessLogsCollection,
@@ -9,6 +9,7 @@ import {
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
 } from '@/constants/constants'
+import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 import { EventDocument } from '@/lib/models/EventDocument'
 
 export default async function updateParticipant(req: NextApiRequest, res: NextApiResponse) {
@@ -86,7 +87,7 @@ export default async function updateParticipant(req: NextApiRequest, res: NextAp
 
           await new Teams(server).deleteMembership(event.participants_team_id, membership.$id)
         } catch (error) {
-          res.status(500).json({ message: (error as Error).message })
+          res.status(500).json({ message: mapAppwriteErroToMessage((error as Error).message) })
           return
         }
       }
@@ -104,6 +105,7 @@ export default async function updateParticipant(req: NextApiRequest, res: NextAp
         appwriteAccessLogsCollection,
         ID.unique(),
         accessLog,
+        [Permission.read(Role.team(event.access_moderators_team_id))],
       )
 
       res.status(200).json({ message: 'ok' })
@@ -111,6 +113,6 @@ export default async function updateParticipant(req: NextApiRequest, res: NextAp
       res.status(403).json({ message: 'Недостаточно прав' })
     }
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message })
+    res.status(500).json({ message: mapAppwriteErroToMessage((error as Error).message) })
   }
 }
