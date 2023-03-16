@@ -12,9 +12,9 @@ import {
 import { EventDocument } from '@/lib/models/EventDocument'
 
 export default async function updateParticipant(req: NextApiRequest, res: NextApiResponse) {
-  const { eventID, redirectUrl, jwt, receivedId } = await req.body
+  const { eventID, jwt, receivedId } = await req.body
 
-  if (!eventID || !redirectUrl || !jwt || !receivedId) {
+  if (!eventID || !jwt || !receivedId) {
     res.status(400).json({ message: 'Неверный запрос' })
     return
   }
@@ -72,7 +72,7 @@ export default async function updateParticipant(req: NextApiRequest, res: NextAp
         event.participants_team_id,
         account.email,
         [],
-        redirectUrl,
+        process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME!,
       )
 
       const accessLog = {
