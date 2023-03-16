@@ -11,10 +11,22 @@ import {
 import { EventDocument } from '@/lib/models/EventDocument'
 
 export default async function getUserById(req: NextApiRequest, res: NextApiResponse) {
-  const { userId, eventId, jwt } = await req.body
+  let userId: string
+  let eventId: string
+  let jwt: string
+
+  if (req.method === 'POST') {
+    userId = req.body.userId
+    eventId = req.body.eventId
+    jwt = req.body.jwt
+  } else {
+    userId = req.query.userId as string
+    eventId = req.query.eventId as string
+    jwt = req.query.jwt as string
+  }
 
   if (!userId || !eventId || !jwt) {
-    return res.status(400).json({ message: 'Не указаны все необходимые параметры.' })
+    return res.status(400).json({ message: 'Неверный запрос' })
   }
 
   const client = new Client()
@@ -59,6 +71,7 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
         const userRes = await users.get(userId)
 
         const user = {
+          id: userRes.$id,
           name: userRes.name,
           email: userRes.email,
           prefs: userRes.prefs,

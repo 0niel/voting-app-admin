@@ -12,7 +12,19 @@ import { EventDocument } from '@/lib/models/EventDocument'
 
 // Поиск пользователей по email или name (только для модераторов доступа и суперпользователей)
 export default async function searchUser(req: NextApiRequest, res: NextApiResponse) {
-  const { eventID, substring, jwt } = await req.body
+  let substring: string
+  let eventID: string
+  let jwt: string
+
+  if (req.method === 'POST') {
+    substring = req.body.substring
+    eventID = req.body.eventID
+    jwt = req.body.jwt
+  } else {
+    substring = req.query.substring as string
+    eventID = req.query.eventID as string
+    jwt = req.query.jwt as string
+  }
 
   const client = new Client()
     .setEndpoint(appwriteEndpoint)
@@ -58,6 +70,7 @@ export default async function searchUser(req: NextApiRequest, res: NextApiRespon
       const usersList = await users.list([Query.limit(5)], substring)
 
       const usersRes: {
+        id: string
         name: string
         email: string
         prefs: {
@@ -68,12 +81,14 @@ export default async function searchUser(req: NextApiRequest, res: NextApiRespon
       usersList.users.map(async (user) => {
         const name = user.name
         const email = user.email
+        const id = user.$id
 
         if (usersRes.some((user) => user.email === email)) {
           return
         }
 
         usersRes.push({
+          id,
           name,
           email,
           prefs: user.prefs,
