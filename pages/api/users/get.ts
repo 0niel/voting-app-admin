@@ -58,17 +58,20 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
 
       const users = new Users(server)
 
-      const userRes = await users.get(userId)
+      try {
+        const userRes = await users.get(userId)
 
-      const user = {
-        id: userRes.$id,
-        name: userRes.name,
-        email: userRes.email,
-        prefs: userRes.prefs,
+        const user = {
+          id: userRes.$id,
+          name: userRes.name,
+          email: userRes.email,
+          prefs: userRes.prefs,
+        } as UserResponseType
+
+        res.status(200).json({ user: user })
+      } catch (error) {
+        res.status(404).json({ message: 'Пользователь не найден.' })
       }
-
-      res.status(200).json({ user: user })
-      return
     } else {
       res.status(403).json({ message: 'У Вас нет доступа к этому действию.' })
     }
