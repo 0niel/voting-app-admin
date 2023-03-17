@@ -10,6 +10,7 @@ import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 import CopyPollModal from '@/components/events/polls/CopyPollModal'
+import CountDown from '@/components/events/polls/CountDown'
 import CreatePollModal from '@/components/events/polls/CreatePollModal'
 import DeletePollModal from '@/components/events/polls/DeletePollModal'
 import ResetVotesPollModal from '@/components/events/polls/ResetVotesPollModal'
@@ -26,7 +27,6 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
 import { formatDate } from '@/lib/formatDate'
 import { EventDocument } from '@/lib/models/EventDocument'
-import CountDown from '@/components/events/polls/CountDown'
 
 const columns: Column[] = [
   { title: 'id' },
