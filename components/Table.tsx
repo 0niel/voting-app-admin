@@ -148,7 +148,7 @@ export default function Table(props: TableProps) {
                           20
                         </option>
                         <option value={25} className='block w-full'>
-                          10
+                          25
                         </option>
                         <option value={30} className='block w-full'>
                           30
