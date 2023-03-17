@@ -1,9 +1,15 @@
-import { ArrowPathIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
-import { Databases, Models, Query, Teams } from 'appwrite'
+import {
+  ArrowPathIcon,
+  DocumentDuplicateIcon,
+  PencilIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline'
+import { Databases, Models, Query } from 'appwrite'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
+import CopyPollModal from '@/components/events/polls/CopyPollModal'
 import CreatePollModal from '@/components/events/polls/CreatePollModal'
 import DeletePollModal from '@/components/events/polls/DeletePollModal'
 import ResetVotesPollModal from '@/components/events/polls/ResetVotesPollModal'
@@ -138,7 +144,13 @@ const PollList = () => {
   const [polls, setPolls] = useState<Models.Document[]>([])
   const databases = new Databases(client)
   const [event, setEvent] = useState<EventDocument>()
-  const { setCreatePoll, setPollIdToUpdate, setPollIdToDelete, setPollIdToResetVotes } = usePoll()
+  const {
+    setCreatePoll,
+    setPollIdToUpdate,
+    setPollIdToDelete,
+    setPollIdToResetVotes,
+    setPollIdToCopy,
+  } = usePoll()
 
   const [timeLeft, setTimeLeft] = useState<number[]>([])
 
@@ -274,8 +286,11 @@ const PollList = () => {
           </button>
           <button
             className='btn-outline btn-secondary btn'
-            onClick={() => setPollIdToDelete(poll.$id)}
+            onClick={() => setPollIdToCopy(poll.$id)}
           >
+            <DocumentDuplicateIcon className='h-6 w-6' />
+          </button>
+          <button className='btn-outline btn-error btn' onClick={() => setPollIdToDelete(poll.$id)}>
             <TrashIcon className='h-6 w-6' />
           </button>
           <button
@@ -304,6 +319,7 @@ const PollList = () => {
       <UpdatePollModal />
       <DeletePollModal />
       <ResetVotesPollModal />
+      <CopyPollModal />
     </>
   )
 }
