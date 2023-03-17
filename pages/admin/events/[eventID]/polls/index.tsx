@@ -1,4 +1,4 @@
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { ArrowPathIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { Databases, Models, Query, Teams } from 'appwrite'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
@@ -20,6 +20,7 @@ import { usePoll } from '@/context/PollContext'
 import { formatDate } from '@/lib/formatDate'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { pluralForm } from '@/lib/pluralForm'
+import ResetVotesPollModal from "@/components/events/polls/ResetVotesPollModal";
 
 const columns: Column[] = [
   { title: 'id' },
@@ -137,7 +138,7 @@ const PollList = () => {
   const [polls, setPolls] = useState<Models.Document[]>([])
   const databases = new Databases(client)
   const [event, setEvent] = useState<EventDocument>()
-  const { setCreatePoll, setPollIdToUpdate, setPollIdToDelete } = usePoll()
+  const { setCreatePoll, setPollIdToUpdate, setPollIdToDelete, setPollIdToResetVotes } = usePoll()
 
   const [timeLeft, setTimeLeft] = useState<number[]>([])
 
@@ -277,6 +278,12 @@ const PollList = () => {
           >
             <TrashIcon className='h-6 w-6' />
           </button>
+          <button
+            className='btn-outline btn-secondary btn'
+            onClick={() => setPollIdToResetVotes(poll.$id)}
+          >
+            <ArrowPathIcon className='h-6 w-6' />
+          </button>
         </div>
       ),
     },
@@ -296,6 +303,7 @@ const PollList = () => {
       <CreatePollModal />
       <UpdatePollModal />
       <DeletePollModal />
+      <ResetVotesPollModal />
     </>
   )
 }
