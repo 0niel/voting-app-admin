@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast'
 
 import CreatePollModal from '@/components/events/polls/CreatePollModal'
 import DeletePollModal from '@/components/events/polls/DeletePollModal'
+import ResetVotesPollModal from '@/components/events/polls/ResetVotesPollModal'
 import UpdatePollModal from '@/components/events/polls/UpdatePollModal'
 import TeamsNavigation from '@/components/events/TeamsNavigation'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
@@ -20,7 +21,6 @@ import { usePoll } from '@/context/PollContext'
 import { formatDate } from '@/lib/formatDate'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { pluralForm } from '@/lib/pluralForm'
-import ResetVotesPollModal from "@/components/events/polls/ResetVotesPollModal";
 
 const columns: Column[] = [
   { title: 'id' },
