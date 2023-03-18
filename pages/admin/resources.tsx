@@ -1,4 +1,4 @@
-import { TrashIcon } from '@heroicons/react/24/outline'
+import {DocumentDuplicateIcon, PencilIcon, TrashIcon} from '@heroicons/react/24/outline'
 import { Databases } from 'appwrite'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -11,9 +11,11 @@ import { appwriteResourcesCollection, appwriteVotingDatabase } from '@/constants
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useResource } from '@/context/ResourceContext'
 import { ResourceDocument } from '@/lib/models/ResourceDocument'
+import UpdateResourceModal from '@/components/resource/UpdateResourceModal'
+import CopyResourceModal from '@/components/resource/CopyResourceModal'
 
 const Resources = () => {
-  const { setCreateResource, setResourceIdToDelete } = useResource()
+  const { setCreateResource, setResourceIdToDelete, setResourceIdToUpdate, setResourceIdToCopy } = useResource()
 
   const { client } = useAppwrite()
   const databases = new Databases(client)
@@ -69,12 +71,26 @@ const Resources = () => {
     { value: <div dangerouslySetInnerHTML={{ __html: resource.svg_icon }} /> },
     {
       value: (
-        <button
-          className='btn-outline btn-secondary btn'
-          onClick={() => setResourceIdToDelete(resource.$id)}
-        >
-          <TrashIcon className='h-6 w-6' />
-        </button>
+        <div className='flex space-x-2'>
+          <button
+            className='btn-outline btn-secondary btn'
+            onClick={() => setResourceIdToUpdate(resource.$id)}
+          >
+            <PencilIcon className='h-6 w-6' />
+          </button>
+          <button
+            className='btn-outline btn-secondary btn'
+            onClick={() => setResourceIdToCopy(resource.$id)}
+          >
+            <DocumentDuplicateIcon className='h-6 w-6' />
+          </button>
+          <button
+            className='btn-outline btn-secondary btn'
+            onClick={() => setResourceIdToDelete(resource.$id)}
+          >
+            <TrashIcon className='h-6 w-6' />
+          </button>
+        </div>
       ),
     },
   ])
@@ -90,6 +106,8 @@ const Resources = () => {
         onActionClick={() => setCreateResource(true)}
       />
       <CreateResourceModal />
+      <CopyResourceModal />
+      <UpdateResourceModal />
       <DeleteResourceModal />
     </>
   )

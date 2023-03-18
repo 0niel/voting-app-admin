@@ -9,6 +9,7 @@ import Modal from '@/components/modal/Modal'
 import {
   appwriteEventsCollection,
   appwriteListEventsLimit,
+  appwritePollsCollection,
   appwriteResourcesCollection,
   appwriteVotingDatabase,
 } from '@/constants/constants'
@@ -16,10 +17,14 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { useResource } from '@/context/ResourceContext'
 import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 import fetchJson from '@/lib/fetchJson'
+import { isValidPoll } from '@/lib/isValidPoll'
+import { isValidResource } from '@/lib/isValidResource'
 import { EventDocument } from '@/lib/models/EventDocument'
+import { PollDocument } from '@/lib/models/PollDocument'
+import { ResourceDocument } from '@/lib/models/ResourceDocument'
 
-export default function CreateResourceModal() {
-  const { createResource, setCreateResource } = useResource()
+export default function UpdateResourceModal() {
+  const { resourceIdToUpdate, setResourceIdToUpdate } = useResource()
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
   const [eventId, setEventId] = useState<string | null>(null)
@@ -29,6 +34,7 @@ export default function CreateResourceModal() {
 
   const { client } = useAppwrite()
   const databases = new Databases(client)
+  const account = new Account(client)
 
   const feather = require('feather-icons')
   const iconNames = Object.keys(feather.icons)
@@ -44,38 +50,43 @@ export default function CreateResourceModal() {
       setEvents(_events.documents as EventDocument[])
     }
     fetchEvents().catch((error) => toast.error(error.message))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
-  async function addResourceToDatabase() {
-    try {
-      if (name === '' || url === '' || svgIcon === '') {
-        toast.error('Заполните все поля')
-        return
-      }
-
-      const event = events.find((event) => event.$id === eventId)
-
-      const newResource = await databases.createDocument(
+    const fetchResource = async () => {
+      const resource = (await databases.getDocument(
         appwriteVotingDatabase,
         appwriteResourcesCollection,
-        ID.unique(),
-        {
-          name: name,
-          url: url,
-          event_id: event?.$id ?? null,
-          svg_icon: feather.icons[svgIcon].toSvg(),
-        },
-      )
-      toast.success('Ресурс успешно создан')
-      setName('')
-      setUrl('')
-      setEventId(null)
-      setSvgIcon('')
-      setCreateResource(false)
-    } catch (error: any) {
-      toast.error(mapAppwriteErroToMessage(error.message))
+        resourceIdToUpdate!,
+      )) as ResourceDocument
+      setName(resource.name)
+      setUrl(resource.url)
+      setEventId(resource.event_id)
+      setSvgIcon(resource.svg_icon)
     }
+
+    if (resourceIdToUpdate !== undefined) {
+      fetchResource().catch((error: any) => toast.error(error.message))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resourceIdToUpdate])
+
+  async function updateResourceInDatabase() {
+    if (!isValidResource(name!, url!, svgIcon!)) {
+      return
+    }
+    const jwt = (await account.createJWT()).jwt
+    await fetchJson('/api/resources/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: name,
+        url: url,
+        eventId: eventId,
+        svgIcon: feather.icons[svgIcon].toSvg(),
+        resourceID: resourceIdToUpdate,
+        jwt,
+      }),
+    })
+    setResourceIdToUpdate(undefined)
   }
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -86,11 +97,11 @@ export default function CreateResourceModal() {
 
   return (
     <Modal
-      isOpen={createResource}
-      onAccept={addResourceToDatabase}
-      acceptButtonName='Создать'
-      onCancel={() => setCreateResource(false)}
-      title='Создать ресурс'
+      isOpen={resourceIdToUpdate !== undefined}
+      onAccept={updateResourceInDatabase}
+      acceptButtonName='Обновить'
+      onCancel={() => setResourceIdToUpdate(undefined)}
+      title='Обновить ресурс'
     >
       <div className='form-control w-full pt-5'>
         <label className='label'>

@@ -36,7 +36,7 @@ export default function DeleteResourceModal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceIdToDelete])
 
-  async function deleteResouce() {
+  async function deleteResource() {
     try {
       await databases.deleteDocument(
         appwriteVotingDatabase,
@@ -52,7 +52,7 @@ export default function DeleteResourceModal() {
   return (
     <Modal
       isOpen={resourceIdToDelete !== undefined}
-      onAccept={deleteResouce}
+      onAccept={deleteResource}
       acceptButtonName='Удалить'
       onCancel={() => setResourceIdToDelete(undefined)}
       title={`Удалить ресурс ${resourceToDelete?.name}`}
