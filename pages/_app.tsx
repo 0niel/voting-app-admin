@@ -11,6 +11,7 @@ import { AppwriteProvider } from '@/context/AppwriteContext'
 import { EventProvider } from '@/context/EventContext'
 import { MembershipProvider } from '@/context/MembershipContext'
 import { PollProvider } from '@/context/PollContext'
+import { ResourceProvider } from '@/context/ResourceContext'
 import fetchJson from '@/lib/fetchJson'
 
 registerLocale('ru', ru)
@@ -32,16 +33,18 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       <EventProvider>
         <MembershipProvider>
           <PollProvider>
-            <SWRConfig
-              value={{
-                fetcher: fetchJson,
-                onError: (err) => {
-                  console.error(err)
-                },
-              }}
-            >
-              {getLayout(<Component {...pageProps} />)}
-            </SWRConfig>
+            <ResourceProvider>
+              <SWRConfig
+                value={{
+                  fetcher: fetchJson,
+                  onError: (err) => {
+                    console.error(err)
+                  },
+                }}
+              >
+                {getLayout(<Component {...pageProps} />)}
+              </SWRConfig>
+            </ResourceProvider>
           </PollProvider>
         </MembershipProvider>
       </EventProvider>

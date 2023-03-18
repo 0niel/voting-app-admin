@@ -3,6 +3,7 @@ import {
   ArrowLeftOnRectangleIcon,
   Bars3Icon,
   CalendarIcon,
+  DocumentTextIcon,
   ShieldCheckIcon,
   UserCircleIcon,
   XMarkIcon,
@@ -44,6 +45,11 @@ const superuserNavigation: NavigationItemI[] = [
     name: 'Суперпользователи',
     href: '/admin/superusers',
     icon: ShieldCheckIcon,
+  },
+  {
+    name: 'Ресурсы',
+    href: '/admin/resources',
+    icon: DocumentTextIcon,
   },
 ]
 
