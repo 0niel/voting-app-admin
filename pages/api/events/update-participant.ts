@@ -1,10 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Account, Client, Databases, ID, Permission, Role, Teams } from 'node-appwrite'
+import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from 'node-appwrite'
 
 import {
   appwriteAccessLogsCollection,
   appwriteEndpoint,
   appwriteEventsCollection,
+  appwriteListMembershipsLimit,
   appwriteProjectId,
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
@@ -81,7 +82,9 @@ export default async function updateParticipant(req: NextApiRequest, res: NextAp
         )
       } else {
         try {
-          const memberships = await serverTeams.listMemberships(event.participants_team_id)
+          const memberships = await serverTeams.listMemberships(event.participants_team_id, [
+            Query.limit(appwriteListMembershipsLimit),
+          ])
           const membership = memberships.memberships.find((m) => m.userId === receivedId)
           if (!membership) {
             res.status(404).json({ message: 'Участник не найден' })

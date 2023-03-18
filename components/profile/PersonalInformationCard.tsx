@@ -1,9 +1,10 @@
-import { Models, Teams } from 'appwrite'
+import { Models, Query, Teams } from 'appwrite'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import PanelWindow from '@/components/PanelWindow'
 import Avatar from '@/components/profile/Avatar'
+import { appwriteListTeamsLimit } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import useUser from '@/lib/useUser'
 
@@ -14,7 +15,7 @@ export default function PersonalInformationCard() {
 
   useEffect(() => {
     async function getTeams() {
-      const teams = (await new Teams(client!).list()).teams
+      const teams = (await new Teams(client!).list([Query.limit(appwriteListTeamsLimit)])).teams
       setTeams(teams)
       console.log(teams.length)
     }

@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast'
 import Modal from '@/components/modal/Modal'
 import {
   appwriteEventsCollection,
+  appwriteListVotesLimit,
   appwritePollsCollection,
   appwriteVotesCollection,
   appwriteVotingDatabase,
@@ -41,7 +42,7 @@ export default function ResetVotesPollModal() {
     const response = await databases.listDocuments(
       appwriteVotingDatabase,
       appwriteVotesCollection,
-      [Query.limit(500), Query.equal('poll_id', pollIdToResetVotes!)],
+      [Query.limit(appwriteListVotesLimit), Query.equal('poll_id', pollIdToResetVotes!)],
     )
     const votes = response.documents
 

@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 import Modal from '@/components/modal/Modal'
-import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
+import {
+  appwriteEventsCollection,
+  appwriteListMembershipsLimit,
+  appwriteVotingDatabase,
+} from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 
@@ -50,6 +54,7 @@ export default function DeleteAccessModeratorModal() {
     await teams.deleteMembership(event!.access_moderators_team_id, membershipIDToDelete!)
     const memberships = await teams.listMemberships(event!.participants_team_id, [
       Query.equal('userId', membership!.userId),
+      Query.limit(appwriteListMembershipsLimit),
     ])
     memberships.memberships.map(async (membership) => {
       await new Teams(client!).deleteMembership(event!.participants_team_id, membership.$id)
