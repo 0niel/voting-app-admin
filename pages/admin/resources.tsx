@@ -1,21 +1,22 @@
-import {DocumentDuplicateIcon, PencilIcon, TrashIcon} from '@heroicons/react/24/outline'
+import { DocumentDuplicateIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { Databases } from 'appwrite'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
+import CopyResourceModal from '@/components/resource/CopyResourceModal'
 import CreateResourceModal from '@/components/resource/CreateResourceModal'
 import DeleteResourceModal from '@/components/resource/DeleteResourceModal'
+import UpdateResourceModal from '@/components/resource/UpdateResourceModal'
 import Table, { Cell, Column } from '@/components/Table'
 import { appwriteResourcesCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useResource } from '@/context/ResourceContext'
 import { ResourceDocument } from '@/lib/models/ResourceDocument'
-import UpdateResourceModal from '@/components/resource/UpdateResourceModal'
-import CopyResourceModal from '@/components/resource/CopyResourceModal'
 
 const Resources = () => {
-  const { setCreateResource, setResourceIdToDelete, setResourceIdToUpdate, setResourceIdToCopy } = useResource()
+  const { setCreateResource, setResourceIdToDelete, setResourceIdToUpdate, setResourceIdToCopy } =
+    useResource()
 
   const { client } = useAppwrite()
   const databases = new Databases(client)

@@ -1,5 +1,5 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import {Account, Databases, ID, Models, Teams} from 'appwrite'
+import { Account, Databases, ID, Models, Teams } from 'appwrite'
 import React, { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useOnClickOutside } from 'usehooks-ts'
