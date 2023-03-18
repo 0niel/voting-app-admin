@@ -5,6 +5,7 @@ import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from '
 import {
   appwriteEndpoint,
   appwriteEventsCollection,
+  appwriteListTeamsLimit,
   appwritePollsCollection,
   appwriteProjectId,
   appwriteVotingDatabase,
@@ -33,7 +34,12 @@ async function updatePoll(req: NextApiRequest, res: NextApiResponse) {
     )) as EventDocument
 
     const isVotingModerator =
-      (await teams.list([Query.equal('$id', event.voting_moderators_team_id)])).total == 1
+      (
+        await teams.list([
+          Query.equal('$id', event.voting_moderators_team_id),
+          Query.limit(appwriteListTeamsLimit),
+        ])
+      ).total == 1
 
     if (isVotingModerator) {
       const server = new Client()

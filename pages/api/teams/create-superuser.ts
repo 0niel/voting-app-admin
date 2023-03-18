@@ -1,7 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Client, Query, Teams } from 'node-appwrite'
 
-import { appwriteEndpoint, appwriteProjectId, appwriteSuperUsersTeam } from '@/constants/constants'
+import {
+  appwriteEndpoint,
+  appwriteListTeamsLimit,
+  appwriteProjectId,
+  appwriteSuperUsersTeam,
+} from '@/constants/constants'
 
 export function handleAlreadyInvitedException(error: any) {
   console.log(error.message)
@@ -31,7 +36,12 @@ export default async function createSuperuser(req: NextApiRequest, res: NextApiR
         .setKey(process.env.APPWRITE_API_KEY!)
 
       const serverTeams = new Teams(server)
-      const teams = (await serverTeams.list([Query.notEqual('$id', appwriteSuperUsersTeam)])).teams
+      const teams = (
+        await serverTeams.list([
+          Query.notEqual('$id', appwriteSuperUsersTeam),
+          Query.limit(appwriteListTeamsLimit),
+        ])
+      ).teams
 
       // invite in all teams
       teams.map(async (team) => {

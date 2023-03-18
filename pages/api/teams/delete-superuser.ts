@@ -4,6 +4,7 @@ import { Client, Query, Teams } from 'node-appwrite'
 import {
   appwriteEndpoint,
   appwriteListMembershipsLimit,
+  appwriteListTeamsLimit,
   appwriteProjectId,
   appwriteSuperUsersTeam,
 } from '@/constants/constants'
@@ -28,7 +29,7 @@ export default async function deleteSuperuser(req: NextApiRequest, res: NextApiR
         .setKey(process.env.APPWRITE_API_KEY!)
 
       const serverTeams = new Teams(server)
-      const teams = (await serverTeams.list()).teams
+      const teams = (await serverTeams.list([Query.limit(appwriteListTeamsLimit)])).teams
       const userMembershipIDs = (
         await Promise.all(
           teams.map(

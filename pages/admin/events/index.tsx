@@ -12,6 +12,7 @@ import {
   appwriteEventsCollection,
   appwriteListEventsLimit,
   appwriteListPollsLimit,
+  appwriteListTeamsLimit,
   appwritePollsCollection,
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
@@ -74,7 +75,9 @@ const Events = () => {
           ])
         ).documents.reverse() as EventDocument[],
       )
-      setUserTeamIDs((await teams.list()).teams.map((team) => team.$id))
+      setUserTeamIDs(
+        (await teams.list([Query.limit(appwriteListTeamsLimit)])).teams.map((team) => team.$id),
+      )
     } catch (error: any) {
       toast.error(error.message)
     }

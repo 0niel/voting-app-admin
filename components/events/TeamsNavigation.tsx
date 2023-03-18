@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast'
 
 import { useAppwrite } from '@/context/AppwriteContext'
 import { EventDocument } from '@/lib/models/EventDocument'
+import { appwriteListTeamsLimit } from '@/constants/constants'
 
 interface TeamNavigationProps {
   className?: string
@@ -24,7 +25,8 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
 
   useEffect(() => {
     const fetchTeam = async function (teamID: string) {
-      return (await teams.list([Query.equal('$id', teamID)])).total
+      return (await teams.list([Query.equal('$id', teamID), Query.limit(appwriteListTeamsLimit)]))
+        .total
     }
     fetchTeam(props.event.access_moderators_team_id)
       .then((count) => {

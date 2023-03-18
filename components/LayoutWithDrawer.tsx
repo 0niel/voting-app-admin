@@ -13,7 +13,7 @@ import React, { FormEvent, Fragment, useEffect, useState } from 'react'
 import { toast, Toaster } from 'react-hot-toast'
 
 import AdminPanelHead from '@/components/Head'
-import { appwriteSuperUsersTeam } from '@/constants/constants'
+import { appwriteListTeamsLimit, appwriteSuperUsersTeam } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import fetchJson from '@/lib/fetchJson'
 import useUser from '@/lib/useUser'
@@ -86,7 +86,14 @@ export default function LayoutWithDrawer(props: LayoutProps) {
 
   useEffect(() => {
     const fetchSuperuser = async () => {
-      setSuperuser((await teams.list([Query.equal('$id', appwriteSuperUsersTeam)])).total === 1)
+      setSuperuser(
+        (
+          await teams.list([
+            Query.equal('$id', appwriteSuperUsersTeam),
+            Query.limit(appwriteListTeamsLimit),
+          ])
+        ).total === 1,
+      )
     }
     fetchSuperuser().catch((error: any) => toast.error(error.message))
     // eslint-disable-next-line react-hooks/exhaustive-deps
