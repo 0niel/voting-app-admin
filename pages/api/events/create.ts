@@ -8,6 +8,7 @@ import {
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
 } from '@/constants/constants'
+import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
 
 export default async function create(req: NextApiRequest, res: NextApiResponse) {
   const { eventName, startAtDateTime, jwt } = req.body
@@ -87,6 +88,6 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
       res.status(403).json({ message: 'Client is not superuser.' })
     }
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message })
+    res.status(500).json({ message: mapAppwriteErroToMessage((error as Error).message) })
   }
 }
