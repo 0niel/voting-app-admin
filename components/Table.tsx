@@ -47,6 +47,7 @@ export default function Table(props: TableProps) {
     setItemsPerPage(parseInt(e.target.value))
     setPageCount(Math.ceil(props.rows.length / parseInt(e.target.value)))
     setOffset((currentPage - 1) * parseInt(e.target.value))
+    setCurrentPage(1)
   }
 
   return (
