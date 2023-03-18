@@ -30,8 +30,11 @@ const Superusers = () => {
 
   async function updateMemberships() {
     setMemberships(
-      (await teams.listMemberships(appwriteSuperUsersTeam),
-      [Query.limit(appwriteListMembershipsLimit)]).memberships.reverse(),
+      (
+        await teams.listMemberships(appwriteSuperUsersTeam, [
+          Query.limit(appwriteListMembershipsLimit),
+        ])
+      ).memberships.reverse(),
     )
   }
   const rows = memberships.map((membership) => {
