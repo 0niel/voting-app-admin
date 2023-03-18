@@ -1,4 +1,4 @@
-import { Databases, Models, Teams } from 'appwrite'
+import { Databases, Models, Query, Teams } from 'appwrite'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -8,7 +8,11 @@ import DeleteAccessModeratorModal from '@/components/events/access-moderators/De
 import TeamsNavigation from '@/components/events/TeamsNavigation'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import Table, { Cell } from '@/components/Table'
-import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
+import {
+  appwriteEventsCollection,
+  appwriteListMembershipsLimit,
+  appwriteVotingDatabase,
+} from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import { GetMembershipRows, membershipColumns } from '@/lib/memberships'
@@ -57,6 +61,7 @@ const AccessModerators = () => {
     try {
       const membershipList = await teams.listMemberships(
         _teamID || event?.access_moderators_team_id!,
+        [Query.limit(appwriteListMembershipsLimit)],
       )
       setMemberships(membershipList.memberships.reverse())
     } catch (error: any) {
