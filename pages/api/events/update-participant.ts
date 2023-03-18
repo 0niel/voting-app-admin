@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from 'node-appwrite'
+import { Account, Client, Databases, ID, Permission, Query, Role, Teams, Users } from 'node-appwrite'
 
 import {
   appwriteAccessLogsCollection,
@@ -72,11 +72,14 @@ export default async function updateParticipant(req: NextApiRequest, res: NextAp
 
       const serverTeams = new Teams(server)
       const serverDatabase = new Databases(server)
+      const serverUsers = new Users(server)
+
+      const user = await serverUsers.get(receivedId)
 
       if (req.method === 'POST') {
         await serverTeams.createMembership(
           event.participants_team_id,
-          account.email,
+          user.email,
           [],
           process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME!,
         )
