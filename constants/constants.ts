@@ -19,4 +19,10 @@ export const appwriteSuperUsersTeam = '63f746e7a52922b3dc38'
 // Содержит атрибуты: poll_id и time_left (в секундах).
 // Может быть null, если таймер не запущен, или опрос не имеет таймера.
 export const appwriteTimerCollection = '6403486e078581b4a04e'
+
+// Limits
 export const appwriteListMembershipsLimit = 500
+export const appwriteListEventsLimit = 500
+export const appwriteListPollsLimit = 500
+export const appwriteListVotesLimit = 500
+export const appwriteListTeamsLimit = 500

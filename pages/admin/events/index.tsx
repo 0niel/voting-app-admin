@@ -10,6 +10,9 @@ import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import Table, { Cell, Column } from '@/components/Table'
 import {
   appwriteEventsCollection,
+  appwriteListEventsLimit,
+  appwriteListPollsLimit,
+  appwriteListTeamsLimit,
   appwritePollsCollection,
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
@@ -61,16 +64,20 @@ const Events = () => {
       setPolls(
         (
           await databases.listDocuments(appwriteVotingDatabase, appwritePollsCollection, [
-            Query.limit(500),
+            Query.limit(appwriteListPollsLimit),
           ])
         ).documents as PollDocument[],
       )
       setEvents(
         (
-          await databases.listDocuments(appwriteVotingDatabase, appwriteEventsCollection)
+          await databases.listDocuments(appwriteVotingDatabase, appwriteEventsCollection, [
+            Query.limit(appwriteListEventsLimit),
+          ])
         ).documents.reverse() as EventDocument[],
       )
-      setUserTeamIDs((await teams.list()).teams.map((team) => team.$id))
+      setUserTeamIDs(
+        (await teams.list([Query.limit(appwriteListTeamsLimit)])).teams.map((team) => team.$id),
+      )
     } catch (error: any) {
       toast.error(error.message)
     }

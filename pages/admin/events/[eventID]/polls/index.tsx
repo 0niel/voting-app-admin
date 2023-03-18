@@ -20,6 +20,7 @@ import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import Table, { Cell, Column } from '@/components/Table'
 import {
   appwriteEventsCollection,
+  appwriteListPollsLimit,
   appwritePollsCollection,
   appwriteVotingDatabase,
 } from '@/constants/constants'
@@ -140,7 +141,7 @@ const PollList = () => {
       const pollList = await databases.listDocuments(
         appwriteVotingDatabase,
         appwritePollsCollection,
-        [Query.equal('event_id', eventID || event?.$id!)],
+        [Query.equal('event_id', eventID || event?.$id!), Query.limit(appwriteListPollsLimit)],
       )
       setPolls(pollList.documents.reverse())
     } catch (error: any) {

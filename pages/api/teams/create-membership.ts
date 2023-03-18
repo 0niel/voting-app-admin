@@ -3,7 +3,11 @@ import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Account, Client, Teams } from 'node-appwrite'
 
-import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
+import {
+  appwriteEndpoint,
+  appwriteListMembershipsLimit,
+  appwriteProjectId,
+} from '@/constants/constants'
 import { sessionOptions } from '@/lib/session'
 
 export enum TeamAppointment {
@@ -24,7 +28,10 @@ async function createMembership(req: NextApiRequest, res: NextApiResponse) {
     const account = await new Account(client).get()
     // Получаем список членов команды.
     const memberships = await new Teams(client)
-      .listMemberships(teamID, [Query.equal('userId', account.$id)])
+      .listMemberships(teamID, [
+        Query.equal('userId', account.$id),
+        Query.limit(appwriteListMembershipsLimit),
+      ])
       .then((membershipList) => membershipList.memberships)
 
     if (

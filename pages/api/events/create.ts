@@ -4,6 +4,7 @@ import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from '
 import {
   appwriteEndpoint,
   appwriteEventsCollection,
+  appwriteListMembershipsLimit,
   appwriteProjectId,
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
@@ -45,7 +46,9 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
       ).$id
       const allNewTeamIDs = [accessModeratorsTeamID, votingModeratorsTeamID, participantsTeamID]
       const superusersTeamEmails = (
-        await serverTeams.listMemberships(appwriteSuperUsersTeam)
+        await serverTeams.listMemberships(appwriteSuperUsersTeam, [
+          Query.limit(appwriteListMembershipsLimit),
+        ])
       ).memberships.map((team) => team.userEmail)
 
       await Promise.all(

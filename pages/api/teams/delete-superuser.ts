@@ -1,7 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Client, Query, Teams } from 'node-appwrite'
 
-import { appwriteEndpoint, appwriteProjectId, appwriteSuperUsersTeam } from '@/constants/constants'
+import {
+  appwriteEndpoint,
+  appwriteListMembershipsLimit,
+  appwriteListTeamsLimit,
+  appwriteProjectId,
+  appwriteSuperUsersTeam,
+} from '@/constants/constants'
 
 export default async function deleteSuperuser(req: NextApiRequest, res: NextApiResponse) {
   const { userID, jwt } = await req.body
@@ -23,12 +29,15 @@ export default async function deleteSuperuser(req: NextApiRequest, res: NextApiR
         .setKey(process.env.APPWRITE_API_KEY!)
 
       const serverTeams = new Teams(server)
-      const teams = (await serverTeams.list()).teams
+      const teams = (await serverTeams.list([Query.limit(appwriteListTeamsLimit)])).teams
       const userMembershipIDs = (
         await Promise.all(
           teams.map(
             async (team) =>
-              await serverTeams.listMemberships(team.$id, [Query.equal('userId', userID)]),
+              await serverTeams.listMemberships(team.$id, [
+                Query.equal('userId', userID),
+                Query.limit(appwriteListMembershipsLimit),
+              ]),
           ),
         )
       ).map((membershipList) => membershipList.memberships.pop()?.$id)

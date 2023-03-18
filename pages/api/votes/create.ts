@@ -4,6 +4,7 @@ import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from '
 import {
   appwriteEndpoint,
   appwriteEventsCollection,
+  appwriteListVotesLimit,
   appwritePollsCollection,
   appwriteProjectId,
   appwriteSuperUsersTeam,
@@ -84,6 +85,7 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
       const votes = await database.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
         Query.equal('voter_id', userId),
         Query.equal('poll_id', pollId),
+        Query.limit(appwriteListVotesLimit),
       ])
 
       if (votes.total > 0) {

@@ -5,6 +5,9 @@ import { toast } from 'react-hot-toast'
 
 import {
   appwriteEventsCollection,
+  appwriteListMembershipsLimit,
+  appwriteListPollsLimit,
+  appwriteListVotesLimit,
   appwritePollsCollection,
   appwriteVotesCollection,
   appwriteVotingDatabase,
@@ -87,7 +90,11 @@ const Realtime = () => {
       const _polls = (await databases.listDocuments(
         appwriteVotingDatabase,
         appwritePollsCollection,
-        [Query.equal('event_id', eventID as string), Query.orderDesc('start_at')],
+        [
+          Query.equal('event_id', eventID as string),
+          Query.orderDesc('start_at'),
+          Query.limit(appwriteListPollsLimit),
+        ],
       )) as { documents: PollDocument[] }
       const _poll = getActiveOrLastPoll(_polls.documents)
       setPoll(_poll)
@@ -98,7 +105,7 @@ const Realtime = () => {
         const _votes = (await databases.listDocuments(
           appwriteVotingDatabase,
           appwriteVotesCollection,
-          [Query.equal('poll_id', _poll.$id), Query.limit(300)],
+          [Query.equal('poll_id', _poll.$id), Query.limit(appwriteListVotesLimit)],
         )) as { documents: VoteDocument[] }
         console.log('Votes: ', _votes.documents)
         setVotes(_votes.documents)
@@ -151,7 +158,11 @@ const Realtime = () => {
               const _polls = (await databases.listDocuments(
                 appwriteVotingDatabase,
                 appwritePollsCollection,
-                [Query.equal('event_id', eventID as string), Query.orderDesc('start_at')],
+                [
+                  Query.equal('event_id', eventID as string),
+                  Query.orderDesc('start_at'),
+                  Query.limit(appwriteListPollsLimit),
+                ],
               )) as { documents: PollDocument[] }
               setPoll(getActiveOrLastPoll(_polls.documents))
             }
