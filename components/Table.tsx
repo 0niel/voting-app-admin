@@ -9,7 +9,7 @@ export interface Column {
 }
 
 export interface Cell {
-  value: string | JSX.Element
+  value: string | number | JSX.Element
   className?: string
   onClick?: () => void
 }

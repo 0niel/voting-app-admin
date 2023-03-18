@@ -2,15 +2,12 @@ import 'react-datepicker/dist/react-datepicker.css'
 
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import React from 'react'
-import ReactDatePicker from 'react-datepicker'
 
 interface PollFormForModalProps {
   question: string
   setQuestion: Function
-  startDate: Date
-  setStartDate: Function
-  finishDate: Date
-  setFinishDate: Function
+  duration: number // seconds
+  setDuration: Function
   pollOptions: string[]
   setPollOptions: Function
 }
@@ -28,33 +25,18 @@ export default function PollFormForModal(props: PollFormForModalProps) {
         />
       </div>
       <div className='p-2'>
-        <label className='mb-2 block text-sm font-medium text-neutral'>Начало голосования</label>
-        <ReactDatePicker
-          selected={props.startDate}
-          onChange={(date) => date && props.setStartDate(date)}
-          locale='ru'
-          showTimeSelect
-          timeFormat='p'
-          timeIntervals={5}
-          dateFormat='Pp'
-          shouldCloseOnSelect
-          className=' block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
-        />
-      </div>
-      <div className='p-2'>
         <label className='mb-2 block text-sm font-medium text-neutral'>
-          Завершение голосования
+          Длительность голосования (в минутах)
         </label>
-        <ReactDatePicker
-          selected={props.finishDate}
-          onChange={(date) => date && props.setFinishDate(date)}
-          locale='ru'
-          showTimeSelect
-          timeFormat='p'
-          timeIntervals={1}
-          dateFormat='Pp'
-          shouldCloseOnSelect
+        <input
+          type='text'
+          min={0}
           className=' block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          value={props.duration / 60}
+          required
+          onChange={(event) =>
+            props.setDuration((event.target.value === '' ? 0 : parseInt(event.target.value)) * 60)
+          }
         />
       </div>
       <div className='p-2'>

@@ -28,10 +28,12 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
 import { formatDate } from '@/lib/formatDate'
 import { EventDocument } from '@/lib/models/EventDocument'
+import { PollDocument } from '@/lib/models/PollDocument'
 
 const columns: Column[] = [
   { title: 'id' },
   { title: 'Вопрос' },
+  { title: 'Изначальная длительность (мин.)' },
   { title: 'Начало' },
   { title: 'Конец' },
   { title: 'Варианты голосования' },
@@ -43,7 +45,7 @@ const PollList = () => {
   const { client } = useAppwrite()
   const router = useRouter()
   const { eventID } = router.query
-  const [polls, setPolls] = useState<Models.Document[]>([])
+  const [polls, setPolls] = useState<PollDocument[]>([])
   const databases = new Databases(client)
   const [event, setEvent] = useState<EventDocument>()
   const {
@@ -68,8 +70,8 @@ const PollList = () => {
 
   useEffect(() => {
     const pollTimes = polls.map((poll) => {
-      const startAt = new Date(poll.start_at)
-      const endAt = new Date(poll.end_at)
+      const startAt = new Date(poll.start_at!)
+      const endAt = new Date(poll.end_at!)
       const now = new Date()
       let timeLeft = endAt.getTime() - now.getTime()
 
@@ -97,12 +99,12 @@ const PollList = () => {
         if (doc.$collectionId === appwritePollsCollection) {
           if (doc.event_id === eventID) {
             if (eventAction === 'create') {
-              setPolls((polls) => [doc, ...polls])
+              setPolls((polls) => [doc as PollDocument, ...polls])
             } else if (eventAction === 'update') {
               setPolls((polls) =>
                 polls.map((poll) => {
                   if (poll.$id === doc.$id) {
-                    return doc
+                    return doc as PollDocument
                   }
                   return poll
                 }),
@@ -143,7 +145,7 @@ const PollList = () => {
         appwritePollsCollection,
         [Query.equal('event_id', eventID || event?.$id!), Query.limit(appwriteListPollsLimit)],
       )
-      setPolls(pollList.documents.reverse())
+      setPolls(pollList.documents.reverse() as PollDocument[])
     } catch (error: any) {
       toast.error(error.message)
     }
@@ -158,11 +160,32 @@ const PollList = () => {
     })
   }
 
+  const setTimeStart = async (time: number, pollIdToUpdate: string) => {
+    const poll = (await databases.getDocument(
+      appwriteVotingDatabase,
+      appwritePollsCollection,
+      pollIdToUpdate,
+    )) as PollDocument
+    console.log('setTimeStart', time, pollIdToUpdate)
+    if (poll.start_at) {
+      toast.error('Голосование уже запущено.')
+      return
+    }
+    const timeStart = new Date(time).toISOString()
+    const timeEnd = new Date(time + poll.duration * 1000).toISOString()
+
+    databases.updateDocument(appwriteVotingDatabase, appwritePollsCollection, pollIdToUpdate, {
+      start_at: timeStart,
+      end_at: timeEnd,
+    })
+  }
+
   const rows: Cell[][] = polls.map((poll: Models.Document) => [
     { value: poll.$id },
     { value: poll.question },
-    { value: formatDate(poll.start_at) },
-    { value: formatDate(poll.end_at) },
+    { value: poll.duration / 60 },
+    { value: poll.start_at ? formatDate(poll.start_at) : 'нет' },
+    { value: poll.end_at ? formatDate(poll.end_at) : 'нет' },
     {
       value: poll.poll_options.map((option: string, index: number) => (
         <li key={index}>{option}</li>
@@ -171,9 +194,11 @@ const PollList = () => {
     {
       value: (
         <CountDown
-          pollId={poll.$id}
+          isStarted={poll.start_at as unknown as boolean}
+          setTimeStart={setTimeStart}
           setTimeEnd={setTimeEnd}
-          timeLeft={timeLeft[polls.indexOf(poll)]}
+          timeLeft={timeLeft[polls.indexOf(poll as PollDocument)]}
+          pollId={poll.$id}
         />
       ),
     },

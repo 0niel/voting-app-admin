@@ -16,8 +16,6 @@ import { EventDocument } from '@/lib/models/EventDocument'
 
 export default function CreatePollModal() {
   const initialQuestion = ''
-  const initialStartDate = new Date()
-  const initialFinishDate = new Date()
   const initialPollOptions = ['За', 'Против', 'Воздержусь']
 
   const router = useRouter()
@@ -26,16 +24,13 @@ export default function CreatePollModal() {
   const databases = new Databases(client)
   const { createPoll, setCreatePoll } = usePoll()
   const [question, setQuestion] = useState(initialQuestion)
-  const [startDate, setStartDate] = useState(initialStartDate)
-  const [finishDate, setFinishDate] = useState(initialFinishDate)
+  const [duration, setDuration] = useState<number>(0)
   const [pollOptions, setPollOptions] = useState<string[]>(initialPollOptions)
   const [event, setEvent] = useState<EventDocument>()
   const account = new Account(client)
 
   useEffect(() => {
     setQuestion(initialQuestion)
-    setStartDate(initialStartDate)
-    setFinishDate(initialFinishDate)
     setPollOptions(initialPollOptions)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createPoll])
@@ -57,7 +52,7 @@ export default function CreatePollModal() {
   }, [router.isReady])
 
   async function addPollToDatabase() {
-    if (!isValidPoll(question, startDate, finishDate, pollOptions)) {
+    if (!isValidPoll(question, duration, pollOptions)) {
       return
     }
     const jwt = (await account.createJWT()).jwt
@@ -66,8 +61,7 @@ export default function CreatePollModal() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         question: question,
-        startAt: startDate.toISOString(),
-        endAt: finishDate.toISOString(),
+        duration,
         pollOptions: pollOptions,
         eventID: event!.$id,
         jwt,
@@ -87,10 +81,8 @@ export default function CreatePollModal() {
       <PollFormForModal
         question={question}
         setQuestion={setQuestion}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        finishDate={finishDate}
-        setFinishDate={setFinishDate}
+        duration={duration}
+        setDuration={setDuration}
         pollOptions={pollOptions}
         setPollOptions={setPollOptions}
       />

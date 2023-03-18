@@ -1,19 +1,13 @@
-import { Account, Databases, Query } from 'appwrite'
+import { Account, Databases } from 'appwrite'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 import Modal from '@/components/modal/Modal'
-import {
-  appwriteEventsCollection,
-  appwritePollsCollection,
-  appwriteVotesCollection,
-  appwriteVotingDatabase,
-} from '@/constants/constants'
+import { appwritePollsCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
 import fetchJson from '@/lib/fetchJson'
-import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 
 export default function CopyPollModal() {
@@ -21,8 +15,9 @@ export default function CopyPollModal() {
   const router = useRouter()
   const { eventID } = router.query
   const [question, setQuestion] = useState<string>()
-  const [startDate, setStartDate] = useState<Date>(new Date())
-  const [finishDate, setFinishDate] = useState<Date>(new Date())
+  const [startDate, setStartDate] = useState<Date>()
+  const [finishDate, setFinishDate] = useState<Date>()
+  const [duration, setDuration] = useState(0)
   const [pollOptions, setPollOptions] = useState<string[]>([])
   const { client } = useAppwrite()
   const databases = new Databases(client)
@@ -36,8 +31,9 @@ export default function CopyPollModal() {
         pollIdToCopy!,
       )) as PollDocument
       setQuestion(poll.question)
-      setStartDate(new Date(poll.start_at))
-      setFinishDate(new Date(poll.end_at))
+      setDuration(poll.duration)
+      setStartDate(poll.start_at ? new Date(poll.start_at) : undefined)
+      setFinishDate(poll.end_at ? new Date(poll.end_at) : undefined)
       setPollOptions(poll.poll_options)
     }
 
@@ -53,8 +49,9 @@ export default function CopyPollModal() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         question: question + ' (копия)',
-        startAt: startDate.toISOString(),
-        endAt: finishDate.toISOString(),
+        startAt: startDate && startDate.toISOString(),
+        endAt: finishDate && finishDate.toISOString(),
+        duration,
         pollOptions: pollOptions,
         eventID: eventID,
         jwt,

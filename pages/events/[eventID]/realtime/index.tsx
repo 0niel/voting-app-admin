@@ -5,7 +5,6 @@ import { toast } from 'react-hot-toast'
 
 import {
   appwriteEventsCollection,
-  appwriteListMembershipsLimit,
   appwriteListPollsLimit,
   appwriteListVotesLimit,
   appwritePollsCollection,
@@ -62,9 +61,13 @@ const Realtime = () => {
     const now = new Date()
 
     const activePoll = polls.find((poll) => {
-      const startAt = new Date(poll.start_at)
-      const endAt = new Date(poll.end_at)
-      return now >= startAt && now <= endAt
+      if (poll.start_at && poll.end_at) {
+        const startAt = new Date(poll.start_at)
+        const endAt = new Date(poll.end_at)
+        return now >= startAt && now <= endAt
+      } else {
+        return false
+      }
     })
 
     if (activePoll) {
@@ -90,11 +93,7 @@ const Realtime = () => {
       const _polls = (await databases.listDocuments(
         appwriteVotingDatabase,
         appwritePollsCollection,
-        [
-          Query.equal('event_id', eventID as string),
-          Query.orderDesc('start_at'),
-          Query.limit(appwriteListPollsLimit),
-        ],
+        [Query.equal('event_id', eventID as string), Query.limit(appwriteListPollsLimit)],
       )) as { documents: PollDocument[] }
       const _poll = getActiveOrLastPoll(_polls.documents)
       setPoll(_poll)
@@ -119,7 +118,7 @@ const Realtime = () => {
   }, [router.isReady])
 
   useEffect(() => {
-    if (poll) {
+    if (poll && poll.start_at && poll.end_at) {
       const startAt = new Date(poll.start_at)
       const endAt = new Date(poll.end_at)
       const now = new Date()
@@ -158,11 +157,7 @@ const Realtime = () => {
               const _polls = (await databases.listDocuments(
                 appwriteVotingDatabase,
                 appwritePollsCollection,
-                [
-                  Query.equal('event_id', eventID as string),
-                  Query.orderDesc('start_at'),
-                  Query.limit(appwriteListPollsLimit),
-                ],
+                [Query.equal('event_id', eventID as string), Query.limit(appwriteListPollsLimit)],
               )) as { documents: PollDocument[] }
               setPoll(getActiveOrLastPoll(_polls.documents))
             }

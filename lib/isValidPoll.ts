@@ -1,17 +1,12 @@
 import { toast } from 'react-hot-toast'
 
-export function isValidPoll(
-  question: string,
-  startDate: Date,
-  finishDate: Date,
-  pollOptions: string[],
-) {
+export function isValidPoll(question: string, duration: number, pollOptions: string[]) {
   if (question.length === 0) {
     toast.error('Не указан вопрос голосования.')
     return false
   }
-  if (startDate > finishDate) {
-    toast.error('Дата начала голосования позже его окончания.')
+  if (duration < 0) {
+    toast.error('Длительность не может быть отрицательной.')
     return false
   }
   if (pollOptions.length < 2) {
