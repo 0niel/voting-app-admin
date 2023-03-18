@@ -1,5 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Account, Client, Databases, ID, Permission, Query, Role, Teams, Users } from 'node-appwrite'
+import {
+  Account,
+  Client,
+  Databases,
+  ID,
+  Permission,
+  Query,
+  Role,
+  Teams,
+  Users,
+} from 'node-appwrite'
 
 import {
   appwriteAccessLogsCollection,
