@@ -1,4 +1,4 @@
-import { Databases, Models, Teams } from 'appwrite'
+import { Databases, Models, Query, Teams } from 'appwrite'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -8,7 +8,11 @@ import DeleteParticipantsModal from '@/components/events/participants/DeletePart
 import TeamsNavigation from '@/components/events/TeamsNavigation'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import Table, { Cell } from '@/components/Table'
-import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
+import {
+  appwriteEventsCollection,
+  appwriteListMembershipsLimit,
+  appwriteVotingDatabase,
+} from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import { GetMembershipRows, membershipColumns } from '@/lib/memberships'
@@ -63,7 +67,9 @@ const Participants = () => {
 
   async function updateMemberships(_teamID?: string) {
     try {
-      const membershipList = await teams.listMemberships(_teamID || event?.participants_team_id!)
+      const membershipList = await teams.listMemberships(_teamID || event?.participants_team_id!, [
+        Query.limit(appwriteListMembershipsLimit),
+      ])
       setMemberships(membershipList.memberships.reverse())
     } catch (error: any) {
       toast.error(error.message)

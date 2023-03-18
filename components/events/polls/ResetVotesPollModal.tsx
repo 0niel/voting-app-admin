@@ -26,7 +26,7 @@ export default function ResetVotesPollModal() {
     const fetchEvent = async () => {
       const _event = await databases.getDocument(
         appwriteVotingDatabase,
-        appwriteVotesCollection,
+        appwriteEventsCollection,
         eventID as string,
       )
       setEvent(_event as EventDocument)

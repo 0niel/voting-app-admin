@@ -1,4 +1,5 @@
-import React from 'react'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import React, { useEffect, useState } from 'react'
 
 export interface Column {
   title: string
@@ -25,6 +26,29 @@ export interface TableProps {
 }
 
 export default function Table(props: TableProps) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [pageCount, setPageCount] = useState(1)
+  const [offset, setOffset] = useState(1)
+
+  useEffect(() => {
+    setPageCount(Math.ceil(props.rows.length / itemsPerPage))
+    setOffset((currentPage - 1) * itemsPerPage)
+  }, [currentPage, itemsPerPage, props.rows.length])
+
+  const handleClick = (page: number) => {
+    if (page < 1 || page > pageCount) {
+      return
+    }
+    setCurrentPage(page)
+  }
+
+  const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setItemsPerPage(parseInt(e.target.value))
+    setPageCount(Math.ceil(props.rows.length / parseInt(e.target.value)))
+    setOffset((currentPage - 1) * parseInt(e.target.value))
+  }
+
   return (
     <div className='px-4 sm:px-6 lg:px-8'>
       <div className='sm:flex sm:items-center'>
@@ -71,7 +95,7 @@ export default function Table(props: TableProps) {
                   </tr>
                 </thead>
                 <tbody className='divide-y divide-gray-200 bg-white'>
-                  {props.rows.map((row, rowIndex) => (
+                  {props.rows.slice(offset, offset + itemsPerPage).map((row, rowIndex) => (
                     <tr key={rowIndex}>
                       {row.map((cell, cellIndex) => (
                         <td
@@ -99,6 +123,81 @@ export default function Table(props: TableProps) {
                   ))}
                 </tbody>
               </table>
+
+              <div className='flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6'>
+                <div className='hidden sm:flex sm:flex-1 sm:items-center sm:justify-between'>
+                  <div>
+                    <p className='text-sm text-gray-700'>
+                      <span className='px-2 py-2 font-medium'>Записей на странице:</span>
+                      <select
+                        id='rowsPerPage'
+                        className='w-15 mr-8'
+                        onChange={handleItemsPerPageChange}
+                        defaultValue={10}
+                      >
+                        <option value={5} className='block w-full'>
+                          5
+                        </option>
+                        <option value={10} className='block w-full'>
+                          10
+                        </option>
+                        <option value={15} className='block w-full'>
+                          15
+                        </option>
+                        <option value={20} className='block w-full'>
+                          20
+                        </option>
+                        <option value={25} className='block w-full'>
+                          25
+                        </option>
+                        <option value={30} className='block w-full'>
+                          30
+                        </option>
+                      </select>
+                      <span className='font-medium'>{offset + 1}</span> -{' '}
+                      <span className='font-medium'>{offset + itemsPerPage}</span> из{' '}
+                      <span className='font-medium'>{props.rows.length}</span>
+                    </p>
+                  </div>
+                  <div>
+                    <nav
+                      className='isolate inline-flex -space-x-px rounded-md shadow-sm'
+                      aria-label='Pagination'
+                    >
+                      <a
+                        href='#'
+                        onClick={() => handleClick(currentPage - 1)}
+                        className='relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+                      >
+                        <span className='sr-only'>Предыдущая</span>
+                        <ChevronLeftIcon className='h-5 w-5' aria-hidden='true' />
+                      </a>
+                      {Array.from({ length: pageCount }, (_, i) => i + 1).map((page) => (
+                        <a
+                          key={page}
+                          href='#'
+                          onClick={() => handleClick(page)}
+                          className={`${
+                            currentPage === page
+                              ? 'z-10 bg-secondary text-white'
+                              : 'text-gray-900 hover:bg-gray-50'
+                          } relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0`}
+                        >
+                          {page}
+                        </a>
+                      ))}
+                      <a
+                        href='#'
+                        onClick={() => handleClick(currentPage + 1)}
+                        className='relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+                      >
+                        <span className='sr-only'>Следующая</span>
+                        <ChevronRightIcon className='h-5 w-5' aria-hidden='true' />
+                      </a>
+                    </nav>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { TrashIcon } from '@heroicons/react/24/outline'
-import { Models, Teams } from 'appwrite'
+import { Models, Query, Teams } from 'appwrite'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
@@ -7,7 +7,7 @@ import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import CreateSuperuserModal from '@/components/superusers/CreateSuperuserModal'
 import DeleteSuperuserModal from '@/components/superusers/DeleteSuperuserModal'
 import Table from '@/components/Table'
-import { appwriteSuperUsersTeam } from '@/constants/constants'
+import { appwriteListMembershipsLimit, appwriteSuperUsersTeam } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import { formatDate } from '@/lib/formatDate'
@@ -29,7 +29,13 @@ const Superusers = () => {
   }, [])
 
   async function updateMemberships() {
-    setMemberships((await teams.listMemberships(appwriteSuperUsersTeam)).memberships.reverse())
+    setMemberships(
+      (
+        await teams.listMemberships(appwriteSuperUsersTeam, [
+          Query.limit(appwriteListMembershipsLimit),
+        ])
+      ).memberships.reverse(),
+    )
   }
   const rows = memberships.map((membership) => {
     return [
