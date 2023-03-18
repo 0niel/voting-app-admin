@@ -33,7 +33,6 @@ async function updateResource(req: NextApiRequest, res: NextApiResponse) {
         .setEndpoint(appwriteEndpoint)
         .setProject(appwriteProjectId)
         .setKey(process.env.APPWRITE_API_KEY!)
-
       await new Databases(server).updateDocument(
         appwriteVotingDatabase,
         appwriteResourcesCollection,

@@ -60,7 +60,10 @@ export default function UpdateResourceModal() {
       setName(resource.name)
       setUrl(resource.url)
       setEventId(resource.event_id)
-      setSvgIcon(resource.svg_icon)
+      const icon =
+        // @ts-ignore
+        feather.icons[iconNames.find((icon) => feather.icons[icon].toSvg() === resource.svg_icon)]
+      setSvgIcon(icon.name)
     }
 
     if (resourceIdToUpdate !== undefined) {
@@ -73,6 +76,8 @@ export default function UpdateResourceModal() {
     if (!isValidResource(name!, url!, svgIcon!)) {
       return
     }
+    const event = events.find((event) => event.$id === eventId)
+
     const jwt = (await account.createJWT()).jwt
     await fetchJson('/api/resources/update', {
       method: 'POST',
@@ -80,7 +85,7 @@ export default function UpdateResourceModal() {
       body: JSON.stringify({
         name: name,
         url: url,
-        eventId: eventId,
+        eventID: event?.$id ?? null,
         svgIcon: feather.icons[svgIcon].toSvg(),
         resourceID: resourceIdToUpdate,
         jwt,
