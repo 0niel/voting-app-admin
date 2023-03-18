@@ -1,6 +1,6 @@
 import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from 'node-appwrite'
+import { Account, Client, Databases, Query, Teams } from 'node-appwrite'
 
 import {
   appwriteEndpoint,
@@ -11,12 +11,13 @@ import {
   appwriteVotingDatabase,
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
+import { PollDocument } from '@/lib/models/PollDocument'
 import { sessionOptions } from '@/lib/session'
 
 export default withIronSessionApiRoute(updatePoll, sessionOptions)
 
 async function updatePoll(req: NextApiRequest, res: NextApiResponse) {
-  const { question, startAt, endAt, eventID, pollOptions, pollID, jwt } = await req.body
+  const { question, startAt, endAt, duration, eventID, pollOptions, pollID, jwt } = await req.body
   try {
     const client = new Client()
       .setEndpoint(appwriteEndpoint)
@@ -56,9 +57,10 @@ async function updatePoll(req: NextApiRequest, res: NextApiResponse) {
           creator_id: userID,
           start_at: startAt,
           end_at: endAt,
+          duration,
           event_id: eventID,
           poll_options: pollOptions,
-        },
+        } as PollDocument,
       )
       res.status(200).json({ message: 'ok' })
     } else {

@@ -12,11 +12,11 @@ export interface PollDocument extends Models.Document {
   /**
    * Дата и время начала голосования.
    */
-  start_at: Date
+  start_at?: string
   /**
    * Дата и время окончания голосования.
    */
-  end_at: Date
+  end_at?: string
   /**
    * ID мероприятия, к которому относится голосование.
    */
@@ -25,4 +25,8 @@ export interface PollDocument extends Models.Document {
    * Варианты ответа.
    */
   poll_options: string[]
+  /**
+   * Длительность голосования в секундах.
+   */
+  duration: number
 }

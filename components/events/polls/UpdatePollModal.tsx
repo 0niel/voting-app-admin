@@ -11,15 +11,13 @@ import { usePoll } from '@/context/PollContext'
 import fetchJson from '@/lib/fetchJson'
 import { isValidPoll } from '@/lib/isValidPoll'
 import { PollDocument } from '@/lib/models/PollDocument'
-import useUser from '@/lib/useUser'
 
 export default function UpdatePollModal() {
   const router = useRouter()
   const { eventID } = router.query
   const { pollIdToUpdate, setPollIdToUpdate } = usePoll()
-  const [question, setQuestion] = useState<string>()
-  const [startDate, setStartDate] = useState<Date>(new Date())
-  const [finishDate, setFinishDate] = useState<Date>(new Date())
+  const [question, setQuestion] = useState<string>('')
+  const [duration, setDuration] = useState<number>(0)
   const [pollOptions, setPollOptions] = useState<string[]>([])
   const { client } = useAppwrite()
   const databases = new Databases(client)
@@ -33,8 +31,7 @@ export default function UpdatePollModal() {
         pollIdToUpdate!,
       )) as PollDocument
       setQuestion(poll.question)
-      setStartDate(new Date(poll.start_at))
-      setFinishDate(new Date(poll.end_at))
+      setDuration(poll.duration)
       setPollOptions(poll.poll_options)
     }
 
@@ -45,7 +42,7 @@ export default function UpdatePollModal() {
   }, [pollIdToUpdate])
 
   async function updatePollInDatabase() {
-    if (!isValidPoll(question!, startDate!, finishDate!, pollOptions)) {
+    if (!isValidPoll(question, duration, pollOptions)) {
       return
     }
     const jwt = (await account.createJWT()).jwt
@@ -54,8 +51,7 @@ export default function UpdatePollModal() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         question: question,
-        startAt: startDate.toISOString(),
-        endAt: finishDate.toISOString(),
+        duration,
         pollOptions,
         eventID,
         pollID: pollIdToUpdate,
@@ -76,10 +72,8 @@ export default function UpdatePollModal() {
       <PollFormForModal
         question={question || ''}
         setQuestion={setQuestion}
-        startDate={startDate || new Date()}
-        setStartDate={setStartDate}
-        finishDate={finishDate || new Date()}
-        setFinishDate={setFinishDate}
+        duration={duration}
+        setDuration={setDuration}
         pollOptions={pollOptions}
         setPollOptions={setPollOptions}
       />

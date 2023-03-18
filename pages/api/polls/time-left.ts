@@ -29,6 +29,11 @@ export default async function pollTimeLeft(req: NextApiRequest, res: NextApiResp
       pollID,
     )) as PollDocument
 
+    if (!poll.start_at || !poll.end_at) {
+      res.status(500).json({ message: 'Время голосования не установлено.' })
+      return
+    }
+
     const now_time = millisecondsToSeconds(new Date().getTime())
     const start_time = millisecondsToSeconds(new Date(poll.start_at).getTime())
     const end_time = millisecondsToSeconds(new Date(poll.end_at).getTime())

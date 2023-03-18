@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react'
 
 import { pluralForm } from '@/lib/pluralForm'
 
-const CountDown = ({
-  pollId,
-  timeLeft,
-  setTimeEnd,
-}: {
+interface CountDownInterface {
   pollId: string
   timeLeft: number
+  isStarted: boolean
+  setTimeStart: (time: number, pollId: string) => void
   setTimeEnd: (time: number, pollId: string) => void
-}) => {
+}
+
+export default function CountDown(props: CountDownInterface) {
   const [days, setDays] = useState(0)
   const [hours, setHours] = useState(0)
   const [minutes, setMinutes] = useState(0)
@@ -18,16 +18,16 @@ const CountDown = ({
   const [currentTimeLeft, setCurrentTimeLeft] = useState(0)
 
   useEffect(() => {
-    setCurrentTimeLeft(timeLeft)
-  }, [timeLeft])
+    setCurrentTimeLeft(props.timeLeft)
+  }, [props.timeLeft])
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (currentTimeLeft > 0) {
-        setDays(Math.floor(timeLeft / (60 * 60 * 24)))
-        setHours(Math.floor((timeLeft / (60 * 60)) % 24))
-        setMinutes(Math.floor((timeLeft / 60) % 60))
-        setSeconds(Math.floor(timeLeft % 60))
+        setDays(Math.floor(props.timeLeft / (60 * 60 * 24)))
+        setHours(Math.floor((props.timeLeft / (60 * 60)) % 24))
+        setMinutes(Math.floor((props.timeLeft / 60) % 60))
+        setSeconds(Math.floor(props.timeLeft % 60))
       }
     }, 1000)
     return () => clearInterval(interval)
@@ -45,7 +45,7 @@ const CountDown = ({
   const updateTimeLeft = (newTimeLeft: number) => {
     setCurrentTimeLeft(newTimeLeft)
     if (newTimeLeft > 0 || newTimeLeft === 0) {
-      setTimeEnd(Date.now() + newTimeLeft * 1000, pollId)
+      props.setTimeEnd(Date.now() + newTimeLeft * 1000, props.pollId)
     }
   }
 
@@ -73,7 +73,7 @@ const CountDown = ({
           </>
         )}
       </div>
-      <div className='flex items-center'>
+      <div className='flex-col items-center'>
         <ul className='flex'>
           <li>
             <button className='btn-ghost btn' onClick={() => handleAddTime(30)}>
@@ -91,7 +91,27 @@ const CountDown = ({
             </button>
           </li>
           <li>
-            <button className='btn-ghost btn' onClick={() => handleStop()}>
+            <button className='btn-ghost btn' onClick={() => handleAddTime(600)}>
+              +10 мин
+            </button>
+          </li>
+        </ul>
+        <ul className='flex justify-center'>
+          <li>
+            <button
+              className='btn-ghost btn'
+              disabled={props.isStarted}
+              onClick={() => props.setTimeStart(Date.now(), props.pollId)}
+            >
+              Старт
+            </button>
+          </li>
+          <li>
+            <button
+              className='btn-ghost btn'
+              disabled={!props.isStarted}
+              onClick={() => handleStop()}
+            >
               Стоп
             </button>
           </li>
@@ -100,5 +120,3 @@ const CountDown = ({
     </div>
   )
 }
-
-export default CountDown
