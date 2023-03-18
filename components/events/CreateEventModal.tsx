@@ -27,9 +27,11 @@ export default function CreateEventModal() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             eventName: eventName,
+            startAtDateTime: startAtDateTime?.toISOString(),
             jwt,
           }),
         })
+        setStartAtDateTime(undefined)
         setNewEventName('')
         setCreateEvent(false)
       } else {
