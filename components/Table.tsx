@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import React, { useEffect, useState } from 'react'
 
 export interface Column {
@@ -30,6 +30,11 @@ export default function Table(props: TableProps) {
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [pageCount, setPageCount] = useState(1)
   const [offset, setOffset] = useState(1)
+  const [rows, setRows] = useState(props.rows)
+
+  useEffect(() => {
+    setRows(props.rows)
+  }, [props.rows])
 
   useEffect(() => {
     setPageCount(Math.ceil(props.rows.length / itemsPerPage))
@@ -41,6 +46,23 @@ export default function Table(props: TableProps) {
       return
     }
     setCurrentPage(page)
+  }
+
+  const filterRows = (value: string) => {
+    if (value === '') {
+      setRows(props.rows)
+      setPageCount(Math.ceil(props.rows.length / itemsPerPage))
+      setOffset((currentPage - 1) * itemsPerPage)
+      return
+    }
+    const filteredRows = props.rows.filter((row) => {
+      return row.some((cell) => {
+        return cell.value.toString().toLowerCase().includes(value.toLowerCase())
+      })
+    })
+    setRows(filteredRows)
+    setPageCount(Math.ceil(filteredRows.length / itemsPerPage))
+    setOffset((currentPage - 1) * itemsPerPage)
   }
 
   const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -72,6 +94,25 @@ export default function Table(props: TableProps) {
         )}
       </div>
       <div className='mt-8 flex flex-col'>
+        <div className='mb-4 flex items-center justify-between'>
+          <div className='text-sm text-gray-700'>
+            Всего значений: <span className='font-semibold'>{props.rows.length}</span>
+          </div>
+          <div className='relative'>
+            <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
+              <MagnifyingGlassIcon className='h-5 w-5 text-gray-400' />
+            </div>
+            <input
+              type='text'
+              name='search'
+              id='search'
+              className='focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 placeholder-gray-400 shadow-sm focus:outline-none sm:text-sm'
+              placeholder='Фильтр'
+              onChange={(e) => filterRows(e.target.value)}
+            />
+          </div>
+        </div>
+
         <div className='-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8'>
           <div className='inline-block min-w-full py-2 align-middle md:px-6 lg:px-8'>
             <div className='overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg'>
@@ -96,7 +137,7 @@ export default function Table(props: TableProps) {
                   </tr>
                 </thead>
                 <tbody className='divide-y divide-gray-200 bg-white'>
-                  {props.rows.slice(offset, offset + itemsPerPage).map((row, rowIndex) => (
+                  {rows.slice(offset, offset + itemsPerPage).map((row, rowIndex) => (
                     <tr key={rowIndex}>
                       {row.map((cell, cellIndex) => (
                         <td
