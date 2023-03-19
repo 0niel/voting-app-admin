@@ -93,7 +93,11 @@ const Realtime = () => {
       const _polls = (await databases.listDocuments(
         appwriteVotingDatabase,
         appwritePollsCollection,
-        [Query.equal('event_id', eventID as string), Query.limit(appwriteListPollsLimit)],
+        [
+          Query.equal('event_id', eventID as string),
+          Query.limit(appwriteListPollsLimit),
+          Query.orderDesc('start_at'),
+        ],
       )) as { documents: PollDocument[] }
       const _poll = getActiveOrLastPoll(_polls.documents)
       setPoll(_poll)
@@ -104,7 +108,11 @@ const Realtime = () => {
         const _votes = (await databases.listDocuments(
           appwriteVotingDatabase,
           appwriteVotesCollection,
-          [Query.equal('poll_id', _poll.$id), Query.limit(appwriteListVotesLimit)],
+          [
+            Query.equal('poll_id', _poll.$id),
+            Query.limit(appwriteListVotesLimit),
+            Query.orderDesc('start_at'),
+          ],
         )) as { documents: VoteDocument[] }
         console.log('Votes: ', _votes.documents)
         setVotes(_votes.documents)
@@ -157,7 +165,11 @@ const Realtime = () => {
               const _polls = (await databases.listDocuments(
                 appwriteVotingDatabase,
                 appwritePollsCollection,
-                [Query.equal('event_id', eventID as string), Query.limit(appwriteListPollsLimit)],
+                [
+                  Query.equal('event_id', eventID as string),
+                  Query.limit(appwriteListPollsLimit),
+                  Query.orderDesc('start_at'),
+                ],
               )) as { documents: PollDocument[] }
               setPoll(getActiveOrLastPoll(_polls.documents))
             }
