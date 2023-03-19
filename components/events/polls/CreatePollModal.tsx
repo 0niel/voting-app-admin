@@ -1,4 +1,4 @@
-import { Account, Databases } from 'appwrite'
+import { Account, Databases, Query } from 'appwrite'
 import ru from 'date-fns/locale/ru'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
@@ -7,24 +7,29 @@ import { toast } from 'react-hot-toast'
 
 import PollFormForModal from '@/components/events/polls/PollFormForModal'
 import Modal from '@/components/modal/Modal'
-import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
+import {
+  appwriteEventsCollection,
+  appwritePollsCollection,
+  appwriteVotingDatabase,
+} from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
 import fetchJson from '@/lib/fetchJson'
 import { isValidPoll } from '@/lib/isValidPoll'
 import { EventDocument } from '@/lib/models/EventDocument'
 
-export default function CreatePollModal() {
-  const initialQuestion = ''
-  const initialPollOptions = ['За', 'Против', 'Воздержусь']
+const initialQuestion = ''
+const initialPollOptions = ['За', 'Против', 'Воздержусь']
+const initialDuration = 0
 
+export default function CreatePollModal() {
   const router = useRouter()
   const { client } = useAppwrite()
   const { eventID } = router.query
   const databases = new Databases(client)
   const { createPoll, setCreatePoll } = usePoll()
   const [question, setQuestion] = useState(initialQuestion)
-  const [duration, setDuration] = useState<number>(0)
+  const [duration, setDuration] = useState<number>(initialDuration)
   const [pollOptions, setPollOptions] = useState<string[]>(initialPollOptions)
   const [event, setEvent] = useState<EventDocument>()
   const account = new Account(client)
@@ -32,6 +37,7 @@ export default function CreatePollModal() {
   useEffect(() => {
     setQuestion(initialQuestion)
     setPollOptions(initialPollOptions)
+    setDuration(initialDuration)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createPoll])
 

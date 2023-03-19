@@ -161,18 +161,25 @@ const PollList = () => {
   }
 
   const setTimeStart = async (time: number, pollIdToUpdate: string) => {
-    const poll = (await databases.getDocument(
+    const pollToStart = (await databases.getDocument(
       appwriteVotingDatabase,
       appwritePollsCollection,
       pollIdToUpdate,
     )) as PollDocument
     console.log('setTimeStart', time, pollIdToUpdate)
-    if (poll.start_at) {
+    if (pollToStart.start_at) {
       toast.error('Голосование уже запущено.')
       return
     }
+    if (
+      polls.filter((poll) => poll.start_at && poll.end_at && new Date(poll.end_at).getTime() > time)
+        .length > 0
+    ) {
+      toast.error('Запущено другое голосование.')
+      return
+    }
     const timeStart = new Date(time).toISOString()
-    const timeEnd = new Date(time + poll.duration * 1000).toISOString()
+    const timeEnd = new Date(time + pollToStart.duration * 1000).toISOString()
 
     databases.updateDocument(appwriteVotingDatabase, appwritePollsCollection, pollIdToUpdate, {
       start_at: timeStart,
