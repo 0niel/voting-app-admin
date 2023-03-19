@@ -15,8 +15,6 @@ export default function CopyPollModal() {
   const router = useRouter()
   const { eventID } = router.query
   const [question, setQuestion] = useState<string>()
-  const [startDate, setStartDate] = useState<Date>()
-  const [finishDate, setFinishDate] = useState<Date>()
   const [duration, setDuration] = useState(0)
   const [pollOptions, setPollOptions] = useState<string[]>([])
   const { client } = useAppwrite()
@@ -32,8 +30,6 @@ export default function CopyPollModal() {
       )) as PollDocument
       setQuestion(poll.question)
       setDuration(poll.duration)
-      setStartDate(poll.start_at ? new Date(poll.start_at) : undefined)
-      setFinishDate(poll.end_at ? new Date(poll.end_at) : undefined)
       setPollOptions(poll.poll_options)
     }
 
@@ -49,8 +45,8 @@ export default function CopyPollModal() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         question: question + ' (копия)',
-        startAt: startDate && startDate.toISOString(),
-        endAt: finishDate && finishDate.toISOString(),
+        startAt: null,
+        endAt: null,
         duration,
         pollOptions: pollOptions,
         eventID: eventID,
