@@ -76,22 +76,38 @@ export default function CountDown(props: CountDownInterface) {
       <div className='flex-col items-center'>
         <ul className='flex'>
           <li>
-            <button className='btn-ghost btn' onClick={() => handleAddTime(30)}>
+            <button
+              className='btn-ghost btn'
+              disabled={!props.isStarted}
+              onClick={() => handleAddTime(30)}
+            >
               +30 сек
             </button>
           </li>
           <li>
-            <button className='btn-ghost btn' onClick={() => handleAddTime(60)}>
+            <button
+              className='btn-ghost btn'
+              disabled={!props.isStarted}
+              onClick={() => handleAddTime(60)}
+            >
               +1 мин
             </button>
           </li>
           <li>
-            <button className='btn-ghost btn' onClick={() => handleAddTime(300)}>
+            <button
+              className='btn-ghost btn'
+              disabled={!props.isStarted}
+              onClick={() => handleAddTime(300)}
+            >
               +5 мин
             </button>
           </li>
           <li>
-            <button className='btn-ghost btn' onClick={() => handleAddTime(600)}>
+            <button
+              className='btn-ghost btn'
+              disabled={!props.isStarted}
+              onClick={() => handleAddTime(600)}
+            >
               +10 мин
             </button>
           </li>
