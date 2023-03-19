@@ -155,6 +155,19 @@ const PollList = () => {
     console.log('setTimeEnd', time, pollIdToUpdate)
     const timeEnd = new Date(time).toISOString()
 
+    const startedPoll = polls.find(
+      (poll) =>
+        poll.$id !== pollIdToUpdate &&
+        poll.start_at &&
+        poll.end_at &&
+        new Date(poll.start_at).getTime() < time &&
+        new Date(poll.end_at).getTime() > new Date().getTime(),
+    )
+    if (startedPoll) {
+      toast.error(`Остановите голосование «${startedPoll.question}», прежде чем продлить другое.`)
+      return
+    }
+
     databases.updateDocument(appwriteVotingDatabase, appwritePollsCollection, pollIdToUpdate, {
       end_at: timeEnd,
     })
@@ -171,11 +184,16 @@ const PollList = () => {
       toast.error('Голосование уже запущено.')
       return
     }
-    if (
-      polls.filter((poll) => poll.start_at && poll.end_at && new Date(poll.end_at).getTime() > time)
-        .length > 0
-    ) {
-      toast.error('Запущено другое голосование.')
+
+    const startedPoll = polls.find(
+      (poll) =>
+        poll.start_at &&
+        poll.end_at &&
+        poll.$id !== pollIdToUpdate &&
+        new Date(poll.end_at).getTime() > time,
+    )
+    if (startedPoll) {
+      toast.error(`Остановите голосование «${startedPoll.question}», прежде чем начинать другое.`)
       return
     }
     const timeStart = new Date(time).toISOString()
