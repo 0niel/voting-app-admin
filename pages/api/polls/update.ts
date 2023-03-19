@@ -6,8 +6,10 @@ import {
   appwriteEndpoint,
   appwriteEventsCollection,
   appwriteListTeamsLimit,
+  appwriteListVotesLimit,
   appwritePollsCollection,
   appwriteProjectId,
+  appwriteVotesCollection,
   appwriteVotingDatabase,
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
@@ -47,8 +49,23 @@ async function updatePoll(req: NextApiRequest, res: NextApiResponse) {
         .setEndpoint(appwriteEndpoint)
         .setProject(appwriteProjectId)
         .setKey(process.env.APPWRITE_API_KEY!)
+      const serverDatabases = new Databases(server)
 
-      await new Databases(server).updateDocument(
+      // delete votes if option does not exist
+      ;(
+        (
+          await serverDatabases.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
+            Query.equal('poll_id', pollID),
+            Query.limit(appwriteListVotesLimit),
+          ])
+        ).documents as PollDocument[]
+      )
+        .filter((vote) => !pollOptions.includes(vote.vote))
+        .forEach((vote) => {
+          serverDatabases.deleteDocument(appwriteVotingDatabase, appwriteVotesCollection, vote.$id)
+        })
+
+      await serverDatabases.updateDocument(
         appwriteVotingDatabase,
         appwritePollsCollection,
         pollID,

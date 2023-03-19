@@ -1,29 +1,27 @@
-import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from 'node-appwrite'
+import { Client, Databases, Query, Teams } from 'node-appwrite'
 
 import {
   appwriteEndpoint,
   appwriteEventsCollection,
   appwriteListTeamsLimit,
+  appwriteListVotesLimit,
   appwritePollsCollection,
   appwriteProjectId,
+  appwriteVotesCollection,
   appwriteVotingDatabase,
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
-import { sessionOptions } from '@/lib/session'
+import { PollDocument } from '@/lib/models/PollDocument'
 
-export default withIronSessionApiRoute(createPoll, sessionOptions)
-
-async function createPoll(req: NextApiRequest, res: NextApiResponse) {
-  const { question, startAt, endAt, duration, eventID, pollOptions, jwt } = await req.body
+export default async function deletePoll(req: NextApiRequest, res: NextApiResponse) {
+  const { eventID, pollID, jwt } = await req.body
   try {
     const client = new Client()
       .setEndpoint(appwriteEndpoint)
       .setProject(appwriteProjectId)
       .setJWT(jwt)
 
-    const userID = (await new Account(client).get()).$id
     const databases = new Databases(client)
     const teams = new Teams(client)
 
@@ -47,24 +45,20 @@ async function createPoll(req: NextApiRequest, res: NextApiResponse) {
         .setProject(appwriteProjectId)
         .setKey(process.env.APPWRITE_API_KEY!)
 
-      await new Databases(server).createDocument(
-        appwriteVotingDatabase,
-        appwritePollsCollection,
-        ID.unique(),
-        {
-          question: question,
-          creator_id: userID,
-          start_at: startAt,
-          end_at: endAt,
-          duration,
-          event_id: eventID,
-          poll_options: pollOptions,
-        },
-        [
-          Permission.read(Role.team(event!.participants_team_id)),
-          Permission.read(Role.team(event!.voting_moderators_team_id)),
-        ],
-      )
+      const serverDatabases = new Databases(server)
+      await serverDatabases.deleteDocument(appwriteVotingDatabase, appwritePollsCollection, pollID)
+
+      // delete votes if option does not exist
+      ;(
+        (
+          await serverDatabases.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
+            Query.equal('poll_id', pollID),
+            Query.limit(appwriteListVotesLimit),
+          ])
+        ).documents as PollDocument[]
+      ).forEach((vote) => {
+        databases.deleteDocument(appwriteVotingDatabase, appwriteVotesCollection, vote.$id)
+      })
       res.status(200).json({ message: 'ok' })
     } else {
       res
