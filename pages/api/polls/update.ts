@@ -49,11 +49,12 @@ async function updatePoll(req: NextApiRequest, res: NextApiResponse) {
         .setEndpoint(appwriteEndpoint)
         .setProject(appwriteProjectId)
         .setKey(process.env.APPWRITE_API_KEY!)
+      const serverDatabases = new Databases(server)
 
       // delete votes if option does not exist
       ;(
         (
-          await databases.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
+          await serverDatabases.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
             Query.equal('poll_id', pollID),
             Query.limit(appwriteListVotesLimit),
           ])
@@ -61,10 +62,10 @@ async function updatePoll(req: NextApiRequest, res: NextApiResponse) {
       )
         .filter((vote) => !pollOptions.includes(vote.vote))
         .forEach((vote) => {
-          databases.deleteDocument(appwriteVotingDatabase, appwriteVotesCollection, vote.$id)
+          serverDatabases.deleteDocument(appwriteVotingDatabase, appwriteVotesCollection, vote.$id)
         })
 
-      await new Databases(server).updateDocument(
+      await serverDatabases.updateDocument(
         appwriteVotingDatabase,
         appwritePollsCollection,
         pollID,

@@ -1,43 +1,29 @@
-import { Databases } from 'appwrite'
+import { Account } from 'appwrite'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
 
 import Modal from '@/components/modal/Modal'
-import {
-  appwriteEventsCollection,
-  appwritePollsCollection,
-  appwriteVotingDatabase,
-} from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
-import { EventDocument } from '@/lib/models/EventDocument'
+import fetchJson from '@/lib/fetchJson'
 
 export default function DeletePollModal() {
   const { pollIdToDelete, setPollIdToDelete } = usePoll()
   const router = useRouter()
   const { eventID } = router.query
   const { client } = useAppwrite()
-  const [event, setEvent] = useState<EventDocument>()
-  const databases = new Databases(client)
-
-  useEffect(() => {
-    const fetchEvent = async () => {
-      const _event = await databases.getDocument(
-        appwriteVotingDatabase,
-        appwriteEventsCollection,
-        eventID as string,
-      )
-      setEvent(_event as EventDocument)
-    }
-    if (router.isReady) {
-      fetchEvent().catch((error) => toast.error(error.message))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady])
+  const account = new Account(client)
 
   async function deletePollFromDatabase() {
-    await databases.deleteDocument(appwriteVotingDatabase, appwritePollsCollection, pollIdToDelete!)
+    const jwt = (await account.createJWT()).jwt
+    await fetchJson('/api/polls/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventID,
+        pollID: pollIdToDelete,
+        jwt,
+      }),
+    })
     setPollIdToDelete(undefined)
   }
 
