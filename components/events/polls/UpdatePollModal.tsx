@@ -55,6 +55,7 @@ export default function UpdatePollModal() {
         pollOptions,
         eventID,
         pollID: pollIdToUpdate,
+        isFinished: false,
         jwt,
       }),
     })

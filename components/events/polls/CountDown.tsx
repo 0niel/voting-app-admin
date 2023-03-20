@@ -6,8 +6,10 @@ interface CountDownInterface {
   pollId: string
   timeLeft: number
   isStarted: boolean
+  isFinished: boolean
   setTimeStart: (time: number, pollId: string) => void
   setTimeEnd: (time: number, pollId: string) => void
+  finishPoll: (pollId: string) => void
 }
 
 export default function CountDown(props: CountDownInterface) {
@@ -78,7 +80,7 @@ export default function CountDown(props: CountDownInterface) {
           <li>
             <button
               className='btn-ghost btn'
-              disabled={!props.isStarted}
+              disabled={!props.isStarted || props.isFinished}
               onClick={() => handleAddTime(30)}
             >
               +30 сек
@@ -87,7 +89,7 @@ export default function CountDown(props: CountDownInterface) {
           <li>
             <button
               className='btn-ghost btn'
-              disabled={!props.isStarted}
+              disabled={!props.isStarted || props.isFinished}
               onClick={() => handleAddTime(60)}
             >
               +1 мин
@@ -96,7 +98,7 @@ export default function CountDown(props: CountDownInterface) {
           <li>
             <button
               className='btn-ghost btn'
-              disabled={!props.isStarted}
+              disabled={!props.isStarted || props.isFinished}
               onClick={() => handleAddTime(300)}
             >
               +5 мин
@@ -105,7 +107,7 @@ export default function CountDown(props: CountDownInterface) {
           <li>
             <button
               className='btn-ghost btn'
-              disabled={!props.isStarted}
+              disabled={!props.isStarted || props.isFinished}
               onClick={() => handleAddTime(600)}
             >
               +10 мин
@@ -116,7 +118,7 @@ export default function CountDown(props: CountDownInterface) {
           <li>
             <button
               className='btn-ghost btn'
-              disabled={props.isStarted}
+              disabled={props.isStarted || props.isFinished}
               onClick={() => props.setTimeStart(Date.now(), props.pollId)}
             >
               Старт
@@ -125,10 +127,19 @@ export default function CountDown(props: CountDownInterface) {
           <li>
             <button
               className='btn-ghost btn'
-              disabled={!props.isStarted}
-              onClick={() => handleStop()}
+              disabled={!props.isStarted || props.isFinished}
+              onClick={handleStop}
             >
               Стоп
+            </button>
+          </li>
+          <li>
+            <button
+              className='btn-ghost btn'
+              disabled={!props.isStarted || props.isFinished}
+              onClick={() => props.finishPoll(props.pollId)}
+            >
+              Подвести итоги
             </button>
           </li>
         </ul>

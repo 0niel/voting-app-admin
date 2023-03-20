@@ -3,7 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 import Modal from '@/components/modal/Modal'
-import { appwriteVotesCollection, appwriteVotingDatabase } from '@/constants/constants'
+import {
+  appwriteListVotesLimit,
+  appwriteVotesCollection,
+  appwriteVotingDatabase,
+} from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
 import { VoteDocument } from '@/lib/models/VoteDocument'
@@ -21,6 +25,7 @@ export default function ShowPollResultsModal() {
         (
           await databases.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
             Query.equal('poll_id', pollIdToShowResults!),
+            Query.limit(appwriteListVotesLimit),
           ])
         ).documents as VoteDocument[]
       ).forEach((vote) => {
@@ -45,16 +50,22 @@ export default function ShowPollResultsModal() {
       hideCancelButton={true}
     >
       <div className='p-2'>
-        {Array.from(votes, ([voteOption, count]) => {
-          return (
-            <li
-              key={voteOption}
-              className={Math.max(...Array.from(votes.values())) === count ? 'underline' : ''}
-            >
-              {voteOption} — {count} гол.
-            </li>
-          )
-        })}
+        {Array.from(votes.values()).length === 0 ? (
+          'Голосов нет.'
+        ) : (
+          <ul className='list-inside list-disc'>
+            {Array.from(votes, ([voteOption, count]) => {
+              return (
+                <li
+                  key={voteOption}
+                  className={Math.max(...Array.from(votes.values())) === count ? 'underline' : ''}
+                >
+                  {voteOption} — {count} гол.
+                </li>
+              )
+            })}
+          </ul>
+        )}
       </div>
     </Modal>
   )

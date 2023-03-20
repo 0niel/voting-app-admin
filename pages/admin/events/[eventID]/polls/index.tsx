@@ -5,7 +5,7 @@ import {
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline'
-import { Databases, Models, Query } from 'appwrite'
+import { Account, Databases, Models, Query } from 'appwrite'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -29,6 +29,7 @@ import {
 } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
+import fetchJson from '@/lib/fetchJson'
 import { formatDate } from '@/lib/formatDate'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
@@ -50,6 +51,7 @@ const PollList = () => {
   const { eventID } = router.query
   const [polls, setPolls] = useState<PollDocument[]>([])
   const databases = new Databases(client)
+  const account = new Account(client)
   const [event, setEvent] = useState<EventDocument>()
   const {
     setCreatePoll,
@@ -209,25 +211,44 @@ const PollList = () => {
     })
   }
 
-  const rows: Cell[][] = polls.map((poll: Models.Document) => [
+  const finishPoll = async (pollIDToFinish: string) => {
+    const jwt = (await account.createJWT()).jwt
+    await fetchJson('/api/polls/finish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        pollID: pollIDToFinish,
+        eventID,
+        jwt,
+      }),
+    })
+  }
+
+  const rows: Cell[][] = polls.map((poll) => [
     { value: poll.$id },
     { value: poll.question },
     { value: poll.duration / 60 },
     { value: poll.start_at ? formatDate(poll.start_at) : 'нет' },
     { value: poll.end_at ? formatDate(poll.end_at) : 'нет' },
     {
-      value: poll.poll_options.map((option: string, index: number) => (
-        <li key={index}>{option}</li>
-      )),
+      value: (
+        <ul className='list-inside list-disc'>
+          {poll.poll_options.map((option: string, index: number) => (
+            <li key={index}>{option}</li>
+          ))}
+        </ul>
+      ),
     },
     {
       value: (
         <CountDown
-          isStarted={poll.start_at as unknown as boolean}
+          isStarted={poll.start_at != undefined}
+          isFinished={poll.is_finished}
           setTimeStart={setTimeStart}
           setTimeEnd={setTimeEnd}
-          timeLeft={timeLeft[polls.indexOf(poll as PollDocument)]}
+          timeLeft={timeLeft[polls.indexOf(poll)]}
           pollId={poll.$id}
+          finishPoll={finishPoll}
         />
       ),
     },
@@ -238,7 +259,7 @@ const PollList = () => {
             <button
               className='btn-outline btn-secondary btn'
               onClick={() => setPollIdToShowResults(poll.$id)}
-              id='show-results'
+              disabled={!poll.is_finished}
             >
               <ChartPieIcon className='h-6 w-6' />
             </button>
