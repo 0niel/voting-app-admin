@@ -93,6 +93,11 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
       ])
 
       if (votes.total > 0) {
+        // возвращаем ошибку, если пользователь уже голосовал. Изменить эти строчки, если нужно
+        // позволить пользователю изменять свой голос
+        res.status(400).json({ message: 'Вы уже голосовали.' })
+        return
+
         console.log(`Пользователь уже голосовал: ${JSON.stringify(votes)}!`)
         // Пользователь уже голосовал, обновляем его голос
         const voteDocument: VoteDocument = votes.documents[0] as VoteDocument
