@@ -1,5 +1,6 @@
 import {
   ArrowPathIcon,
+  ChartPieIcon,
   DocumentDuplicateIcon,
   PencilIcon,
   TrashIcon,
@@ -14,10 +15,12 @@ import CountDown from '@/components/events/polls/CountDown'
 import CreatePollModal from '@/components/events/polls/CreatePollModal'
 import DeletePollModal from '@/components/events/polls/DeletePollModal'
 import ResetVotesPollModal from '@/components/events/polls/ResetVotesPollModal'
+import ShowPollResultsModal from '@/components/events/polls/ShowPollResultsModal'
 import UpdatePollModal from '@/components/events/polls/UpdatePollModal'
 import TeamsNavigation from '@/components/events/TeamsNavigation'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import Table, { Cell, Column } from '@/components/Table'
+import Tooltip from '@/components/Tooltip'
 import {
   appwriteEventsCollection,
   appwriteListPollsLimit,
@@ -54,6 +57,7 @@ const PollList = () => {
     setPollIdToDelete,
     setPollIdToResetVotes,
     setPollIdToCopy,
+    setPollIdToShowResults,
   } = usePoll()
 
   const [timeLeft, setTimeLeft] = useState<number[]>([])
@@ -230,26 +234,41 @@ const PollList = () => {
     {
       value: (
         <div className='flex space-x-2'>
-          <button
-            className='btn-outline btn-secondary btn'
-            onClick={() => setPollIdToUpdate(poll.$id)}
-          >
-            <PencilIcon className='h-6 w-6' />
-          </button>
-          <button
-            className='btn-outline btn-secondary btn'
-            onClick={() => setPollIdToCopy(poll.$id)}
-          >
-            <DocumentDuplicateIcon className='h-6 w-6' />
-          </button>
+          <Tooltip text='результаты'>
+            <button
+              className='btn-outline btn-secondary btn'
+              onClick={() => setPollIdToShowResults(poll.$id)}
+              id='show-results'
+            >
+              <ChartPieIcon className='h-6 w-6' />
+            </button>
+          </Tooltip>
+          <Tooltip text='изменить'>
+            <button
+              className='btn-outline btn-secondary btn'
+              onClick={() => setPollIdToUpdate(poll.$id)}
+            >
+              <PencilIcon className='h-6 w-6' />
+            </button>
+          </Tooltip>
+          <Tooltip text='скопировать'>
+            <button
+              className='btn-outline btn-secondary btn'
+              onClick={() => setPollIdToCopy(poll.$id)}
+            >
+              <DocumentDuplicateIcon className='h-6 w-6' />
+            </button>
+          </Tooltip>
+          <Tooltip text='удалить голоса'>
+            <button
+              className='btn-outline btn-secondary btn'
+              onClick={() => setPollIdToResetVotes(poll.$id)}
+            >
+              <ArrowPathIcon className='h-6 w-6' />
+            </button>
+          </Tooltip>
           <button className='btn-outline btn-error btn' onClick={() => setPollIdToDelete(poll.$id)}>
             <TrashIcon className='h-6 w-6' />
-          </button>
-          <button
-            className='btn-outline btn-secondary btn'
-            onClick={() => setPollIdToResetVotes(poll.$id)}
-          >
-            <ArrowPathIcon className='h-6 w-6' />
           </button>
         </div>
       ),
@@ -272,6 +291,7 @@ const PollList = () => {
       <DeletePollModal />
       <ResetVotesPollModal />
       <CopyPollModal />
+      <ShowPollResultsModal />
     </>
   )
 }
