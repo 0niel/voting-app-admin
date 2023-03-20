@@ -11,6 +11,8 @@ interface PollContextI {
   setPollIdToResetVotes: Function
   pollIdToCopy?: string
   setPollIdToCopy: Function
+  pollIdToShowResults?: string
+  setPollIdToShowResults: Function
 }
 
 const PollContext = createContext<PollContextI>({
@@ -24,6 +26,8 @@ const PollContext = createContext<PollContextI>({
   setPollIdToResetVotes: (_pollId: string) => null,
   pollIdToCopy: undefined,
   setPollIdToCopy: (_pollId: string) => null,
+  pollIdToShowResults: undefined,
+  setPollIdToShowResults: (_pollId: string) => null,
 })
 
 export const usePoll = () => React.useContext(PollContext)
@@ -34,6 +38,7 @@ export function PollProvider({ children }: any) {
   const [pollIdToDelete, setPollIdToDelete] = useState<string>()
   const [pollIdToResetVotes, setPollIdToResetVotes] = useState<string>()
   const [pollIdToCopy, setPollIdToCopy] = useState<string>()
+  const [pollIdToShowResults, setPollIdToShowResults] = useState<string>()
 
   return (
     <PollContext.Provider
@@ -48,6 +53,8 @@ export function PollProvider({ children }: any) {
         setPollIdToResetVotes,
         pollIdToCopy,
         setPollIdToCopy,
+        pollIdToShowResults,
+        setPollIdToShowResults,
       }}
     >
       {children}

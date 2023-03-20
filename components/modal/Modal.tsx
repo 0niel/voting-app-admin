@@ -6,6 +6,7 @@ interface ModalProps {
   isOpen: boolean
   onAccept: MouseEventHandler<HTMLButtonElement>
   acceptButtonName: string
+  hideCancelButton?: boolean
   onCancel: () => {}
   cancelButtonName?: string
   title: string
@@ -53,12 +54,16 @@ export default function Modal(props: ModalProps) {
                 </Dialog.Title>
                 {props.children}
                 <div className='mt-6 flex justify-end gap-4'>
-                  <button type='button' className='btn-primary btn' onClick={props.onCancel}>
-                    {props.cancelButtonName || 'Отменить'}
-                  </button>
+                  {!(props.hideCancelButton === true) && (
+                    <button type='button' className='btn-primary btn' onClick={props.onCancel}>
+                      {props.cancelButtonName || 'Отменить'}
+                    </button>
+                  )}
                   <button
                     type='button'
-                    className='btn-outline btn-primary btn'
+                    className={`btn-primary btn ${
+                      !(props.hideCancelButton === true) && 'btn-outline'
+                    }`}
                     onClick={props.onAccept}
                   >
                     {props.acceptButtonName}

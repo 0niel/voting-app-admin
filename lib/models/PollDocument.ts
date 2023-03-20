@@ -29,4 +29,8 @@ export interface PollDocument extends Models.Document {
    * Длительность голосования в секундах.
    */
   duration: number
+  /**
+   * Индикатор, что голосование завершено. Неотданные голоса добавлены в категорию воздержался.
+   */
+  is_finished: boolean
 }

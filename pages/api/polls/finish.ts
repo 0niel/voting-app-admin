@@ -1,29 +1,28 @@
-import { withIronSessionApiRoute } from 'iron-session/next'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from 'node-appwrite'
+import { Client, Databases, ID, Query, Teams } from 'node-appwrite'
 
 import {
   appwriteEndpoint,
   appwriteEventsCollection,
+  appwriteListMembershipsLimit,
   appwriteListTeamsLimit,
+  appwriteListVotesLimit,
   appwritePollsCollection,
   appwriteProjectId,
+  appwriteVotesCollection,
   appwriteVotingDatabase,
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
-import { sessionOptions } from '@/lib/session'
+import { VoteDocument } from '@/lib/models/VoteDocument'
 
-export default withIronSessionApiRoute(createPoll, sessionOptions)
-
-async function createPoll(req: NextApiRequest, res: NextApiResponse) {
-  const { question, startAt, endAt, duration, eventID, pollOptions, jwt } = await req.body
+export default async function finishPoll(req: NextApiRequest, res: NextApiResponse) {
+  const { pollID, eventID, jwt } = await req.body
   try {
     const client = new Client()
       .setEndpoint(appwriteEndpoint)
       .setProject(appwriteProjectId)
       .setJWT(jwt)
 
-    const userID = (await new Account(client).get()).$id
     const databases = new Databases(client)
     const teams = new Teams(client)
 
@@ -46,27 +45,46 @@ async function createPoll(req: NextApiRequest, res: NextApiResponse) {
         .setEndpoint(appwriteEndpoint)
         .setProject(appwriteProjectId)
         .setKey(process.env.APPWRITE_API_KEY!)
+      const serverDatabases = new Databases(server)
+      const serverTeams = new Teams(server)
 
-      await new Databases(server).createDocument(
+      await serverDatabases.updateDocument(
         appwriteVotingDatabase,
         appwritePollsCollection,
-        ID.unique(),
+        pollID,
         {
-          question: question,
-          creator_id: userID,
-          start_at: startAt,
-          end_at: endAt,
-          duration,
-          event_id: eventID,
-          poll_options: pollOptions,
-          is_finished: false,
+          end_at: new Date().toISOString(),
+          is_finished: true,
         },
-        [
-          Permission.read(Role.team(event!.participants_team_id)),
-          Permission.read(Role.team(event!.voting_moderators_team_id)),
-          Permission.update(Role.team(event!.voting_moderators_team_id)),
-        ],
       )
+      const voterIDs = (
+        (
+          await serverDatabases.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
+            Query.limit(appwriteListVotesLimit),
+          ])
+        ).documents as VoteDocument[]
+      ).map((vote) => vote.voter_id)
+      ;(
+        await serverTeams.listMemberships(event?.participants_team_id!, [
+          Query.limit(appwriteListMembershipsLimit),
+        ])
+      ).memberships
+        .filter(
+          (membership) =>
+            !voterIDs.includes(membership.userId) && !membership.roles.includes('owner'),
+        )
+        .forEach((membership) => {
+          serverDatabases.createDocument(
+            appwriteVotingDatabase,
+            appwriteVotesCollection,
+            ID.unique(),
+            {
+              voter_id: membership.userId,
+              poll_id: pollID,
+              vote: 'Воздержусь',
+            },
+          )
+        })
       res.status(200).json({ message: 'ok' })
     } else {
       res
