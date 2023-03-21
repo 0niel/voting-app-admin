@@ -11,9 +11,9 @@ import { appwriteListMembershipsLimit, appwriteSuperUsersTeam } from '@/constant
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import { formatDate } from '@/lib/formatDate'
+import { mapRoles } from '@/lib/mapRoles'
 import { membershipColumns } from '@/lib/memberships'
 import { membershipsRealtimeResponseCallback } from '@/lib/membershipsRealtimeResponseCallback'
-import { mapRoles } from '@/lib/mapRoles'
 
 const Superusers = () => {
   const [memberships, setMemberships] = useState<Models.Membership[]>([])
