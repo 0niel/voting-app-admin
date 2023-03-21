@@ -1,4 +1,4 @@
-import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
+import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
 
 export default async function fetchJson<JSON = unknown>(
   input: RequestInfo,
@@ -16,7 +16,7 @@ export default async function fetchJson<JSON = unknown>(
     return data
   }
   throw new FetchError({
-    message: mapAppwriteErroToMessage(data.message),
+    message: mapAppwriteErrorToMessage(data.message),
     response,
     data,
   })

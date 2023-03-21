@@ -5,6 +5,7 @@ import React from 'react'
 import { Cell, Column } from '@/components/Table'
 import { useMembership } from '@/context/MembershipContext'
 import { formatDate } from '@/lib/formatDate'
+import { mapRoles } from '@/lib/mapRoles'
 
 export const membershipColumns: Column[] = [
   { title: 'id' },
@@ -25,7 +26,7 @@ export function GetMembershipRows(
       { value: membership.$id },
       { value: membership.userName },
       { value: membership.userEmail },
-      { value: membership.roles.join(', ') },
+      { value: membership.roles.map((role) => mapRoles(role)).join(', ') },
       { value: formatDate(membership.invited) },
       {
         value:

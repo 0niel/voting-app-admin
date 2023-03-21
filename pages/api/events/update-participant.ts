@@ -20,7 +20,7 @@ import {
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
 } from '@/constants/constants'
-import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
+import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
 import { EventDocument } from '@/lib/models/EventDocument'
 
 export default async function updateParticipant(req: NextApiRequest, res: NextApiResponse) {
@@ -106,7 +106,7 @@ export default async function updateParticipant(req: NextApiRequest, res: NextAp
 
           await serverTeams.deleteMembership(event.participants_team_id, membership.$id)
         } catch (error) {
-          res.status(500).json({ message: mapAppwriteErroToMessage((error as Error).message) })
+          res.status(500).json({ message: mapAppwriteErrorToMessage((error as Error).message) })
           return
         }
       }
@@ -131,6 +131,6 @@ export default async function updateParticipant(req: NextApiRequest, res: NextAp
       res.status(403).json({ message: 'Недостаточно прав' })
     }
   } catch (error) {
-    res.status(500).json({ message: mapAppwriteErroToMessage((error as Error).message) })
+    res.status(500).json({ message: mapAppwriteErrorToMessage((error as Error).message) })
   }
 }

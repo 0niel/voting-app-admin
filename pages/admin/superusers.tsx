@@ -13,6 +13,7 @@ import { useMembership } from '@/context/MembershipContext'
 import { formatDate } from '@/lib/formatDate'
 import { membershipColumns } from '@/lib/memberships'
 import { membershipsRealtimeResponseCallback } from '@/lib/membershipsRealtimeResponseCallback'
+import { mapRoles } from '@/lib/mapRoles'
 
 const Superusers = () => {
   const [memberships, setMemberships] = useState<Models.Membership[]>([])
@@ -42,7 +43,7 @@ const Superusers = () => {
       { value: membership.$id },
       { value: membership.userName },
       { value: membership.userEmail },
-      { value: membership.roles.join(', ') },
+      { value: membership.roles.map((role) => mapRoles(role)).join(', ') },
       { value: formatDate(membership.invited) },
       {
         value: (

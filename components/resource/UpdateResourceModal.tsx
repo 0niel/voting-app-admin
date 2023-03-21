@@ -15,7 +15,7 @@ import {
 } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useResource } from '@/context/ResourceContext'
-import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
+import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
 import fetchJson from '@/lib/fetchJson'
 import { isValidPoll } from '@/lib/isValidPoll'
 import { isValidResource } from '@/lib/isValidResource'

@@ -11,6 +11,7 @@ import {
   appwriteProjectId,
   appwriteVotesCollection,
   appwriteVotingDatabase,
+  presidencyRole,
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
@@ -71,7 +72,8 @@ export default async function finishPoll(req: NextApiRequest, res: NextApiRespon
       ).memberships
         .filter(
           (membership) =>
-            !voterIDs.includes(membership.userId) && !membership.roles.includes('owner'),
+            !voterIDs.includes(membership.userId) &&
+            (!membership.roles.includes('owner') || membership.roles.includes(presidencyRole)),
         )
         .forEach((membership) => {
           serverDatabases.createDocument(

@@ -19,7 +19,7 @@ import {
 } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
-import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
+import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 
@@ -144,7 +144,7 @@ const Events = () => {
               toast.error('Недостаточно прав на изменение состояния мероприятия')
             }
           } catch (error: any) {
-            toast.error(mapAppwriteErroToMessage(error.message))
+            toast.error(mapAppwriteErrorToMessage(error.message))
           }
         },
         className: event.is_active

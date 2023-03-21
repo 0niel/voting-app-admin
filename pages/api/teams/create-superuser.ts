@@ -17,7 +17,7 @@ export function handleAlreadyInvitedException(error: any) {
 }
 
 export default async function createSuperuser(req: NextApiRequest, res: NextApiResponse) {
-  const { email, jwt } = await req.body
+  const { email, roles, jwt } = await req.body
   try {
     const client = new Client()
       .setEndpoint(appwriteEndpoint)
@@ -49,7 +49,7 @@ export default async function createSuperuser(req: NextApiRequest, res: NextApiR
           await serverTeams.createMembership(
             team.$id,
             email,
-            ['owner'],
+            ['owner', ...roles],
             process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME!,
           )
         } catch (error: any) {
@@ -62,7 +62,7 @@ export default async function createSuperuser(req: NextApiRequest, res: NextApiR
         await serverTeams.createMembership(
           appwriteSuperUsersTeam,
           email,
-          [],
+          roles,
           process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME!,
         )
       } catch (error: any) {

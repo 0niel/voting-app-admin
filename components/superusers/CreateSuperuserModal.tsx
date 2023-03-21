@@ -11,6 +11,7 @@ import fetchJson from '@/lib/fetchJson'
 export default function CreateSuperuserModal() {
   const { createMembership, setCreateMembership } = useMembership()
   const [email, setEmail] = useState('')
+  const [isPresidency, setPresidency] = useState(false)
   const { client } = useAppwrite()
   const account = new Account(client)
 
@@ -24,6 +25,7 @@ export default function CreateSuperuserModal() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             email: newEmail,
+            roles: isPresidency ? ['presidency'] : [],
             jwt,
           }),
         })
@@ -46,6 +48,17 @@ export default function CreateSuperuserModal() {
       title='Пригласить участника'
     >
       <CreateMembershipModalContent email={email} setEmail={setEmail} />
+      <div className='form-control'>
+        <label className='label cursor-pointer'>
+          <span className='label-text'>Является председателем</span>
+          <input
+            type='checkbox'
+            checked={isPresidency}
+            onChange={(event) => setPresidency(event.target.checked)}
+            className='checkbox-primary checkbox'
+          />
+        </label>
+      </div>
     </Modal>
   )
 }

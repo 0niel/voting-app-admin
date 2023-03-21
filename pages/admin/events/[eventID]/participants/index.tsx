@@ -12,6 +12,7 @@ import {
   appwriteEventsCollection,
   appwriteListMembershipsLimit,
   appwriteVotingDatabase,
+  presidencyRole,
 } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
@@ -44,8 +45,12 @@ const Participants = () => {
       setEvent(_event)
       await updateMemberships(_event.participants_team_id)
       client.subscribe('memberships', async (response) => {
-        // @ts-ignore
-        if (!response.payload?.roles?.includes('owner')) {
+        if (
+          // @ts-ignore
+          !response.payload?.roles?.includes('owner') ||
+          // @ts-ignore
+          response.payload?.roles?.includes(presidencyRole)
+        ) {
           membershipsRealtimeResponseCallback(response, setMemberships, _event.participants_team_id)
         }
       })
@@ -77,7 +82,10 @@ const Participants = () => {
   }
 
   const rows: Cell[][] = GetMembershipRows(
-    memberships.filter((membership) => !membership.roles.includes('owner')),
+    memberships.filter(
+      (membership) =>
+        !membership.roles.includes('owner') || membership.roles.includes(presidencyRole),
+    ),
     isPermitted,
   )
 
