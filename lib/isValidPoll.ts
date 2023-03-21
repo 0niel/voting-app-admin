@@ -9,8 +9,8 @@ export function isValidPoll(question: string, duration: number, pollOptions: str
     toast.error('Длительность не может быть отрицательной.')
     return false
   }
-  if (pollOptions.length < 2) {
-    toast.error('Укажите хотя бы два варианта голосования.')
+  if (Array.from(new Set(pollOptions)).length < 2) {
+    toast.error('Укажите хотя бы два отличных от друг друга варианта голосования.')
     return false
   }
   if (pollOptions.some((option) => option.length == 0)) {

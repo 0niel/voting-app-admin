@@ -18,6 +18,7 @@ export default withIronSessionApiRoute(createPoll, sessionOptions)
 async function createPoll(req: NextApiRequest, res: NextApiResponse) {
   const { question, startAt, endAt, duration, eventID, pollOptions, jwt } = await req.body
   try {
+    const pollOptionsSet = Array.from(new Set(pollOptions))
     const client = new Client()
       .setEndpoint(appwriteEndpoint)
       .setProject(appwriteProjectId)
@@ -58,7 +59,7 @@ async function createPoll(req: NextApiRequest, res: NextApiResponse) {
           end_at: endAt,
           duration,
           event_id: eventID,
-          poll_options: pollOptions,
+          poll_options: pollOptionsSet,
           is_finished: false,
         },
         [

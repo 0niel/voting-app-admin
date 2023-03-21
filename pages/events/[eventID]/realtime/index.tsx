@@ -222,14 +222,18 @@ const Realtime = () => {
             </p>
           )}
           <div className='mb-4 text-center text-gray-700'>
-            {timeLeft === 0 && <p>Голосование завершено 🎉</p>}
-            {timeLeft < 0 && <p>Голосование не начато.</p>}
+            {poll.end_at && new Date().getTime() > new Date(poll.end_at).getTime() && (
+              <p>Голосование завершено 🎉</p>
+            )}
+            {!poll.start_at && <p>Голосование не начато.</p>}
           </div>
-          {poll.poll_options && (
+          {Array.from(new Set([votes.map((vote) => vote.vote), ...poll.poll_options])) && (
             <>
               <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
               <BarChart
-                data={Array.from(new Set(votes.map((vote) => vote.vote))).map((option) => ({
+                data={Array.from(
+                  new Set([...votes.map((vote) => vote.vote), ...poll.poll_options]),
+                ).map((option) => ({
                   name: option,
                   votes: votes.filter((vote) => vote.vote === option).length,
                 }))}
