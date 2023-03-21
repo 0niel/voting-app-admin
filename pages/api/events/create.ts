@@ -45,20 +45,20 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
         await serverTeams.create(ID.unique(), `Участники ${eventName}`, ['owner'])
       ).$id
       const allNewTeamIDs = [accessModeratorsTeamID, votingModeratorsTeamID, participantsTeamID]
-      const superusersTeamEmails = (
+      const superuserMemberships = (
         await serverTeams.listMemberships(appwriteSuperUsersTeam, [
           Query.limit(appwriteListMembershipsLimit),
         ])
-      ).memberships.map((team) => team.userEmail)
+      ).memberships
 
       await Promise.all(
-        superusersTeamEmails.map(async (email) => {
+        superuserMemberships.map(async (membership) => {
           await Promise.all(
             allNewTeamIDs.map(async (teamID) => {
               await serverTeams.createMembership(
                 teamID,
-                email,
-                ['owner'],
+                membership.userEmail,
+                ['owner', ...membership.roles],
                 process.env.NEXT_PUBLIC_REDIRECT_HOSTNAME!,
               )
             }),
