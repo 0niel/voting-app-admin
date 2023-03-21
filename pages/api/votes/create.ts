@@ -56,7 +56,8 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
       poll.start_at &&
       poll.end_at &&
       new Date(poll.start_at) < new Date() &&
-      new Date(poll.end_at) > new Date()
+      new Date(poll.end_at) > new Date() &&
+      !poll.is_finished
     if (!isPollActive) {
       res.status(400).json({ message: 'Голосование не активно.' })
       return

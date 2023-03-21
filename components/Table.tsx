@@ -177,28 +177,18 @@ export default function Table(props: TableProps) {
                         onChange={handleItemsPerPageChange}
                         defaultValue={10}
                       >
-                        <option value={5} className='block w-full'>
-                          5
-                        </option>
-                        <option value={10} className='block w-full'>
-                          10
-                        </option>
-                        <option value={15} className='block w-full'>
-                          15
-                        </option>
-                        <option value={20} className='block w-full'>
-                          20
-                        </option>
-                        <option value={25} className='block w-full'>
-                          25
-                        </option>
-                        <option value={30} className='block w-full'>
-                          30
-                        </option>
+                        {[5, 10, 15, 20, 25, 30].map((value) => (
+                          <option value={value} key={value} className='block w-full'>
+                            {value}
+                          </option>
+                        ))}
                       </select>
-                      <span className='font-medium'>{offset + 1}</span> -{' '}
-                      <span className='font-medium'>{offset + itemsPerPage}</span> из{' '}
-                      <span className='font-medium'>{props.rows.length}</span>
+                      <span className='font-medium'>
+                        {`${Math.min(offset + 1, props.rows.length)}–${Math.min(
+                          offset + itemsPerPage,
+                          props.rows.length,
+                        )} из ${props.rows.length}`}
+                      </span>
                     </p>
                   </div>
                   <div>

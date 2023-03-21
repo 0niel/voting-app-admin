@@ -41,6 +41,7 @@ const columns: Column[] = [
   { title: 'Начало' },
   { title: 'Конец' },
   { title: 'Варианты голосования' },
+  { title: 'Голоса' },
   { title: 'Времени осталось' },
   { title: '' },
 ]
@@ -239,6 +240,7 @@ const PollList = () => {
         </ul>
       ),
     },
+    { value: poll.is_finished ? '✅Подсчитаны' : '❌Промежуточные' },
     {
       value: (
         <CountDown
