@@ -8,7 +8,7 @@ import Modal from '@/components/modal/Modal'
 import { appwriteResourcesCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useResource } from '@/context/ResourceContext'
-import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
+import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
 import fetchJson from '@/lib/fetchJson'
 
 export default function CopyResourceModal() {
@@ -33,7 +33,7 @@ export default function CopyResourceModal() {
           })
       }
     } catch (error: any) {
-      toast.error(mapAppwriteErroToMessage(error.message))
+      toast.error(mapAppwriteErrorToMessage(error.message))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceIdToCopy])
@@ -53,7 +53,7 @@ export default function CopyResourceModal() {
       )
       setResourceIdToCopy(undefined)
     } catch (error: any) {
-      toast.error(mapAppwriteErroToMessage(error.message))
+      toast.error(mapAppwriteErrorToMessage(error.message))
     }
   }
 

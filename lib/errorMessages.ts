@@ -1,4 +1,4 @@
-export const mapAppwriteErroToMessage = (error: string) => {
+export const mapAppwriteErrorToMessage = (error: string) => {
   switch (error) {
     case 'The current user is not authorized to perform the requested action.':
       return 'Произошла ошибка при выполнении запроса. У вас нет прав на выполнение этого действия.'

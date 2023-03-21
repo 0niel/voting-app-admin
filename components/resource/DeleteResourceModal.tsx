@@ -8,7 +8,7 @@ import Modal from '@/components/modal/Modal'
 import { appwriteResourcesCollection, appwriteVotingDatabase } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useResource } from '@/context/ResourceContext'
-import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
+import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
 
 export default function DeleteResourceModal() {
   const dialogPanelRef = useRef(null)
@@ -31,7 +31,7 @@ export default function DeleteResourceModal() {
           })
       }
     } catch (error: any) {
-      toast.error(mapAppwriteErroToMessage(error.message))
+      toast.error(mapAppwriteErrorToMessage(error.message))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceIdToDelete])
@@ -45,7 +45,7 @@ export default function DeleteResourceModal() {
       )
       setResourceIdToDelete(undefined)
     } catch (error: any) {
-      toast.error(mapAppwriteErroToMessage(error.message))
+      toast.error(mapAppwriteErrorToMessage(error.message))
     }
   }
 

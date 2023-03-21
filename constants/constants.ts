@@ -23,3 +23,6 @@ export const appwriteListEventsLimit = 500
 export const appwriteListPollsLimit = 500
 export const appwriteListVotesLimit = 500
 export const appwriteListTeamsLimit = 500
+
+// Roles
+export const presidencyRole = 'presidency'

@@ -11,6 +11,7 @@ import { appwriteListMembershipsLimit, appwriteSuperUsersTeam } from '@/constant
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import { formatDate } from '@/lib/formatDate'
+import { mapRoles } from '@/lib/mapRoles'
 import { membershipColumns } from '@/lib/memberships'
 import { membershipsRealtimeResponseCallback } from '@/lib/membershipsRealtimeResponseCallback'
 
@@ -42,7 +43,7 @@ const Superusers = () => {
       { value: membership.$id },
       { value: membership.userName },
       { value: membership.userEmail },
-      { value: membership.roles.join(', ') },
+      { value: membership.roles.map((role) => mapRoles(role)).join(', ') },
       { value: formatDate(membership.invited) },
       {
         value: (

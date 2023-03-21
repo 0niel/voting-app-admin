@@ -14,7 +14,7 @@ import {
 } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useResource } from '@/context/ResourceContext'
-import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
+import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
 import fetchJson from '@/lib/fetchJson'
 import { EventDocument } from '@/lib/models/EventDocument'
 
@@ -74,7 +74,7 @@ export default function CreateResourceModal() {
       setSvgIcon('')
       setCreateResource(false)
     } catch (error: any) {
-      toast.error(mapAppwriteErroToMessage(error.message))
+      toast.error(mapAppwriteErrorToMessage(error.message))
     }
   }
 

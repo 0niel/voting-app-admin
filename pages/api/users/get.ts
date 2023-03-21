@@ -8,7 +8,7 @@ import {
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
 } from '@/constants/constants'
-import { mapAppwriteErroToMessage } from '@/lib/errorMessages'
+import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
 import { EventDocument } from '@/lib/models/EventDocument'
 
 import UserResponseType from './UserResponseType'
@@ -77,6 +77,6 @@ export default async function getUserById(req: NextApiRequest, res: NextApiRespo
     }
   } catch (error) {
     console.error(error)
-    res.status(500).json({ message: mapAppwriteErroToMessage((error as Error).message) })
+    res.status(500).json({ message: mapAppwriteErrorToMessage((error as Error).message) })
   }
 }
