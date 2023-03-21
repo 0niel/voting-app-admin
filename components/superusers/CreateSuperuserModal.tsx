@@ -1,5 +1,5 @@
 import { Account } from 'appwrite'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 import CreateMembershipModalContent from '@/components/modal/CreateMembershipModalContent'
@@ -8,12 +8,20 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { useMembership } from '@/context/MembershipContext'
 import fetchJson from '@/lib/fetchJson'
 
+const initialEmail = ''
+const initialIsPresidency = false
+
 export default function CreateSuperuserModal() {
   const { createMembership, setCreateMembership } = useMembership()
-  const [email, setEmail] = useState('')
-  const [isPresidency, setPresidency] = useState(false)
+  const [email, setEmail] = useState(initialEmail)
+  const [isPresidency, setPresidency] = useState(initialIsPresidency)
   const { client } = useAppwrite()
   const account = new Account(client)
+
+  useEffect(() => {
+    setPresidency(initialIsPresidency)
+    setEmail(initialEmail)
+  }, [createMembership])
 
   async function addSuperuser() {
     try {
@@ -29,7 +37,6 @@ export default function CreateSuperuserModal() {
             jwt,
           }),
         })
-        setEmail('')
         setCreateMembership(false)
       } else {
         toast.error('Укажите действительную почту.')
@@ -45,7 +52,7 @@ export default function CreateSuperuserModal() {
       onAccept={addSuperuser}
       acceptButtonName='Пригласить'
       onCancel={() => setCreateMembership(false)}
-      title='Пригласить участника'
+      title='Пригласить суперпользователя'
     >
       <CreateMembershipModalContent email={email} setEmail={setEmail} />
       <div className='form-control'>
