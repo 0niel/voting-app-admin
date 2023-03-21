@@ -232,7 +232,7 @@ const Realtime = () => {
               <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
               <BarChart
                 data={Array.from(
-                  new Set([...votes.map((vote) => vote.vote), ...poll.poll_options]),
+                  new Set([...poll.poll_options, ...votes.map((vote) => vote.vote)]),
                 ).map((option) => ({
                   name: option,
                   votes: votes.filter((vote) => vote.vote === option).length,
