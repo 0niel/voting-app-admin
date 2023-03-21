@@ -93,11 +93,7 @@ const Realtime = () => {
       const _polls = (await databases.listDocuments(
         appwriteVotingDatabase,
         appwritePollsCollection,
-        [
-          Query.equal('event_id', eventID as string),
-          Query.limit(appwriteListPollsLimit),
-          Query.orderDesc('start_at'),
-        ],
+        [Query.equal('event_id', eventID as string), Query.limit(appwriteListPollsLimit)],
       )) as { documents: PollDocument[] }
       const _poll = getActiveOrLastPoll(_polls.documents)
       setPoll(_poll)
