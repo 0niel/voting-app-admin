@@ -62,6 +62,7 @@ export default async function finishPoll(req: NextApiRequest, res: NextApiRespon
         (
           await serverDatabases.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
             Query.limit(appwriteListVotesLimit),
+            Query.equal('poll_id', pollID),
           ])
         ).documents as VoteDocument[]
       ).map((vote) => vote.voter_id)
