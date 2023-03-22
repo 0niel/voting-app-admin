@@ -1,4 +1,4 @@
-import { Databases, Models, Query, Teams } from 'appwrite'
+import { Databases, Models, Query } from 'appwrite'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -84,36 +84,35 @@ const Realtime = () => {
     return null
   }
 
-  useEffect(() => {
-    const fetchEvent = async () => {
-      const _event = await databases.getDocument(
-        appwriteVotingDatabase,
-        appwriteEventsCollection,
-        eventID as string,
-      )
-      setEvent(_event as EventDocument)
+  const fetchEvent = async () => {
+    const _event = await databases.getDocument(
+      appwriteVotingDatabase,
+      appwriteEventsCollection,
+      eventID as string,
+    )
+    setEvent(_event as EventDocument)
 
-      const _polls = (await databases.listDocuments(
-        appwriteVotingDatabase,
-        appwritePollsCollection,
-        [Query.equal('event_id', eventID as string), Query.limit(appwriteListPollsLimit)],
-      )) as { documents: PollDocument[] }
-      const _poll = getActiveOrLastPoll(_polls.documents)
-      setPoll(_poll)
-      console.log('We have poll: ', _poll)
+    const _polls = (await databases.listDocuments(appwriteVotingDatabase, appwritePollsCollection, [
+      Query.equal('event_id', eventID as string),
+      Query.limit(appwriteListPollsLimit),
+    ])) as { documents: PollDocument[] }
+    const _poll = getActiveOrLastPoll(_polls.documents)
+    setPoll(_poll)
+    console.log('We have poll: ', _poll)
 
-      if (_poll) {
-        console.log('Poll ID: ', _poll.$id)
-        const _votes = (await databases.listDocuments(
-          appwriteVotingDatabase,
-          appwriteVotesCollection,
-          [Query.equal('poll_id', _poll.$id), Query.limit(appwriteListVotesLimit)],
-        )) as { documents: VoteDocument[] }
-        console.log('Votes: ', _votes.documents)
-        setVotes(_votes.documents)
-      }
+    if (_poll) {
+      console.log('Poll ID: ', _poll.$id)
+      const _votes = (await databases.listDocuments(
+        appwriteVotingDatabase,
+        appwriteVotesCollection,
+        [Query.equal('poll_id', _poll.$id), Query.limit(appwriteListVotesLimit)],
+      )) as { documents: VoteDocument[] }
+      console.log('Votes: ', _votes.documents)
+      setVotes(_votes.documents)
     }
+  }
 
+  useEffect(() => {
     if (router.isReady) {
       fetchEvent().catch((error) => toast.error(error.message))
     }
@@ -157,15 +156,8 @@ const Realtime = () => {
             const doc = response.payload as Models.Document
 
             if (doc.$collectionId === appwritePollsCollection) {
-              console.log(1)
               if (doc.event_id === eventID) {
-                console.log(2)
-                const _polls = (await databases.listDocuments(
-                  appwriteVotingDatabase,
-                  appwritePollsCollection,
-                  [Query.equal('event_id', eventID as string), Query.limit(appwriteListPollsLimit)],
-                )) as { documents: PollDocument[] }
-                setPoll(getActiveOrLastPoll(_polls.documents))
+                fetchEvent().catch((error) => toast.error(error.message))
               }
             }
 
