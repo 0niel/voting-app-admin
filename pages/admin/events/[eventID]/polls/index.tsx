@@ -171,7 +171,7 @@ const PollList = () => {
         new Date(poll.end_at).getTime() > new Date().getTime(),
     )
     if (startedPoll) {
-      toast.error(`Остановите голосование «${startedPoll.question}», прежде чем продлить другое.`)
+      toast.error(`Остановите голосование «${startedPoll.question}», прежде чем продлить это.`)
       return
     }
 

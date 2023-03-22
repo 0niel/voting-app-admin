@@ -53,7 +53,7 @@ const Realtime = () => {
   const { eventID } = router.query
 
   const [event, setEvent] = useState<EventDocument>()
-  const [poll, setPoll] = useState<PollDocument | null>(null)
+  const [poll, setPoll] = useState<PollDocument | null | undefined>(undefined)
   const [votes, setVotes] = useState<VoteDocument[]>([])
   const [timeLeft, setTimeLeft] = useState(0)
 
@@ -74,8 +74,14 @@ const Realtime = () => {
     const activePoll = pollsWithDates.find(
       (poll) => now > new Date(poll.start_at!) && now < new Date(poll.end_at!),
     )
-
-    return activePoll ?? pollsWithDates.length > 0 ? pollsWithDates[0] : null
+    console.log('active', activePoll)
+    if (activePoll !== undefined) {
+      return activePoll
+    }
+    if (pollsWithDates.length > 0) {
+      return pollsWithDates[0]
+    }
+    return null
   }
 
   useEffect(() => {
@@ -137,74 +143,81 @@ const Realtime = () => {
   }, [poll])
 
   useEffect(() => {
-    client.subscribe(
-      [
-        `databases.${appwriteVotingDatabase}.collections.${appwritePollsCollection}.documents`,
-        `databases.${appwriteVotingDatabase}.collections.${appwriteVotesCollection}.documents`,
-      ],
-      async (response) => {
-        const event = response.events[0]
-        const eventAction = event.split('.').pop()
+    function subscribe() {
+      client.subscribe(
+        [
+          `databases.${appwriteVotingDatabase}.collections.${appwritePollsCollection}.documents`,
+          `databases.${appwriteVotingDatabase}.collections.${appwriteVotesCollection}.documents`,
+        ],
+        async (response) => {
+          const event = response.events[0]
+          const eventAction = event.split('.').pop()
 
-        if (eventAction === 'create' || eventAction === 'update' || eventAction === 'delete') {
-          const doc = response.payload as Models.Document
+          if (eventAction === 'create' || eventAction === 'update' || eventAction === 'delete') {
+            const doc = response.payload as Models.Document
 
-          if (doc.$collectionId === appwritePollsCollection) {
-            if (doc.event_id === eventID) {
-              const _polls = (await databases.listDocuments(
-                appwriteVotingDatabase,
-                appwritePollsCollection,
-                [Query.equal('event_id', eventID as string), Query.limit(appwriteListPollsLimit)],
-              )) as { documents: PollDocument[] }
-              setPoll(getActiveOrLastPoll(_polls.documents))
+            if (doc.$collectionId === appwritePollsCollection) {
+              console.log(1)
+              if (doc.event_id === eventID) {
+                console.log(2)
+                const _polls = (await databases.listDocuments(
+                  appwriteVotingDatabase,
+                  appwritePollsCollection,
+                  [Query.equal('event_id', eventID as string), Query.limit(appwriteListPollsLimit)],
+                )) as { documents: PollDocument[] }
+                setPoll(getActiveOrLastPoll(_polls.documents))
+              }
             }
-          }
 
-          if (doc.$collectionId === appwriteVotesCollection) {
-            if (doc.poll_id === poll?.$id) {
-              // в зависимости от ивента (update, create, delete) обновляем список голосов
-              // если документ изменился, то надо найти его в массиве и обновить
-              // если документ удален, то надо найти его в массиве и удалить
-              // если документ создан, то надо добавить его в массив
+            if (doc.$collectionId === appwriteVotesCollection) {
+              if (doc.poll_id === poll?.$id) {
+                // в зависимости от ивента (update, create, delete) обновляем список голосов
+                // если документ изменился, то надо найти его в массиве и обновить
+                // если документ удален, то надо найти его в массиве и удалить
+                // если документ создан, то надо добавить его в массив
 
-              const index = votes.findIndex((vote) => vote.$id === doc.$id)
+                const index = votes.findIndex((vote) => vote.$id === doc.$id)
 
-              if (index > -1) {
-                if (eventAction === 'update') {
-                  const _votes = [...votes]
-                  _votes[index] = doc as VoteDocument
-                  setVotes(_votes)
-                  console.log('Votes: ', _votes)
-                }
+                if (index > -1) {
+                  if (eventAction === 'update') {
+                    const _votes = [...votes]
+                    _votes[index] = doc as VoteDocument
+                    setVotes(_votes)
+                    console.log('Votes: ', _votes)
+                  }
 
-                if (eventAction === 'delete') {
-                  const _votes = [...votes]
-                  _votes.splice(index, 1)
-                  setVotes(_votes)
-                  console.log('Votes: ', _votes)
-                }
+                  if (eventAction === 'delete') {
+                    const _votes = [...votes]
+                    _votes.splice(index, 1)
+                    setVotes(_votes)
+                    console.log('Votes: ', _votes)
+                  }
 
-                if (eventAction === 'create') {
-                  const _votes = [...votes]
-                  _votes.push(doc as VoteDocument)
-                  setVotes(_votes)
-                  console.log('Votes: ', _votes)
-                }
-              } else {
-                if (eventAction === 'create' || eventAction === 'update') {
-                  const _votes = [...votes]
-                  _votes.push(doc as VoteDocument)
-                  setVotes(_votes)
-                  console.log('Votes: ', _votes)
+                  if (eventAction === 'create') {
+                    const _votes = [...votes]
+                    _votes.push(doc as VoteDocument)
+                    setVotes(_votes)
+                    console.log('Votes: ', _votes)
+                  }
+                } else {
+                  if (eventAction === 'create' || eventAction === 'update') {
+                    const _votes = [...votes]
+                    _votes.push(doc as VoteDocument)
+                    setVotes(_votes)
+                    console.log('Votes: ', _votes)
+                  }
                 }
               }
             }
           }
-        }
-      },
-    )
+        },
+      )
+    }
+    if (router.isReady) {
+      subscribe()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [event, poll, votes])
+  }, [router.isReady])
 
   return (
     <div className='flex min-h-screen flex-col items-center justify-center bg-gray-100'>
@@ -239,7 +252,7 @@ const Realtime = () => {
           )}
         </div>
       )}
-      {!poll && (
+      {poll === null && (
         <div className='w-full max-w-3xl rounded-lg bg-white px-4 py-8 shadow-lg'>
           <h1 className='mb-4 text-center text-3xl font-bold text-gray-900'>{event?.name}</h1>
           <p className='mb-4 text-center text-lg text-gray-900'>
