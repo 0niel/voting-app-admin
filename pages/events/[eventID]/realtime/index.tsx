@@ -57,28 +57,25 @@ const Realtime = () => {
   const [votes, setVotes] = useState<VoteDocument[]>([])
   const [timeLeft, setTimeLeft] = useState(0)
 
+  // Should be equivalent to function _getActiveOrLastPoll in mobile app
+  // https://github.com/mirea-ninja/face-to-face-voting-app/blob/7d2ee05616716570424254d50cc6032c774054fd/lib/blocs/poll/poll_cubit.dart#L62
   const getActiveOrLastPoll = (polls: PollDocument[]) => {
+    if (polls.length === 0) {
+      return null
+    }
+
+    const pollsWithDates = polls
+      .filter((poll) => poll.start_at !== null && poll.end_at !== null)
+      .sort(
+        (poll1, poll2) => new Date(poll2.start_at!).getTime() - new Date(poll1.start_at!).getTime(),
+      )
+
     const now = new Date()
+    const activePoll = pollsWithDates.find(
+      (poll) => now > new Date(poll.start_at!) && now < new Date(poll.end_at!),
+    )
 
-    const activePoll = polls.find((poll) => {
-      if (poll.start_at && poll.end_at) {
-        const startAt = new Date(poll.start_at)
-        const endAt = new Date(poll.end_at)
-        return now >= startAt && now <= endAt
-      } else {
-        return false
-      }
-    })
-
-    if (activePoll) {
-      return activePoll
-    }
-
-    if (polls.length > 0) {
-      return polls[0]
-    }
-
-    return null
+    return activePoll ?? pollsWithDates.length > 0 ? pollsWithDates[0] : null
   }
 
   useEffect(() => {
