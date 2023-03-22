@@ -17,7 +17,7 @@ import UserResponseType from './UserResponseType'
 export default async function searchUser(req: NextApiRequest, res: NextApiResponse) {
   const { eventID, substring, jwt } = await req.body
 
-  if (!eventID || !substring || !jwt) {
+  if (!substring || !jwt) {
     return res.status(400).json({ message: 'Неверный запрос' })
   }
 
