@@ -114,7 +114,7 @@ const Realtime = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      fetchEvent().catch((error) => toast.error(error.message))
+      fetchEvent().then()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady])
@@ -157,7 +157,7 @@ const Realtime = () => {
 
             if (doc.$collectionId === appwritePollsCollection) {
               if (doc.event_id === eventID) {
-                fetchEvent().catch((error) => toast.error(error.message))
+                await fetchEvent().then()
               }
             }
 
@@ -193,10 +193,8 @@ const Realtime = () => {
                   }
                 } else {
                   if (eventAction === 'create' || eventAction === 'update') {
-                    const _votes = [...votes]
-                    _votes.push(doc as VoteDocument)
-                    setVotes(_votes)
-                    console.log('Votes: ', _votes)
+                    setVotes((votes) => [...votes, doc as VoteDocument])
+                    console.log('Votes create or update')
                   }
                 }
               }
