@@ -113,13 +113,6 @@ const Realtime = () => {
   }
 
   useEffect(() => {
-    if (router.isReady) {
-      fetchEvent().then()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady])
-
-  useEffect(() => {
     if (poll && poll.start_at && poll.end_at) {
       const startAt = new Date(poll.start_at)
       const endAt = new Date(poll.end_at)
@@ -163,41 +156,58 @@ const Realtime = () => {
             }
 
             if (doc.$collectionId === appwriteVotesCollection) {
-              if (doc.poll_id === poll?.$id) {
+              const _polls = (await databases.listDocuments(
+                appwriteVotingDatabase,
+                appwritePollsCollection,
+                [Query.equal('event_id', eventID as string), Query.limit(appwriteListPollsLimit)],
+              )) as { documents: PollDocument[] }
+              const _poll = getActiveOrLastPoll(_polls.documents)
+              if (_poll !== null && doc.poll_id === _poll.$id) {
+                const _votes = (await databases.listDocuments(
+                  appwriteVotingDatabase,
+                  appwriteVotesCollection,
+                  [Query.equal('poll_id', _poll.$id), Query.limit(appwriteListVotesLimit)],
+                )) as { documents: VoteDocument[] }
+                setVotes(() => _votes.documents)
+
+                // TODO
                 // в зависимости от ивента (update, create, delete) обновляем список голосов
                 // если документ изменился, то надо найти его в массиве и обновить
                 // если документ удален, то надо найти его в массиве и удалить
                 // если документ создан, то надо добавить его в массив
 
-                const index = votes.findIndex((vote) => vote.$id === doc.$id)
+                // const index = votes.findIndex((vote) => vote.$id === doc.$id)
 
-                if (index > -1) {
-                  if (eventAction === 'update') {
-                    const _votes = [...votes]
-                    _votes[index] = doc as VoteDocument
-                    setVotes(_votes)
-                    console.log('Votes: ', _votes)
-                  }
-
-                  if (eventAction === 'delete') {
-                    const _votes = [...votes]
-                    _votes.splice(index, 1)
-                    setVotes(_votes)
-                    console.log('Votes: ', _votes)
-                  }
-
-                  if (eventAction === 'create') {
-                    const _votes = [...votes]
-                    _votes.push(doc as VoteDocument)
-                    setVotes(_votes)
-                    console.log('Votes: ', _votes)
-                  }
-                } else {
-                  if (eventAction === 'create' || eventAction === 'update') {
-                    setVotes((votes) => [...votes, doc as VoteDocument])
-                    console.log('Votes create or update')
-                  }
-                }
+                // if (index > -1) {
+                //   if (eventAction === 'update') {
+                //     const _votes = [...votes]
+                //     _votes[index] = doc as VoteDocument
+                //     setVotes((votes) =>
+                //       votes.map((vote) => {
+                //         if (vote.$id === doc.$id) {
+                //           return doc as VoteDocument
+                //         }
+                //         return vote
+                //       }),
+                //     )
+                //     console.log('Votes update from subscription')
+                //   }
+                //
+                //   if (eventAction === 'delete') {
+                //     setVotes((votes) => votes.filter((vote) => vote.$id !== doc.$id))
+                //     console.log('Votes delete from subscription ')
+                //   }
+                //
+                //   if (eventAction === 'create') {
+                //     setVotes((votes) => [...votes, doc as VoteDocument])
+                //     console.log('Votes create from subscription')
+                //   }
+                // } else {
+                //   if (eventAction === 'create' || eventAction === 'update') {
+                //     setVotes((votes) => [...votes, doc as VoteDocument])
+                //     console.log('Votes create or update from subscription')
+                //   }
+                // }
               }
             }
           }
@@ -205,7 +215,7 @@ const Realtime = () => {
       )
     }
     if (router.isReady) {
-      subscribe()
+      fetchEvent().then(subscribe)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady])
