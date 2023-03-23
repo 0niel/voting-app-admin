@@ -63,10 +63,11 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
         await teams.listMemberships(event.participants_team_id, [
           Query.limit(appwriteListMembershipsLimit),
         ])
-      ).memberships.filter(
+      ).memberships.find(
         (membership) =>
-          !membership.roles.includes('owner') || membership.roles.includes(presidencyRole),
-      ).length > 0
+          !membership.roles.includes('owner') ||
+          (membership.roles.includes(presidencyRole) && membership.userId === userId),
+      ) !== undefined
 
     if (isParticipantOrPresidency) {
       const server = new Client()
