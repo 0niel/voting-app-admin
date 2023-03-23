@@ -256,7 +256,7 @@ const Realtime = () => {
           </div>
         )}
         {poll === null && (
-          <div className='w-full max-w-3xl rounded-lg bg-white px-4 py-8 shadow-lg'>
+          <div className='mb-4'>
             <h1 className='mb-4 text-center text-3xl font-bold text-gray-900'>{event?.name}</h1>
             <p className='mb-4 text-center text-lg text-gray-900'>
               В данный момент нет активных голосований
