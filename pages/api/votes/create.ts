@@ -65,8 +65,8 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
         ])
       ).memberships.find(
         (membership) =>
-          !membership.roles.includes('owner') ||
-          (membership.roles.includes(presidencyRole) && membership.userId === userId),
+          (!membership.roles.includes('owner') || membership.roles.includes(presidencyRole)) &&
+          membership.userId === userId,
       ) !== undefined
 
     if (isParticipantOrPresidency) {
