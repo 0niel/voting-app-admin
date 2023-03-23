@@ -168,7 +168,7 @@ const Realtime = () => {
                   appwriteVotesCollection,
                   [Query.equal('poll_id', _poll.$id), Query.limit(appwriteListVotesLimit)],
                 )) as { documents: VoteDocument[] }
-                setVotes(() => _votes.documents)
+                setVotes(() => _votes.documents.reverse())
 
                 // TODO
                 // в зависимости от ивента (update, create, delete) обновляем список голосов
