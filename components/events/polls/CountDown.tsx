@@ -37,7 +37,7 @@ export default function CountDown(props: CountDownInterface) {
   }, [currentTimeLeft])
 
   const handleAddTime = (secondsToAdd: number) => {
-    updateTimeLeft(currentTimeLeft + secondsToAdd)
+    updateTimeLeft((currentTimeLeft > 0 ? currentTimeLeft : 0) + secondsToAdd)
   }
 
   const handleStop = () => {

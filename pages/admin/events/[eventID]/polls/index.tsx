@@ -77,7 +77,6 @@ const PollList = () => {
 
   useEffect(() => {
     const pollTimes = polls.map((poll) => {
-      const startAt = new Date(poll.start_at!)
       const endAt = new Date(poll.end_at!)
       const now = new Date()
       let timeLeft = endAt.getTime() - now.getTime()
@@ -94,39 +93,6 @@ const PollList = () => {
   }, [polls])
 
   useEffect(() => {
-    client.subscribe(
-      [`databases.${appwriteVotingDatabase}.collections.${appwritePollsCollection}.documents`],
-      async (response) => {
-        console.log('Received event', response.events[0], 'with payload', response.payload)
-        const event = response.events[0]
-        const eventAction = event.split('.').pop()
-
-        const doc = response.payload as Models.Document
-
-        if (doc.$collectionId === appwritePollsCollection) {
-          if (doc.event_id === eventID) {
-            if (eventAction === 'create') {
-              setPolls((polls) => [doc as PollDocument, ...polls])
-            } else if (eventAction === 'update') {
-              setPolls((polls) =>
-                polls.map((poll) => {
-                  if (poll.$id === doc.$id) {
-                    return doc as PollDocument
-                  }
-                  return poll
-                }),
-              )
-            } else if (eventAction === 'delete') {
-              setPolls((polls) => polls.filter((poll) => poll.$id !== doc.$id))
-            }
-          }
-        }
-      },
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [event])
-
-  useEffect(() => {
     const fetchEvent = async () => {
       const _event = await databases.getDocument(
         appwriteVotingDatabase,
@@ -135,9 +101,35 @@ const PollList = () => {
       )
       setEvent(_event as EventDocument)
       await updatePolls(_event.$id)
-      client.subscribe('documents', async (response) => {
-        await updatePolls(_event.$id)
-      })
+      client.subscribe(
+        [`databases.${appwriteVotingDatabase}.collections.${appwritePollsCollection}.documents`],
+        async (response) => {
+          console.log('Received event', response.events[0], 'with payload', response.payload)
+          const event = response.events[0]
+          const eventAction = event.split('.').pop()
+
+          const doc = response.payload as Models.Document
+
+          if (doc.$collectionId === appwritePollsCollection) {
+            if (doc.event_id === eventID) {
+              if (eventAction === 'create') {
+                setPolls((polls) => [doc as PollDocument, ...polls])
+              } else if (eventAction === 'update') {
+                setPolls((polls) =>
+                  polls.map((poll) => {
+                    if (poll.$id === doc.$id) {
+                      return doc as PollDocument
+                    }
+                    return poll
+                  }),
+                )
+              } else if (eventAction === 'delete') {
+                setPolls((polls) => polls.filter((poll) => poll.$id !== doc.$id))
+              }
+            }
+          }
+        },
+      )
     }
     if (router.isReady) {
       fetchEvent().catch((error) => toast.error(error.message))
