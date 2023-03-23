@@ -4,12 +4,14 @@ import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from '
 import {
   appwriteEndpoint,
   appwriteEventsCollection,
+  appwriteListMembershipsLimit,
   appwriteListVotesLimit,
   appwritePollsCollection,
   appwriteProjectId,
   appwriteSuperUsersTeam,
   appwriteVotesCollection,
   appwriteVotingDatabase,
+  presidencyRole,
 } from '@/constants/constants'
 import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
 import { EventDocument } from '@/lib/models/EventDocument'
@@ -29,14 +31,6 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
   const userId = (await account.get()).$id
 
   const teams = new Teams(client)
-
-  var isSuperUser = true
-  var isParticipant = true
-  try {
-    await teams.get(appwriteSuperUsersTeam)
-  } catch (error) {
-    isSuperUser = false
-  }
 
   try {
     // Получаем информацию о мероприятии из базы данных
@@ -63,14 +57,17 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
       return
     }
 
-    // Проверяем, является ли пользователь участником мероприятия
-    try {
-      await teams.get(event.participants_team_id)
-    } catch (error) {
-      isParticipant = false
-    }
+    // Проверяем, является ли пользователь участником мероприятия или председателем
+    const isParticipantOrPresidency = (
+      await teams.listMemberships(event.participants_team_id, [
+        Query.limit(appwriteListMembershipsLimit),
+      ])
+    ).memberships.find(
+      (membership) =>
+        !membership.roles.includes('owner') || membership.roles.includes(presidencyRole),
+    )
 
-    if (isSuperUser || isParticipant) {
+    if (isParticipantOrPresidency) {
       const server = new Client()
         .setEndpoint(appwriteEndpoint)
         .setProject(appwriteProjectId)
@@ -144,6 +141,10 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
       )
 
       res.status(200).json({ message: 'ok' })
+    } else {
+      res
+        .status(403)
+        .json({ message: 'Пользователь не является председателем или участником голосования' })
     }
   } catch (error) {
     res.status(500).json({ message: mapAppwriteErrorToMessage((error as Error).message) })
