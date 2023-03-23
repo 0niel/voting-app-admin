@@ -1,8 +1,12 @@
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Databases, Models, Query } from 'appwrite'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
 
+import MNLogo from '@/components/logos/MNLogo'
+import SuMireaLogo from '@/components/logos/SuMireaLogo'
+import NinjaXUnion from '@/components/NinjaXUnion'
 import {
   appwriteEventsCollection,
   appwriteListPollsLimit,
@@ -16,15 +20,11 @@ import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
 import { pluralForm } from '@/lib/pluralForm'
+import StudentUnionLogo from '@/public/assets/mn-and-union.png'
 
 const BarChart = ({ data }: { data: { name: string; votes: number }[] }): ReactElement => {
   const totalVotes = data.reduce((acc, option) => acc + option.votes, 0)
-  console.log('Total votes: ', totalVotes)
-  for (const option of data) {
-    console.log('Option: ', option)
-    console.log('Votes: ', option.votes)
-    console.log('Percent: ', (option.votes / totalVotes) * 100)
-  }
+
   return (
     <div className='flex items-center justify-center'>
       <div className='w-full max-w-4xl rounded-md bg-white p-4 '>
@@ -106,7 +106,6 @@ const Realtime = () => {
         appwriteVotesCollection,
         [Query.equal('poll_id', _poll.$id), Query.limit(appwriteListVotesLimit)],
       )) as { documents: VoteDocument[] }
-      console.log('Votes: ', _votes.documents)
       setVotes(_votes.documents)
     }
   }
@@ -116,8 +115,6 @@ const Realtime = () => {
       const startAt = new Date(poll.start_at)
       const endAt = new Date(poll.end_at)
       const now = new Date()
-
-      console.log('Times [startAt, endAt, now]: ', [startAt, endAt, now])
 
       if (now >= startAt && now <= endAt) {
         setTimeLeft(endAt.getTime() - now.getTime())
@@ -220,48 +217,53 @@ const Realtime = () => {
   }, [router.isReady])
 
   return (
-    <div className='flex min-h-screen flex-col items-center justify-center bg-gray-100'>
-      {poll && (
-        <div className='w-full max-w-3xl rounded-lg bg-white px-4 py-8 shadow-lg'>
-          <h1 className='mb-4 text-center text-3xl font-bold text-gray-900'>{poll?.question}</h1>
-          <p className='mb-8 text-gray-700'>{poll.description}</p>
-          {timeLeft > 0 && (
-            <p className='mb-4 text-center font-bold text-gray-700'>
-              До окончания: {Math.floor(timeLeft / 1000 / 60)}{' '}
-              {pluralForm(Math.floor(timeLeft / 1000 / 60), ['минута', 'минуты', 'минут'])}{' '}
-              {Math.floor((timeLeft / 1000) % 60)}{' '}
-              {pluralForm(Math.floor((timeLeft / 1000) % 60), ['секунда', 'секунды', 'секунд'])}
-            </p>
-          )}
-          <div className='mb-4 text-center text-gray-700'>
-            {poll.end_at && new Date().getTime() > new Date(poll.end_at).getTime() && (
-              <p>Голосование завершено 🎉</p>
+    <div className='flex min-h-screen flex-col items-center justify-center  bg-gray-100'>
+      <div className='mb-8'>
+        <Image src={StudentUnionLogo} alt='Логотип Студсоюза МИРЭА' height={200} />
+      </div>
+      <div className='w-full max-w-3xl rounded-xl bg-white px-4 py-8 shadow-lg'>
+        {poll && (
+          <div className='mb-4'>
+            <h1 className='mb-4 text-center text-3xl font-bold text-gray-900'>{poll?.question}</h1>
+            <p className='mb-8 text-gray-700'>{poll.description}</p>
+            {timeLeft > 0 && (
+              <p className='mb-4 text-center font-bold text-gray-700'>
+                До окончания: {Math.floor(timeLeft / 1000 / 60)}{' '}
+                {pluralForm(Math.floor(timeLeft / 1000 / 60), ['минута', 'минуты', 'минут'])}{' '}
+                {Math.floor((timeLeft / 1000) % 60)}{' '}
+                {pluralForm(Math.floor((timeLeft / 1000) % 60), ['секунда', 'секунды', 'секунд'])}
+              </p>
             )}
-            {!poll.start_at && <p>Голосование не начато.</p>}
+            <div className='mb-4 text-center text-gray-700'>
+              {poll.end_at && new Date().getTime() > new Date(poll.end_at).getTime() && (
+                <p>Голосование завершено 🎉</p>
+              )}
+              {!poll.start_at && <p>Голосование не начато.</p>}
+            </div>
+            {Array.from(new Set([votes.map((vote) => vote.vote), ...poll.poll_options])) && (
+              <>
+                <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
+                <BarChart
+                  data={Array.from(
+                    new Set([...poll.poll_options, ...votes.map((vote) => vote.vote)]),
+                  ).map((option) => ({
+                    name: option,
+                    votes: votes.filter((vote) => vote.vote === option).length,
+                  }))}
+                />
+              </>
+            )}
           </div>
-          {Array.from(new Set([votes.map((vote) => vote.vote), ...poll.poll_options])) && (
-            <>
-              <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
-              <BarChart
-                data={Array.from(
-                  new Set([...poll.poll_options, ...votes.map((vote) => vote.vote)]),
-                ).map((option) => ({
-                  name: option,
-                  votes: votes.filter((vote) => vote.vote === option).length,
-                }))}
-              />
-            </>
-          )}
-        </div>
-      )}
-      {poll === null && (
-        <div className='w-full max-w-3xl rounded-lg bg-white px-4 py-8 shadow-lg'>
-          <h1 className='mb-4 text-center text-3xl font-bold text-gray-900'>{event?.name}</h1>
-          <p className='mb-4 text-center text-lg text-gray-900'>
-            В данный момент нет активных голосований
-          </p>
-        </div>
-      )}
+        )}
+        {poll === null && (
+          <div className='w-full max-w-3xl rounded-lg bg-white px-4 py-8 shadow-lg'>
+            <h1 className='mb-4 text-center text-3xl font-bold text-gray-900'>{event?.name}</h1>
+            <p className='mb-4 text-center text-lg text-gray-900'>
+              В данный момент нет активных голосований
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
