@@ -58,14 +58,15 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
     }
 
     // Проверяем, является ли пользователь участником мероприятия или председателем
-    const isParticipantOrPresidency = (
-      await teams.listMemberships(event.participants_team_id, [
-        Query.limit(appwriteListMembershipsLimit),
-      ])
-    ).memberships.find(
-      (membership) =>
-        !membership.roles.includes('owner') || membership.roles.includes(presidencyRole),
-    )
+    const isParticipantOrPresidency =
+      (
+        await teams.listMemberships(event.participants_team_id, [
+          Query.limit(appwriteListMembershipsLimit),
+        ])
+      ).memberships.find(
+        (membership) =>
+          !membership.roles.includes('owner') || membership.roles.includes(presidencyRole),
+      ) !== undefined
 
     if (isParticipantOrPresidency) {
       const server = new Client()

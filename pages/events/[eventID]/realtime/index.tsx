@@ -150,6 +150,7 @@ const Realtime = () => {
         ],
         async (response) => {
           const event = response.events[0]
+          console.log(event)
           const eventAction = event.split('.').pop()
 
           if (eventAction === 'create' || eventAction === 'update' || eventAction === 'delete') {
