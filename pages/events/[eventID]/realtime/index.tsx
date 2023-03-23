@@ -15,27 +15,29 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
+import { pluralForm } from '@/lib/pluralForm'
 
 const BarChart = ({ data }: { data: { name: string; votes: number }[] }): ReactElement => {
   const totalVotes = data.reduce((acc, option) => acc + option.votes, 0)
+  console.log('Total votes: ', totalVotes)
+  for (const option of data) {
+    console.log('Option: ', option)
+    console.log('Votes: ', option.votes)
+    console.log('Percent: ', (option.votes / totalVotes) * 100)
+  }
   return (
     <div className='flex items-center justify-center'>
       <div className='w-full max-w-4xl rounded-md bg-white p-4 '>
         {data.map((option) => (
           <div key={option.name} className='mb-4'>
             <div className='flex items-center justify-between'>
-              <span
-                className='text-lg font-medium text-gray-700
-              '
-              >
-                {option.name}
-              </span>
+              <span className='text-lg font-medium text-gray-700'>{option.name}</span>
               <span className='text-2xl font-bold text-gray-700'>{option.votes}</span>
             </div>
             <div className='mt-1 h-4 rounded-md bg-gray-300'>
               <div
                 className='h-4 rounded-md bg-blue-500'
-                style={{ width: `${(option.votes / totalVotes) * 100}%` }}
+                style={{ width: `${totalVotes === 0 ? 0 : (option.votes / totalVotes) * 100}%` }}
               ></div>
             </div>
           </div>
@@ -74,7 +76,6 @@ const Realtime = () => {
     const activePoll = pollsWithDates.find(
       (poll) => now > new Date(poll.start_at!) && now < new Date(poll.end_at!),
     )
-    console.log('active', activePoll)
     if (activePoll !== undefined) {
       return activePoll
     }
@@ -98,10 +99,8 @@ const Realtime = () => {
     ])) as { documents: PollDocument[] }
     const _poll = getActiveOrLastPoll(_polls.documents)
     setPoll(_poll)
-    console.log('We have poll: ', _poll)
 
     if (_poll) {
-      console.log('Poll ID: ', _poll.$id)
       const _votes = (await databases.listDocuments(
         appwriteVotingDatabase,
         appwriteVotesCollection,
@@ -228,8 +227,10 @@ const Realtime = () => {
           <p className='mb-8 text-gray-700'>{poll.description}</p>
           {timeLeft > 0 && (
             <p className='mb-4 text-center font-bold text-gray-700'>
-              До окончания: {Math.floor(timeLeft / 1000 / 60)} минут{' '}
-              {Math.floor((timeLeft / 1000) % 60)} секунд
+              До окончания: {Math.floor(timeLeft / 1000 / 60)}{' '}
+              {pluralForm(Math.floor(timeLeft / 1000 / 60), ['минута', 'минуты', 'минут'])}{' '}
+              {Math.floor((timeLeft / 1000) % 60)}{' '}
+              {pluralForm(Math.floor((timeLeft / 1000) % 60), ['секунда', 'секунды', 'секунд'])}
             </p>
           )}
           <div className='mb-4 text-center text-gray-700'>
