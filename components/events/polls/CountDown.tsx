@@ -81,6 +81,24 @@ export default function CountDown(props: CountDownInterface) {
             <button
               className='btn-ghost btn'
               disabled={!props.isStarted || props.isFinished}
+              onClick={() => handleAddTime(5)}
+            >
+              +5 сек
+            </button>
+          </li>
+          <li>
+            <button
+              className='btn-ghost btn'
+              disabled={!props.isStarted || props.isFinished}
+              onClick={() => handleAddTime(10)}
+            >
+              +10 сек
+            </button>
+          </li>
+          <li>
+            <button
+              className='btn-ghost btn'
+              disabled={!props.isStarted || props.isFinished}
               onClick={() => handleAddTime(30)}
             >
               +30 сек
@@ -93,24 +111,6 @@ export default function CountDown(props: CountDownInterface) {
               onClick={() => handleAddTime(60)}
             >
               +1 мин
-            </button>
-          </li>
-          <li>
-            <button
-              className='btn-ghost btn'
-              disabled={!props.isStarted || props.isFinished}
-              onClick={() => handleAddTime(300)}
-            >
-              +5 мин
-            </button>
-          </li>
-          <li>
-            <button
-              className='btn-ghost btn'
-              disabled={!props.isStarted || props.isFinished}
-              onClick={() => handleAddTime(600)}
-            >
-              +10 мин
             </button>
           </li>
         </ul>

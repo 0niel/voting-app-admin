@@ -50,7 +50,7 @@ async function createMembership(req: NextApiRequest, res: NextApiResponse) {
       await new Teams(server).createMembership(teamID, email, roles || [], url)
       res.status(200).json({ message: 'ok' })
     } else {
-      res.status(403).json({ message: 'Пользователь не является.' })
+      res.status(403).json({ message: 'Пользователь не является администратором команды.' })
     }
   } catch (error) {
     let message = (error as Error).message

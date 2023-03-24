@@ -26,16 +26,16 @@ export default function PollFormForModal(props: PollFormForModalProps) {
       </div>
       <div className='p-2'>
         <label className='mb-2 block text-sm font-medium text-neutral'>
-          Длительность голосования (в минутах)
+          Длительность голосования (в секундах)
         </label>
         <input
           type='text'
           min={0}
           className=' block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
-          value={props.duration / 60}
+          value={props.duration}
           required
           onChange={(event) =>
-            props.setDuration((event.target.value === '' ? 0 : parseInt(event.target.value)) * 60)
+            props.setDuration(event.target.value === '' ? 0 : parseInt(event.target.value))
           }
         />
       </div>
