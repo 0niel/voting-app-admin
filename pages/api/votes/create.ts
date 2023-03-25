@@ -153,7 +153,9 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
         await serverTeams.listMemberships(event.participants_team_id, [
           Query.limit(appwriteListMembershipsLimit),
         ])
-      ).memberships.map((membership) => membership.userId)
+      ).memberships
+        .filter(participantFilter)
+        .map((membership) => membership.userId)
       const toFinishPoll = allParticipantIDs.every((id) => votedParticipantIDs.includes(id))
       if (toFinishPoll) {
         await serverDatabase.updateDocument(
