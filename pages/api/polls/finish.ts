@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Client, Databases, ID, Query, Teams } from 'node-appwrite'
+import { Client, Databases, ID, Models, Query, Teams } from 'node-appwrite'
 
 import {
   appwriteEndpoint,
@@ -11,10 +11,10 @@ import {
   appwriteProjectId,
   appwriteVotesCollection,
   appwriteVotingDatabase,
-  presidencyRole,
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
+import { participantFilter } from '@/lib/participantFilter'
 
 export default async function finishPoll(req: NextApiRequest, res: NextApiResponse) {
   const { pollID, eventID, jwt } = await req.body
@@ -72,9 +72,7 @@ export default async function finishPoll(req: NextApiRequest, res: NextApiRespon
         ])
       ).memberships
         .filter(
-          (membership) =>
-            !voterIDs.includes(membership.userId) &&
-            (!membership.roles.includes('owner') || membership.roles.includes(presidencyRole)),
+          (membership) => !voterIDs.includes(membership.userId) && participantFilter(membership),
         )
         .forEach((membership) => {
           serverDatabases.createDocument(
