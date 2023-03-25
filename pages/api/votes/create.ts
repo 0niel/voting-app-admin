@@ -161,7 +161,8 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
           appwritePollsCollection,
           pollId,
           {
-            end_at: new Date(),
+            end_at: new Date().toISOString(),
+            is_finished: true,
           },
         )
       }
