@@ -12,6 +12,7 @@ import {
   appwriteEventsCollection,
   appwriteListMembershipsLimit,
   appwriteVotingDatabase,
+  moderatorVoterRole,
   presidencyRole,
 } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
@@ -19,6 +20,7 @@ import { useMembership } from '@/context/MembershipContext'
 import { GetMembershipRows, membershipColumns } from '@/lib/memberships'
 import { membershipsRealtimeResponseCallback } from '@/lib/membershipsRealtimeResponseCallback'
 import { EventDocument } from '@/lib/models/EventDocument'
+import { participantFilter } from '@/lib/participantFilter'
 import usePermitted from '@/lib/usePermitted'
 import useUser from '@/lib/useUser'
 
@@ -49,7 +51,9 @@ const Participants = () => {
           // @ts-ignore
           !response.payload?.roles?.includes('owner') ||
           // @ts-ignore
-          response.payload?.roles?.includes(presidencyRole)
+          response.payload?.roles?.includes(presidencyRole) ||
+          // @ts-ignore
+          response.payload?.roles?.includes(moderatorVoterRole)
         ) {
           membershipsRealtimeResponseCallback(response, setMemberships, _event.participants_team_id)
         }
@@ -81,13 +85,7 @@ const Participants = () => {
     }
   }
 
-  const rows: Cell[][] = GetMembershipRows(
-    memberships.filter(
-      (membership) =>
-        !membership.roles.includes('owner') || membership.roles.includes(presidencyRole),
-    ),
-    isPermitted,
-  )
+  const rows: Cell[][] = GetMembershipRows(memberships.filter(participantFilter), isPermitted)
 
   return (
     <>

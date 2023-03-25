@@ -26,3 +26,4 @@ export const appwriteListTeamsLimit = 500
 
 // Roles
 export const presidencyRole = 'presidency'
+export const moderatorVoterRole = 'moderatorvoter'

@@ -8,15 +8,14 @@ import {
   appwriteListVotesLimit,
   appwritePollsCollection,
   appwriteProjectId,
-  appwriteSuperUsersTeam,
   appwriteVotesCollection,
   appwriteVotingDatabase,
-  presidencyRole,
 } from '@/constants/constants'
 import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
+import { participantFilter } from '@/lib/participantFilter'
 
 export default async function createVote(req: NextApiRequest, res: NextApiResponse) {
   const { eventId, pollId, vote, jwt } = await req.body
@@ -64,9 +63,7 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
           Query.limit(appwriteListMembershipsLimit),
         ])
       ).memberships.find(
-        (membership) =>
-          (!membership.roles.includes('owner') || membership.roles.includes(presidencyRole)) &&
-          membership.userId === userId,
+        (membership) => participantFilter(membership) && membership.userId === userId,
       ) !== undefined
 
     if (isParticipantOrPresidency) {
@@ -76,6 +73,7 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
         .setKey(process.env.APPWRITE_API_KEY!)
 
       const serverDatabase = new Databases(server)
+      const serverTeams = new Teams(server)
 
       // Проверяем, что `vote` соответсвтует одному из poll.vote_options
       const isVoteValid = poll.poll_options.some((option) => option === vote)
@@ -98,27 +96,27 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
         res.status(400).json({ message: 'Вы уже голосовали.' })
         return
 
-        console.log(`Пользователь уже голосовал: ${JSON.stringify(votes)}!`)
-        // Пользователь уже голосовал, обновляем его голос
-        const voteDocument: VoteDocument = votes.documents[0] as VoteDocument
-        voteDocument.vote = vote
-
-        const voteId = await serverDatabase.updateDocument(
-          appwriteVotingDatabase,
-          appwriteVotesCollection,
-          voteDocument.$id,
-          {
-            vote: vote,
-          },
-        )
-
-        if (!voteId) {
-          res.status(500).json({ message: 'Не удалось обновить голос.' })
-          return
-        }
-
-        res.status(200).json({ message: 'ok' })
-        return
+        // console.log(`Пользователь уже голосовал: ${JSON.stringify(votes)}!`)
+        // // Пользователь уже голосовал, обновляем его голос
+        // const voteDocument: VoteDocument = votes.documents[0] as VoteDocument
+        // voteDocument.vote = vote
+        //
+        // const voteId = await serverDatabase.updateDocument(
+        //   appwriteVotingDatabase,
+        //   appwriteVotesCollection,
+        //   voteDocument.$id,
+        //   {
+        //     vote: vote,
+        //   },
+        // )
+        //
+        // if (!voteId) {
+        //   res.status(500).json({ message: 'Не удалось обновить голос.' })
+        //   return
+        // }
+        //
+        // res.status(200).json({ message: 'ok' })
+        // return
       }
 
       // Создаем голос пользователя
@@ -141,6 +139,32 @@ export default async function createVote(req: NextApiRequest, res: NextApiRespon
           Permission.read(Role.team(event.participants_team_id)),
         ],
       )
+
+      // autocomplete poll
+      const votedParticipantIDs = (
+        (
+          await serverDatabase.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
+            Query.equal('poll_id', pollId),
+            Query.limit(appwriteListVotesLimit),
+          ])
+        ).documents as VoteDocument[]
+      ).map((vote) => vote.voter_id)
+      const allParticipantIDs = (
+        await serverTeams.listMemberships(event.participants_team_id, [
+          Query.limit(appwriteListMembershipsLimit),
+        ])
+      ).memberships.map((membership) => membership.userId)
+      const toFinishPoll = allParticipantIDs.every((id) => votedParticipantIDs.includes(id))
+      if (toFinishPoll) {
+        await serverDatabase.updateDocument(
+          appwriteVotingDatabase,
+          appwritePollsCollection,
+          pollId,
+          {
+            end_at: new Date(),
+          },
+        )
+      }
 
       res.status(200).json({ message: 'ok' })
     } else {
