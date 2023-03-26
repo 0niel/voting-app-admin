@@ -16,8 +16,15 @@ import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
 import { participantFilter } from '@/lib/participantFilter'
+import NextCors from 'nextjs-cors'
 
 export default async function createVote(req: NextApiRequest, res: NextApiResponse) {
+  await NextCors(req, res, {
+    // Options
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    origin: '*',
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  })
   const { eventId, pollId, vote, jwt } = await req.body
 
   const client = new Client()
