@@ -1,38 +1,40 @@
 version: '3.9'
 
 services:
-  proxy:
-    image: jwilder/nginx-proxy
+  traefik:
+    image: traefik:latest
+    command:
+      - --accesslog=true
+      - --log.level=INFO
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.constraints=Label(`traefik.constraint-label-stack`,`voting-app-admin`)
+      - --entrypoints.voting_app_admin_web.address=:80
+      - --entrypoints.voting_app_admin_websecure.address=:443
+      # LetsEncrypt Staging Server
+      # - --certificatesResolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=voting_app_admin_web
+      - --certificatesresolvers.letsencrypt.acme.email=${EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+    restart: unless-stopped
     ports:
-      - '80:80'
-      - '443:443'
+      - 80:80
+      - 443:443
     volumes:
-      - conf:/etc/nginx/conf.d
-      - vhost:/etc/nginx/vhost.d
-      - dhparam:/etc/nginx/dhparam
-      - certs:/etc/nginx/certs:ro
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - /usr/share/nginx/html
-      - acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/letsencrypt:/letsencrypt
+    depends_on:
+      - frontend
     networks:
-      - proxy
-    restart: always
-
-  letsencrypt:
-    image: nginxproxy/acme-companion:latest
-    volumes_from:
-      - proxy
-    volumes:
-      - certs:/etc/nginx/certs:rw
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - acme:/etc/acme.sh
-    restart: always
+      - gateway
+      - application
 
   frontend:
     image: ${IMAGE_FRONTEND}
+    restart: unless-stopped
     networks:
-      - proxy
-      - default
+      - application
     environment:
       SENTRY_URL: ${SENTRY_URL}
       SENTRY_ORG: ${SENTRY_ORG}
@@ -44,34 +46,55 @@ services:
       SECRET_COOKIE_PASSWORD: ${SECRET_COOKIE_PASSWORD}
 
       APPWRITE_API_KEY: ${APPWRITE_API_KEY}
+    labels:
+      - traefik.enable=true
+      - traefik.constraint-label-stack=voting-app-admin
+      - traefik.docker.network=application
+      - traefik.http.services.voting_app_admin.loadbalancer.server.port=3000
+      #http
+      - traefik.http.routers.voting_app_admin_http.entrypoints=voting_app_admin_web
+      - traefik.http.routers.voting_app_admin_http.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.voting_app_admin_http.service=voting_app_admin
+      - traefik.http.routers.voting_app_admin_http.middlewares=voting_app_admin_redirect_https
+      # https
+      - traefik.http.middlewares.voting_app_admin_redirect_https.redirectscheme.scheme=https
+      - traefik.http.middlewares.voting_app_admin_redirect_https.redirectscheme.permanent=true
+      - traefik.http.routers.voting_app_admin_https.entrypoints=voting_app_admin_websecure
+      - traefik.http.routers.voting_app_admin_https.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.voting_app_admin_https.service=voting_app_admin
+      - traefik.http.routers.voting_app_admin_https.tls=true
+      - traefik.http.routers.voting_app_admin_https.tls.certresolver=${CERT_RESOLVER}
 
-      VIRTUAL_HOST: ${DOMAIN}
-      LETSENCRYPT_HOST: ${DOMAIN}
-      VIRTUAL_PORT: '3000'
-
-  frontend_dev:
-    image: ${IMAGE_FRONTEND_DEV}
-    networks:
-      - proxy
-      - default
-    environment:
-      SECRET_COOKIE_PASSWORD: ${SECRET_COOKIE_PASSWORD}
-      NEXT_PUBLIC_REDIRECT_HOSTNAME: ${DEV_REDIRECT_HOSTNAME}
-      SENTRY_DSN: ${SENTRY_DSN}
-
-      APPWRITE_API_KEY: ${APPWRITE_API_KEY}
-
-      VIRTUAL_HOST: ${DEV_DOMAIN}
-      LETSENCRYPT_HOST: ${DEV_DOMAIN}
-      VIRTUAL_PORT: '3001'
-
-volumes:
-  conf:
-  vhost:
-  dhparam:
-  certs:
-  acme:
+#  frontend_dev:
+#    image: ${IMAGE_FRONTEND_DEV}
+#    restart: unless-stopped
+#    networks:
+#      - application
+#    environment:
+#      SECRET_COOKIE_PASSWORD: ${SECRET_COOKIE_PASSWORD}
+#      NEXT_PUBLIC_REDIRECT_HOSTNAME: ${DEV_REDIRECT_HOSTNAME}
+#      SENTRY_DSN: ${SENTRY_DSN}
+#
+#      APPWRITE_API_KEY: ${APPWRITE_API_KEY}
+#    labels:
+#      - traefik.enable=true
+#      - traefik.constraint-label-stack=voting-app-admin
+#      - traefik.docker.network=application
+#      - traefik.http.services.voting_app_admin.loadbalancer.server.port=3001
+#      #http
+#      - traefik.http.routers.voting_app_admin_http.entrypoints=voting_app_admin_web
+#      - traefik.http.routers.voting_app_admin_http.rule=Host(`${DEV_DOMAIN}`)
+#      - traefik.http.routers.voting_app_admin_http.service=voting_app_admin
+#      - traefik.http.routers.voting_app_admin_http.middlewares=voting_app_admin_redirect_https
+#      # https
+#      - traefik.http.middlewares.voting_app_admin_redirect_https.redirectscheme.scheme=https
+#      - traefik.http.middlewares.voting_app_admin_redirect_https.redirectscheme.permanent=true
+#      - traefik.http.routers.voting_app_admin_https.entrypoints=voting_app_admin_websecure
+#      - traefik.http.routers.voting_app_admin_https.rule=Host(`${DEV_DOMAIN}`)
+#      - traefik.http.routers.voting_app_admin_https.service=voting_app_admin
+#      - traefik.http.routers.voting_app_admin_https.tls=true
+#      - traefik.http.routers.voting_app_admin_https.tls.certresolver=${CERT_RESOLVER}
 
 networks:
-  proxy:
-    external: true
+  gateway:
+  application:
