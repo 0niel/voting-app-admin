@@ -33,4 +33,8 @@ export interface PollDocument extends Models.Document {
    * Индикатор, что голосование завершено. Неотданные голоса добавлены в категорию воздержался.
    */
   is_finished: boolean
+  /**
+   * Показывать список проголосовавших.
+   */
+  show_voters: boolean
 }

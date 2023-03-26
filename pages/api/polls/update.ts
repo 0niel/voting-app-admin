@@ -19,8 +19,18 @@ import { sessionOptions } from '@/lib/session'
 export default withIronSessionApiRoute(updatePoll, sessionOptions)
 
 async function updatePoll(req: NextApiRequest, res: NextApiResponse) {
-  const { question, startAt, endAt, duration, eventID, pollOptions, isFinished, pollID, jwt } =
-    await req.body
+  const {
+    question,
+    startAt,
+    endAt,
+    duration,
+    eventID,
+    pollOptions,
+    showVoters,
+    isFinished,
+    pollID,
+    jwt,
+  } = await req.body
   try {
     const client = new Client()
       .setEndpoint(appwriteEndpoint)
@@ -79,6 +89,7 @@ async function updatePoll(req: NextApiRequest, res: NextApiResponse) {
           event_id: eventID,
           poll_options: pollOptions,
           is_finished: isFinished,
+          show_voters: showVoters,
         } as PollDocument,
       )
       res.status(200).json({ message: 'ok' })

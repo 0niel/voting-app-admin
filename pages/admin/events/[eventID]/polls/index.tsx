@@ -37,6 +37,7 @@ import { PollDocument } from '@/lib/models/PollDocument'
 const columns: Column[] = [
   { title: 'id' },
   { title: 'Вопрос' },
+  { title: 'Показать список участников' },
   { title: 'Изначальная длительность (сек.)' },
   { title: 'Начало' },
   { title: 'Конец' },
@@ -220,6 +221,7 @@ const PollList = () => {
   const rows: Cell[][] = polls.map((poll) => [
     { value: poll.$id },
     { value: poll.question },
+    { value: poll.show_voters ? '✅Да' : '❌Нет' },
     { value: poll.duration },
     { value: poll.start_at ? formatDate(poll.start_at) : 'нет' },
     { value: poll.end_at ? formatDate(poll.end_at) : 'нет' },

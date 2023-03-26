@@ -10,6 +10,8 @@ interface PollFormForModalProps {
   setDuration: Function
   pollOptions: string[]
   setPollOptions: Function
+  showVoters: boolean
+  setShowVoters: Function
 }
 export default function PollFormForModal(props: PollFormForModalProps) {
   return (
@@ -38,6 +40,15 @@ export default function PollFormForModal(props: PollFormForModalProps) {
             props.setDuration(event.target.value === '' ? 0 : parseInt(event.target.value))
           }
         />
+        <label className='label cursor-pointer'>
+          <span className='label-text'>Показать список участников</span>
+          <input
+            type='checkbox'
+            checked={props.showVoters}
+            onChange={(event) => props.setShowVoters(event.target.checked)}
+            className='checkbox-primary checkbox'
+          />
+        </label>
       </div>
       <div className='p-2'>
         <label className='mb-2 block text-sm font-medium text-neutral'>Варианты выбора</label>
