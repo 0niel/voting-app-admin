@@ -85,7 +85,7 @@ export default function DeleteEventModal() {
             <ExclamationTriangleIcon className='h-8 w-8' />
             <span>
               При удалении мероприятия списки модераторов доступа и голосования, участников также
-              удалены.
+              будут удалены.
             </span>
           </div>
         </div>

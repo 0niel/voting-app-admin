@@ -230,31 +230,29 @@ const Events = () => {
 
   return (
     <>
-      <div className='mt-4 flex flex-col space-y-4'>
-        <Table
-          columns={columns}
-          rows={rows}
-          title='Список мероприятий'
-          description='Список всех мероприятий, созданных в системе. Меропрития — это события, в рамках которых проводятся голосования'
-          action='Создать мероприятие'
-          onActionClick={() => setCreateEvent(true)}
-          isDisabledAction={!hasPermissionToCreteEvent}
-        />
+      <Table
+        columns={columns}
+        rows={rows}
+        title='Список мероприятий'
+        description='Список всех мероприятий, созданных в системе. Меропрития — это события, в рамках которых проводятся голосования'
+        action='Создать мероприятие'
+        onActionClick={() => setCreateEvent(true)}
+        isDisabledAction={!hasPermissionToCreteEvent}
+      />
 
-        <div className='rounded-md bg-white px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8'>
-          <h2 className='text-2xl font-semibold'>Кто такие модераторы доступа и голосований?</h2>
-          <div className='grid grid-cols-1 gap-8 md:grid-cols-2'>
-            <p>
-              <span className='font-semibold'>Модераторы доступа</span> могут управлять доступом
-              участников к голосованиям. Они добавляют и удаляют участников из группы{' '}
-              <span className='font-semibold'>Участники</span>.
-            </p>
-            <p>
-              <span className='font-semibold'>Модераторы голосования</span> могут управлять
-              голосованиями. Они могут создавать, редактировать и удалять голосования, изменять
-              время начала и окончания голосования.
-            </p>
-          </div>
+      <div className='rounded-md bg-white px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8'>
+        <h2 className='text-2xl font-semibold'>Кто такие модераторы доступа и голосований?</h2>
+        <div className='grid grid-cols-1 gap-8 md:grid-cols-2'>
+          <p>
+            <span className='font-semibold'>Модераторы доступа</span> могут управлять доступом
+            участников к голосованиям. Они добавляют и удаляют участников из группы{' '}
+            <span className='font-semibold'>Участники</span>.
+          </p>
+          <p>
+            <span className='font-semibold'>Модераторы голосования</span> могут управлять
+            голосованиями. Они могут создавать, редактировать и удалять голосования, изменять время
+            начала и окончания голосования.
+          </p>
         </div>
       </div>
       <CreateEventModal />

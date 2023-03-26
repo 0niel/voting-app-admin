@@ -1,6 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react'
 import {
   ArrowLeftOnRectangleIcon,
+  ArrowUpOnSquareIcon,
   Bars3Icon,
   CalendarIcon,
   DocumentTextIcon,
@@ -36,7 +37,6 @@ interface NavigationItemI {
 }
 
 const navigation: NavigationItemI[] = [
-  // { name: 'Дашборды', href: '/admin/dashboard', icon: HomeIcon },
   { name: 'Мероприятия', href: '/admin/events', icon: CalendarIcon, current: true },
 ]
 
@@ -50,6 +50,11 @@ const superuserNavigation: NavigationItemI[] = [
     name: 'Ресурсы',
     href: '/admin/resources',
     icon: DocumentTextIcon,
+  },
+  {
+    name: 'Экспорт',
+    href: '/admin/export',
+    icon: ArrowUpOnSquareIcon,
   },
 ]
 
