@@ -26,7 +26,7 @@ async function updatePoll(req: NextApiRequest, res: NextApiResponse) {
     duration,
     eventID,
     pollOptions,
-    showVoters,
+    showPollResults,
     isFinished,
     pollID,
     jwt,
@@ -89,7 +89,7 @@ async function updatePoll(req: NextApiRequest, res: NextApiResponse) {
           event_id: eventID,
           poll_options: pollOptions,
           is_finished: isFinished,
-          show_voters: showVoters,
+          show_poll_results: showPollResults,
         } as PollDocument,
       )
       res.status(200).json({ message: 'ok' })

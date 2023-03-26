@@ -21,7 +21,7 @@ import { EventDocument } from '@/lib/models/EventDocument'
 const initialQuestion = ''
 const initialPollOptions = ['За', 'Против', 'Воздержусь']
 const initialDuration = 0
-const initialShowVoters = false
+const initialShowPollResults = false
 
 export default function CreatePollModal() {
   const router = useRouter()
@@ -32,7 +32,7 @@ export default function CreatePollModal() {
   const [question, setQuestion] = useState(initialQuestion)
   const [duration, setDuration] = useState<number>(initialDuration)
   const [pollOptions, setPollOptions] = useState<string[]>(initialPollOptions)
-  const [showVoters, setShowVoters] = useState(initialShowVoters)
+  const [showPollResults, setShowPollResults] = useState(initialShowPollResults)
   const [event, setEvent] = useState<EventDocument>()
   const account = new Account(client)
 
@@ -40,7 +40,7 @@ export default function CreatePollModal() {
     setQuestion(initialQuestion)
     setPollOptions(initialPollOptions)
     setDuration(initialDuration)
-    setShowVoters(initialShowVoters)
+    setShowPollResults(initialShowPollResults)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createPoll])
 
@@ -73,7 +73,7 @@ export default function CreatePollModal() {
         duration,
         pollOptions: pollOptions,
         eventID: event!.$id,
-        showVoters,
+        showPollResults,
         jwt,
       }),
     })
@@ -95,8 +95,8 @@ export default function CreatePollModal() {
         setDuration={setDuration}
         pollOptions={pollOptions}
         setPollOptions={setPollOptions}
-        showVoters={showVoters}
-        setShowVoters={setShowVoters}
+        showPollResults={showPollResults}
+        setShowPollResults={setShowPollResults}
       />
     </Modal>
   )
