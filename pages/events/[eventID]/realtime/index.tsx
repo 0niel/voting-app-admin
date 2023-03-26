@@ -1,5 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { Databases, Models, Query } from 'appwrite'
+import { Databases, Models, Query, Teams } from 'appwrite'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
@@ -19,6 +19,7 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
+import { participantFilter } from '@/lib/participantFilter'
 import { pluralForm } from '@/lib/pluralForm'
 import StudentUnionLogo from '@/public/assets/mn-and-union.png'
 
@@ -50,13 +51,14 @@ const BarChart = ({ data }: { data: { name: string; votes: number }[] }): ReactE
 const Realtime = () => {
   const { client } = useAppwrite()
   const databases = new Databases(client)
+  const teams = new Teams(client)
 
   const router = useRouter()
   const { eventID } = router.query
 
   const [event, setEvent] = useState<EventDocument>()
   const [poll, setPoll] = useState<PollDocument | null | undefined>(undefined)
-  const [votes, setVotes] = useState<VoteDocument[]>([])
+  const [votes, setVotes] = useState<VoteDocument[] | any[]>([])
   const [timeLeft, setTimeLeft] = useState(0)
 
   // Should be equivalent to function _getActiveOrLastPoll in mobile app
@@ -85,13 +87,31 @@ const Realtime = () => {
     return null
   }
 
+  const getOnlyVotersCount = async (event: EventDocument, votes: VoteDocument[]) => {
+    const membershipList = await teams.listMemberships(event.participants_team_id)
+    const voters = membershipList.memberships.filter((membership) => participantFilter(membership))
+
+    const voted = votes.filter((vote) => voters.some((voter) => voter.userId === vote.user_id))
+    const notVoted = voters.filter((voter) => !voted.some((vote) => vote.user_id === voter.userId))
+
+    const votedOption = {
+      name: 'Проголосовали',
+      votes: voted.length,
+    }
+    const notVotedOption = {
+      name: 'Не проголосовали',
+      votes: notVoted.length,
+    }
+    return [votedOption, notVotedOption]
+  }
+
   const fetchEvent = async () => {
-    const _event = await databases.getDocument(
+    const _event = (await databases.getDocument(
       appwriteVotingDatabase,
       appwriteEventsCollection,
       eventID as string,
-    )
-    setEvent(_event as EventDocument)
+    )) as EventDocument
+    setEvent(_event)
 
     const _polls = (await databases.listDocuments(appwriteVotingDatabase, appwritePollsCollection, [
       Query.equal('event_id', eventID as string),
@@ -106,7 +126,16 @@ const Realtime = () => {
         appwriteVotesCollection,
         [Query.equal('poll_id', _poll.$id), Query.limit(appwriteListVotesLimit)],
       )) as { documents: VoteDocument[] }
-      setVotes(_votes.documents)
+
+      if (_poll.show_only_voters_count && !_poll.is_finished) {
+        const [votedOption, notVotedOption] = await getOnlyVotersCount(
+          _event,
+          _votes.documents as VoteDocument[],
+        )
+        setVotes([votedOption, notVotedOption])
+      } else {
+        setVotes(_votes.documents)
+      }
     }
   }
 
@@ -138,9 +167,8 @@ const Realtime = () => {
           `databases.${appwriteVotingDatabase}.collections.${appwriteVotesCollection}.documents`,
         ],
         async (response) => {
-          const event = response.events[0]
-          console.log(event)
-          const eventAction = event.split('.').pop()
+          const _event = response.events[0]
+          const eventAction = _event.split('.').pop()
 
           if (eventAction === 'create' || eventAction === 'update' || eventAction === 'delete') {
             const doc = response.payload as Models.Document
@@ -157,14 +185,33 @@ const Realtime = () => {
                 appwritePollsCollection,
                 [Query.equal('event_id', eventID as string), Query.limit(appwriteListPollsLimit)],
               )) as { documents: PollDocument[] }
+
               const _poll = getActiveOrLastPoll(_polls.documents)
+
               if (_poll !== null && doc.poll_id === _poll.$id) {
                 const _votes = (await databases.listDocuments(
                   appwriteVotingDatabase,
                   appwriteVotesCollection,
                   [Query.equal('poll_id', _poll.$id), Query.limit(appwriteListVotesLimit)],
                 )) as { documents: VoteDocument[] }
-                setVotes(() => _votes.documents.reverse())
+                console.log(_poll)
+
+                // Если голосование настроено на "показать только количество проголосовавших",
+                // то мы отображаем в качестве вариантов "Проголосовали", "Не проголосовали",
+                // а результаты только если голосование завершено
+                if (_poll.show_only_voters_count && !_poll.is_finished) {
+                  if (event === undefined) return
+
+                  const [votedOption, notVotedOption] = await getOnlyVotersCount(
+                    event,
+                    _votes.documents as VoteDocument[],
+                  )
+
+                  setVotes(() => [votedOption, notVotedOption])
+                  console.log('voted', votes)
+                } else {
+                  setVotes(() => _votes.documents.reverse())
+                }
 
                 // TODO
                 // в зависимости от ивента (update, create, delete) обновляем список голосов
@@ -240,17 +287,26 @@ const Realtime = () => {
               )}
               {!poll.start_at && <p>Голосование не начато.</p>}
             </div>
-            {Array.from(new Set([votes.map((vote) => vote.vote), ...poll.poll_options])) && (
+
+            {!poll.show_only_voters_count ||
+              (poll.is_finished &&
+                Array.from(new Set([votes.map((vote) => vote.vote), ...poll.poll_options])) && (
+                  <>
+                    <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
+                    <BarChart
+                      data={Array.from(
+                        new Set([...poll.poll_options, ...votes.map((vote) => vote.vote)]),
+                      ).map((option) => ({
+                        name: option,
+                        votes: votes.filter((vote) => vote.vote === option).length,
+                      }))}
+                    />
+                  </>
+                ))}
+            {poll.show_only_voters_count && !poll.is_finished && (
               <>
                 <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
-                <BarChart
-                  data={Array.from(
-                    new Set([...poll.poll_options, ...votes.map((vote) => vote.vote)]),
-                  ).map((option) => ({
-                    name: option,
-                    votes: votes.filter((vote) => vote.vote === option).length,
-                  }))}
-                />
+                <BarChart data={votes as { name: string; votes: number }[]} />
               </>
             )}
           </div>

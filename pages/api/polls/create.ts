@@ -17,7 +17,7 @@ import { sessionOptions } from '@/lib/session'
 export default withIronSessionApiRoute(createPoll, sessionOptions)
 
 async function createPoll(req: NextApiRequest, res: NextApiResponse) {
-  const { question, startAt, endAt, duration, eventID, pollOptions, showPollResults, jwt } =
+  const { question, startAt, endAt, duration, eventID, pollOptions, showOnlyVotersCount, jwt } =
     await req.body
   try {
     const pollOptionsSet = Array.from(new Set(pollOptions))
@@ -63,7 +63,7 @@ async function createPoll(req: NextApiRequest, res: NextApiResponse) {
           event_id: eventID,
           poll_options: pollOptionsSet,
           is_finished: false,
-          show_poll_results: showPollResults,
+          show_only_voters_count: showOnlyVotersCount,
         } as PollDocument,
         [
           Permission.read(Role.team(event!.participants_team_id)),

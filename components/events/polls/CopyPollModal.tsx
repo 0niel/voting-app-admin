@@ -16,6 +16,7 @@ export default function CopyPollModal() {
   const { eventID } = router.query
   const [question, setQuestion] = useState<string>()
   const [duration, setDuration] = useState(0)
+  const [showOnlyVotersCount, setshowOnlyVotersCount] = useState(false)
   const [pollOptions, setPollOptions] = useState<string[]>([])
   const { client } = useAppwrite()
   const databases = new Databases(client)
@@ -31,6 +32,7 @@ export default function CopyPollModal() {
       setQuestion(poll.question)
       setDuration(poll.duration)
       setPollOptions(poll.poll_options)
+      setshowOnlyVotersCount(poll.show_only_voters_count)
     }
 
     if (pollIdToCopy !== undefined) {
@@ -50,6 +52,7 @@ export default function CopyPollModal() {
         duration,
         pollOptions: pollOptions,
         eventID: eventID,
+        showOnlyVotersCount: showOnlyVotersCount,
         jwt,
       }),
     })

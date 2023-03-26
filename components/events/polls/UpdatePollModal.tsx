@@ -34,7 +34,7 @@ export default function UpdatePollModal() {
       setQuestion(poll.question)
       setDuration(poll.duration)
       setPollOptions(poll.poll_options)
-      setShowPollResults(poll.show_poll_results)
+      setShowPollResults(poll.show_only_voters_count)
     }
 
     if (pollIdToUpdate !== undefined) {
