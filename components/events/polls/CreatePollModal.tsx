@@ -32,7 +32,7 @@ export default function CreatePollModal() {
   const [question, setQuestion] = useState(initialQuestion)
   const [duration, setDuration] = useState<number>(initialDuration)
   const [pollOptions, setPollOptions] = useState<string[]>(initialPollOptions)
-  const [showOnlyVotersCount, setshowOnlyVotersCount] = useState(initialshowOnlyVotersCount)
+  const [showOnlyVotersCount, setShowOnlyVotersCount] = useState(initialshowOnlyVotersCount)
   const [event, setEvent] = useState<EventDocument>()
   const account = new Account(client)
 
@@ -40,7 +40,7 @@ export default function CreatePollModal() {
     setQuestion(initialQuestion)
     setPollOptions(initialPollOptions)
     setDuration(initialDuration)
-    setshowOnlyVotersCount(initialshowOnlyVotersCount)
+    setShowOnlyVotersCount(initialshowOnlyVotersCount)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createPoll])
 
@@ -96,7 +96,7 @@ export default function CreatePollModal() {
         pollOptions={pollOptions}
         setPollOptions={setPollOptions}
         showOnlyVotersCount={showOnlyVotersCount}
-        setshowOnlyVotersCount={setshowOnlyVotersCount}
+        setShowOnlyVotersCount={setShowOnlyVotersCount}
       />
     </Modal>
   )

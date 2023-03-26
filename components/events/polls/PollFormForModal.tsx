@@ -11,7 +11,7 @@ interface PollFormForModalProps {
   pollOptions: string[]
   setPollOptions: Function
   showOnlyVotersCount: boolean
-  setshowOnlyVotersCount: Function
+  setShowOnlyVotersCount: Function
 }
 export default function PollFormForModal(props: PollFormForModalProps) {
   return (
@@ -50,7 +50,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
             <input
               type='checkbox'
               checked={props.showOnlyVotersCount}
-              onChange={(event) => props.setshowOnlyVotersCount(event.target.checked)}
+              onChange={(event) => props.setShowOnlyVotersCount(event.target.checked)}
               className='checkbox-primary checkbox'
             />
           </label>

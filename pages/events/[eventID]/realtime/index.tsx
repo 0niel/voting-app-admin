@@ -1,17 +1,24 @@
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { Databases, Models, Query, Teams } from 'appwrite'
+import { Client, Databases, Models, Query, Teams } from 'appwrite'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import {
+  Client as ServerClient,
+  Databases as ServerDatabases,
+  Teams as ServerTeams,
+} from 'node-appwrite'
 import React, { ReactElement, useEffect, useState } from 'react'
 
 import MNLogo from '@/components/logos/MNLogo'
 import SuMireaLogo from '@/components/logos/SuMireaLogo'
 import NinjaXUnion from '@/components/NinjaXUnion'
 import {
+  appwriteEndpoint,
   appwriteEventsCollection,
   appwriteListPollsLimit,
   appwriteListVotesLimit,
   appwritePollsCollection,
+  appwriteProjectId,
   appwriteVotesCollection,
   appwriteVotingDatabase,
 } from '@/constants/constants'
@@ -48,15 +55,51 @@ const BarChart = ({ data }: { data: { name: string; votes: number }[] }): ReactE
   )
 }
 
-const Realtime = () => {
+// serverside updatebale props to get participant list
+export async function getServerSideProps(context: any) {
+  const eventID = context.params.eventID
+
+  const server = new ServerClient()
+    .setEndpoint(appwriteEndpoint)
+    .setProject(appwriteProjectId)
+    .setKey(process.env.APPWRITE_API_KEY!)
+
+  const databases = new ServerDatabases(server)
+
+  const teams = new ServerTeams(server)
+
+  const event = (await databases.getDocument(
+    appwriteVotingDatabase,
+    appwriteEventsCollection,
+    eventID,
+  )) as EventDocument
+
+  const membershipList = await teams.listMemberships(event.participants_team_id)
+  const voters = membershipList.memberships.filter((membership) => participantFilter(membership))
+
+  return {
+    props: {
+      currentEvent: event,
+      votersList: voters,
+    },
+  }
+}
+
+const Realtime = ({
+  currentEvent,
+  votersList,
+}: {
+  currentEvent: EventDocument
+  votersList: Models.Membership[]
+}) => {
   const { client } = useAppwrite()
   const databases = new Databases(client)
-  const teams = new Teams(client)
 
   const router = useRouter()
   const { eventID } = router.query
 
-  const [event, setEvent] = useState<EventDocument>()
+  const [event, setEvent] = useState<EventDocument>(currentEvent)
+  const [voters, setVoters] = useState<Models.Membership[]>(votersList)
   const [poll, setPoll] = useState<PollDocument | null | undefined>(undefined)
   const [votes, setVotes] = useState<VoteDocument[] | any[]>([])
   const [timeLeft, setTimeLeft] = useState(0)
@@ -88,9 +131,6 @@ const Realtime = () => {
   }
 
   const getOnlyVotersCount = async (event: EventDocument, votes: VoteDocument[]) => {
-    const membershipList = await teams.listMemberships(event.participants_team_id)
-    const voters = membershipList.memberships.filter((membership) => participantFilter(membership))
-
     const voted = votes.filter((vote) => voters.some((voter) => voter.userId === vote.voter_id))
     const notVoted = voters.filter((voter) => !voted.some((vote) => vote.voter_id === voter.userId))
 
@@ -109,13 +149,6 @@ const Realtime = () => {
   }
 
   const fetchEvent = async () => {
-    const _event = (await databases.getDocument(
-      appwriteVotingDatabase,
-      appwriteEventsCollection,
-      eventID as string,
-    )) as EventDocument
-    setEvent(_event)
-
     const _polls = (await databases.listDocuments(appwriteVotingDatabase, appwritePollsCollection, [
       Query.equal('event_id', eventID as string),
       Query.limit(appwriteListPollsLimit),
@@ -132,7 +165,7 @@ const Realtime = () => {
 
       if (_poll.show_only_voters_count && !_poll.is_finished) {
         const [votedOption, notVotedOption] = await getOnlyVotersCount(
-          _event,
+          event,
           _votes.documents as VoteDocument[],
         )
         setVotes([votedOption, notVotedOption])
@@ -291,21 +324,20 @@ const Realtime = () => {
               {!poll.start_at && <p>Голосование не начато.</p>}
             </div>
 
-            {!poll.show_only_voters_count ||
-              (poll.is_finished &&
-                Array.from(new Set([votes.map((vote) => vote.vote), ...poll.poll_options])) && (
-                  <>
-                    <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
-                    <BarChart
-                      data={Array.from(
-                        new Set([...poll.poll_options, ...votes.map((vote) => vote.vote)]),
-                      ).map((option) => ({
-                        name: option,
-                        votes: votes.filter((vote) => vote.vote === option).length,
-                      }))}
-                    />
-                  </>
-                ))}
+            {(!poll.show_only_voters_count || poll.is_finished) &&
+              Array.from(new Set([votes.map((vote) => vote.vote), ...poll.poll_options])) && (
+                <>
+                  <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
+                  <BarChart
+                    data={Array.from(
+                      new Set([...poll.poll_options, ...votes.map((vote) => vote.vote)]),
+                    ).map((option) => ({
+                      name: option,
+                      votes: votes.filter((vote) => vote.vote === option).length,
+                    }))}
+                  />
+                </>
+              )}
             {poll.show_only_voters_count && !poll.is_finished && (
               <>
                 <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>

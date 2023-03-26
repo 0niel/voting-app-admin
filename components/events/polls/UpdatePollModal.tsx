@@ -19,7 +19,7 @@ export default function UpdatePollModal() {
   const [question, setQuestion] = useState<string>('')
   const [duration, setDuration] = useState<number>(0)
   const [pollOptions, setPollOptions] = useState<string[]>([])
-  const [showPollResults, setShowPollResults] = useState(false)
+  const [showOnlyVotersCount, setShowOnlyVotersCount] = useState(false)
   const { client } = useAppwrite()
   const databases = new Databases(client)
   const account = new Account(client)
@@ -34,7 +34,7 @@ export default function UpdatePollModal() {
       setQuestion(poll.question)
       setDuration(poll.duration)
       setPollOptions(poll.poll_options)
-      setShowPollResults(poll.show_only_voters_count)
+      setShowOnlyVotersCount(poll.show_only_voters_count)
     }
 
     if (pollIdToUpdate !== undefined) {
@@ -58,7 +58,7 @@ export default function UpdatePollModal() {
         eventID,
         pollID: pollIdToUpdate,
         isFinished: false,
-        showPollResults,
+        showOnlyVotersCount,
         jwt,
       }),
     })
@@ -80,8 +80,8 @@ export default function UpdatePollModal() {
         setDuration={setDuration}
         pollOptions={pollOptions}
         setPollOptions={setPollOptions}
-        showPollResults={showPollResults}
-        setShowPollResults={setShowPollResults}
+        showOnlyVotersCount={showOnlyVotersCount}
+        setShowOnlyVotersCount={setShowOnlyVotersCount}
       />
     </Modal>
   )
