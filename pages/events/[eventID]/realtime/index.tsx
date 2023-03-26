@@ -91,8 +91,8 @@ const Realtime = () => {
     const membershipList = await teams.listMemberships(event.participants_team_id)
     const voters = membershipList.memberships.filter((membership) => participantFilter(membership))
 
-    const voted = votes.filter((vote) => voters.some((voter) => voter.userId === vote.user_id))
-    const notVoted = voters.filter((voter) => !voted.some((vote) => vote.user_id === voter.userId))
+    const voted = votes.filter((vote) => voters.some((voter) => voter.userId === vote.voter_id))
+    const notVoted = voters.filter((voter) => !voted.some((vote) => vote.voter_id === voter.userId))
 
     const votedOption = {
       name: 'Проголосовали',
@@ -102,6 +102,9 @@ const Realtime = () => {
       name: 'Не проголосовали',
       votes: notVoted.length,
     }
+
+    console.log(votedOption, notVotedOption)
+
     return [votedOption, notVotedOption]
   }
 
