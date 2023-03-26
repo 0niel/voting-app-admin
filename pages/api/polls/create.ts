@@ -11,8 +11,8 @@ import {
   appwriteVotingDatabase,
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
-import { sessionOptions } from '@/lib/session'
 import { PollDocument } from '@/lib/models/PollDocument'
+import { sessionOptions } from '@/lib/session'
 
 export default withIronSessionApiRoute(createPoll, sessionOptions)
 
