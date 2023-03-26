@@ -19,6 +19,7 @@ export default function UpdatePollModal() {
   const [question, setQuestion] = useState<string>('')
   const [duration, setDuration] = useState<number>(0)
   const [pollOptions, setPollOptions] = useState<string[]>([])
+  const [showVoters, setShowVoters] = useState(false)
   const { client } = useAppwrite()
   const databases = new Databases(client)
   const account = new Account(client)
@@ -33,6 +34,7 @@ export default function UpdatePollModal() {
       setQuestion(poll.question)
       setDuration(poll.duration)
       setPollOptions(poll.poll_options)
+      setShowVoters(poll.show_voters)
     }
 
     if (pollIdToUpdate !== undefined) {
@@ -56,6 +58,7 @@ export default function UpdatePollModal() {
         eventID,
         pollID: pollIdToUpdate,
         isFinished: false,
+        showVoters,
         jwt,
       }),
     })
@@ -77,6 +80,8 @@ export default function UpdatePollModal() {
         setDuration={setDuration}
         pollOptions={pollOptions}
         setPollOptions={setPollOptions}
+        showVoters={showVoters}
+        setShowVoters={setShowVoters}
       />
     </Modal>
   )

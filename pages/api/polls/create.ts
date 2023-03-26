@@ -11,12 +11,14 @@ import {
   appwriteVotingDatabase,
 } from '@/constants/constants'
 import { EventDocument } from '@/lib/models/EventDocument'
+import { PollDocument } from '@/lib/models/PollDocument'
 import { sessionOptions } from '@/lib/session'
 
 export default withIronSessionApiRoute(createPoll, sessionOptions)
 
 async function createPoll(req: NextApiRequest, res: NextApiResponse) {
-  const { question, startAt, endAt, duration, eventID, pollOptions, jwt } = await req.body
+  const { question, startAt, endAt, duration, eventID, pollOptions, showVoters, jwt } =
+    await req.body
   try {
     const pollOptionsSet = Array.from(new Set(pollOptions))
     const client = new Client()
@@ -61,7 +63,8 @@ async function createPoll(req: NextApiRequest, res: NextApiResponse) {
           event_id: eventID,
           poll_options: pollOptionsSet,
           is_finished: false,
-        },
+          show_voters: showVoters,
+        } as PollDocument,
         [
           Permission.read(Role.team(event!.participants_team_id)),
           Permission.read(Role.team(event!.voting_moderators_team_id)),
