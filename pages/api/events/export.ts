@@ -14,10 +14,10 @@ import {
   appwriteVotingDatabase,
 } from '@/constants/constants'
 import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
+import { formatDate } from '@/lib/formatDate'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
-import { formatDate } from '@/lib/formatDate'
 
 class ExportRow {
   eventID: string
