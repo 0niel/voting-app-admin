@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import NextCors from 'nextjs-cors'
 import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from 'node-appwrite'
 
 import {
@@ -16,7 +17,6 @@ import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
 import { participantFilter } from '@/lib/participantFilter'
-import NextCors from 'nextjs-cors'
 
 export default async function createVote(req: NextApiRequest, res: NextApiResponse) {
   await NextCors(req, res, {
