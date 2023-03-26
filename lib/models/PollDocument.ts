@@ -34,7 +34,7 @@ export interface PollDocument extends Models.Document {
    */
   is_finished: boolean
   /**
-   * Показывать результаты голосования.
+   * Показывать только количество проголосовавших/не проголосовавших.
    */
-  show_poll_results: boolean
+  show_only_voters_count: boolean
 }
