@@ -47,7 +47,7 @@ const Export = () => {
               htmlFor='events'
               className='mb-2 block text-sm font-medium text-gray-900 dark:text-white'
             >
-              Выберете мероприятие:
+              Выберите мероприятие:
             </label>
             {events.length > 0 ? (
               <select
