@@ -2,6 +2,7 @@ import {
   ArrowPathIcon,
   ChartPieIcon,
   DocumentDuplicateIcon,
+  NoSymbolIcon,
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline'
@@ -15,6 +16,7 @@ import CountDown from '@/components/events/polls/CountDown'
 import CreatePollModal from '@/components/events/polls/CreatePollModal'
 import DeletePollModal from '@/components/events/polls/DeletePollModal'
 import ResetVotesPollModal from '@/components/events/polls/ResetVotesPollModal'
+import ShowNotVotedParticipants from '@/components/events/polls/ShowNotVotedParticipants'
 import ShowPollResultsModal from '@/components/events/polls/ShowPollResultsModal'
 import UpdatePollModal from '@/components/events/polls/UpdatePollModal'
 import TeamsNavigation from '@/components/events/TeamsNavigation'
@@ -62,6 +64,7 @@ const PollList = () => {
     setPollIdToResetVotes,
     setPollIdToCopy,
     setPollIdToShowResults,
+    setPollIdToShowNotVotedParticipants,
   } = usePoll()
 
   const [timeLeft, setTimeLeft] = useState<number[]>([])
@@ -251,6 +254,15 @@ const PollList = () => {
     {
       value: (
         <div className='flex space-x-2'>
+          <Tooltip text='непроголосовавшие'>
+            <button
+              className='btn-outline btn-secondary btn'
+              onClick={() => setPollIdToShowNotVotedParticipants(poll.$id)}
+              disabled={poll.is_finished}
+            >
+              <NoSymbolIcon className='h-6 w-6' />
+            </button>
+          </Tooltip>
           <Tooltip text='результаты'>
             <button
               className='btn-outline btn-secondary btn'
@@ -309,6 +321,7 @@ const PollList = () => {
       <ResetVotesPollModal />
       <CopyPollModal />
       <ShowPollResultsModal />
+      <ShowNotVotedParticipants />
     </>
   )
 }

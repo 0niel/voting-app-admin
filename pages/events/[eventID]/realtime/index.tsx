@@ -15,6 +15,7 @@ import NinjaXUnion from '@/components/NinjaXUnion'
 import {
   appwriteEndpoint,
   appwriteEventsCollection,
+  appwriteListMembershipsLimit,
   appwriteListPollsLimit,
   appwriteListVotesLimit,
   appwritePollsCollection,
@@ -74,7 +75,9 @@ export async function getServerSideProps(context: any) {
     eventID,
   )) as EventDocument
 
-  const membershipList = await teams.listMemberships(event.participants_team_id)
+  const membershipList = await teams.listMemberships(event.participants_team_id, [
+    Query.limit(appwriteListMembershipsLimit),
+  ])
   const voters = membershipList.memberships.filter((membership) => participantFilter(membership))
 
   return {
