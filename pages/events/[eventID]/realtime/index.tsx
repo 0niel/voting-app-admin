@@ -321,9 +321,10 @@ const Realtime = ({
               </p>
             )}
             <div className='mb-4 text-center text-gray-700'>
-              {poll.end_at && new Date().getTime() > new Date(poll.end_at).getTime() && (
-                <p>Голосование завершено 🎉</p>
-              )}
+              {poll.end_at &&
+                new Date().getTime() > new Date(poll.end_at).getTime() &&
+                !poll.is_finished && <p>Время истекло ⌛</p>}
+              {poll.is_finished && <p>Голосование завершено 🎉</p>}
               {!poll.start_at && <p>Голосование не начато.</p>}
             </div>
 
