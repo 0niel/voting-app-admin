@@ -20,6 +20,7 @@ import {
 import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
 import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
+import { formatDate } from '@/lib/formatDate'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 
@@ -106,6 +107,7 @@ const Events = () => {
     { title: 'id' },
     { title: 'Состояние' },
     { title: 'Название' },
+    { title: 'Дата проведения' },
     { title: 'Модер. доступа' },
     { title: 'Модер. голос.' },
     { title: 'Участники' },
@@ -152,6 +154,7 @@ const Events = () => {
           : 'hover:text-red-700 cursor-pointer text-red-500 bg-red-100 before:content-["❌"] uppercase',
       },
       { value: event.name },
+      { value: formatDate(new Date(event.start_at).toISOString()) },
       isUserHasTeamAccess(event.access_moderators_team_id)
         ? {
             value: 'Открыть',
