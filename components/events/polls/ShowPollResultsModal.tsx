@@ -1,3 +1,4 @@
+import { HandRaisedIcon } from '@heroicons/react/24/outline'
 import { Databases, Query } from 'appwrite'
 import { ArcElement, Chart, Legend, Tooltip } from 'chart.js'
 import React, { useEffect, useState } from 'react'
@@ -13,7 +14,6 @@ import {
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
 import { VoteDocument } from '@/lib/models/VoteDocument'
-import { HandRaisedIcon } from '@heroicons/react/24/outline'
 
 Chart.register(ArcElement, Tooltip, Legend)
 
