@@ -13,6 +13,7 @@ import {
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
 import { VoteDocument } from '@/lib/models/VoteDocument'
+import { HandRaisedIcon } from '@heroicons/react/24/outline'
 
 Chart.register(ArcElement, Tooltip, Legend)
 
@@ -84,22 +85,23 @@ export default function ShowPollResultsModal() {
         {Array.from(votes.values()).length === 0 ? (
           'Голосов нет.'
         ) : (
-          <ul className='list-inside list-disc'>
-            {Array.from(votes, ([voteOption, count]) => {
-              return (
-                <li
-                  key={voteOption}
-                  className={Math.max(...Array.from(votes.values())) === count ? 'text-accent' : ''}
-                >
-                  {voteOption} — {count} гол.
-                </li>
-              )
-            })}
-          </ul>
+          <div>
+            {Array.from(votes, ([voteOption, count], index) => (
+              <React.Fragment key={voteOption}>
+                <div className='my-2 flex'>
+                  <HandRaisedIcon className='mt-1 mr-1 h-4 w-4' />
+                  {voteOption} — <span className='mx-1 font-semibold'>{count}</span> гол.
+                </div>
+                {index !== Array.from(votes.values()).length - 1 && (
+                  <hr className='my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50' />
+                )}
+              </React.Fragment>
+            ))}
+          </div>
         )}
         {pieData && (
           <Pie
-            className='h-15 w-15 p-2' // @ts-ignore
+            className='h-9 w-9 p-2' // @ts-ignore
             data={pieData}
           />
         )}
