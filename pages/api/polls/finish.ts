@@ -58,21 +58,30 @@ export default async function finishPoll(req: NextApiRequest, res: NextApiRespon
           is_finished: true,
         },
       )
-      const voterIDs = (
-        (
-          await serverDatabases.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
-            Query.limit(appwriteListVotesLimit),
-            Query.equal('poll_id', pollID),
-          ])
-        ).documents as VoteDocument[]
-      ).map((vote) => vote.voter_id)
+
+      const allVotes = (
+        await serverDatabases.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
+          Query.equal('poll_id', pollID),
+          Query.limit(appwriteListVotesLimit),
+        ])
+      ).documents as VoteDocument[]
+      const allVotesVotersIDs = allVotes.map((vote) => vote.voter_id)
+
+      // delete duplicates
+      allVotes
+        .filter((value, index, array) => allVotesVotersIDs.indexOf(value.voter_id) !== index)
+        .forEach((vote) => {
+          // if duplicates exist, leave only first
+          databases.deleteDocument(appwriteVotingDatabase, appwriteVotesCollection, vote.$id)
+        })
       ;(
         await serverTeams.listMemberships(event?.participants_team_id!, [
           Query.limit(appwriteListMembershipsLimit),
         ])
       ).memberships
         .filter(
-          (membership) => !voterIDs.includes(membership.userId) && participantFilter(membership),
+          (membership) =>
+            !allVotesVotersIDs.includes(membership.userId) && participantFilter(membership),
         )
         .forEach((membership) => {
           serverDatabases.createDocument(
