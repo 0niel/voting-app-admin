@@ -2,6 +2,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import React, { useState } from 'react'
+
 import { pluralForm } from '@/lib/pluralForm'
 
 interface PollFormForModalProps {
