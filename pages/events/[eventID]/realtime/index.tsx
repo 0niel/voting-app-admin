@@ -101,8 +101,6 @@ const Realtime = ({
   const router = useRouter()
   const { eventID } = router.query
 
-  const [event, setEvent] = useState<EventDocument>(currentEvent)
-  const [voters, setVoters] = useState<Models.Membership[]>(votersList)
   const [poll, setPoll] = useState<PollDocument | null | undefined>(undefined)
   const [votes, setVotes] = useState<VoteDocument[] | any[]>([])
   const [timeLeft, setTimeLeft] = useState(0)
@@ -134,8 +132,10 @@ const Realtime = ({
   }
 
   const getOnlyVotersCount = async (event: EventDocument, votes: VoteDocument[]) => {
-    const voted = votes.filter((vote) => voters.some((voter) => voter.userId === vote.voter_id))
-    const notVoted = voters.filter((voter) => !voted.some((vote) => vote.voter_id === voter.userId))
+    const voted = votes.filter((vote) => votersList.some((voter) => voter.userId === vote.voter_id))
+    const notVoted = votersList.filter(
+      (voter) => !voted.some((vote) => vote.voter_id === voter.userId),
+    )
 
     const votedOption = {
       name: 'Проголосовали',
@@ -168,7 +168,7 @@ const Realtime = ({
 
       if (_poll.show_only_voters_count && !_poll.is_finished) {
         const [votedOption, notVotedOption] = await getOnlyVotersCount(
-          event,
+          currentEvent,
           _votes.documents as VoteDocument[],
         )
         setVotes([votedOption, notVotedOption])
@@ -242,7 +242,7 @@ const Realtime = ({
                   if (event === undefined) return
 
                   const [votedOption, notVotedOption] = await getOnlyVotersCount(
-                    event,
+                    currentEvent,
                     _votes.documents as VoteDocument[],
                   )
 
@@ -352,7 +352,9 @@ const Realtime = ({
         )}
         {poll === null && (
           <div className='mb-4'>
-            <h1 className='mb-4 text-center text-3xl font-bold text-gray-900'>{event?.name}</h1>
+            <h1 className='mb-4 text-center text-3xl font-bold text-gray-900'>
+              {currentEvent.name}
+            </h1>
             <p className='mb-4 text-center text-lg text-gray-900'>
               В данный момент нет активных голосований
             </p>
