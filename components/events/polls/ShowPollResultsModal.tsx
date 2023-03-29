@@ -101,7 +101,7 @@ export default function ShowPollResultsModal() {
         )}
         {pieData && (
           <Pie
-            className='h-9 w-9 p-2' // @ts-ignore
+            className='h-9 w-9 pt-2' // @ts-ignore
             data={pieData}
           />
         )}
