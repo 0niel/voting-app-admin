@@ -102,7 +102,7 @@ const Realtime = ({
   const { eventID } = router.query
 
   const [poll, setPoll] = useState<PollDocument | null | undefined>(undefined)
-  const [votes, setVotes] = useState<VoteDocument[] | any[]>([])
+  const [votes, setVotes] = useState<VoteDocument[]>([])
   const [timeLeft, setTimeLeft] = useState(0)
 
   // Should be equivalent to function _getActiveOrLastPoll in mobile app
@@ -131,7 +131,7 @@ const Realtime = ({
     return null
   }
 
-  const getOnlyVotersCount = async (event: EventDocument, votes: VoteDocument[]) => {
+  const getOnlyVotersCount = (event: EventDocument, votes: VoteDocument[]) => {
     const voted = votes.filter((vote) => votersList.some((voter) => voter.userId === vote.voter_id))
     const notVoted = votersList.filter(
       (voter) => !voted.some((vote) => vote.voter_id === voter.userId),
@@ -166,15 +166,7 @@ const Realtime = ({
         [Query.equal('poll_id', _poll.$id), Query.limit(appwriteListVotesLimit)],
       )) as { documents: VoteDocument[] }
 
-      if (_poll.show_only_voters_count && !_poll.is_finished) {
-        const [votedOption, notVotedOption] = await getOnlyVotersCount(
-          currentEvent,
-          _votes.documents as VoteDocument[],
-        )
-        setVotes([votedOption, notVotedOption])
-      } else {
-        setVotes(_votes.documents)
-      }
+      setVotes(_votes.documents)
     }
   }
 
@@ -235,22 +227,7 @@ const Realtime = ({
                 )) as { documents: VoteDocument[] }
                 console.log(_poll)
 
-                // Если голосование настроено на "показать только количество проголосовавших",
-                // то мы отображаем в качестве вариантов "Проголосовали", "Не проголосовали",
-                // а результаты только если голосование завершено
-                if (_poll.show_only_voters_count && !_poll.is_finished) {
-                  if (event === undefined) return
-
-                  const [votedOption, notVotedOption] = await getOnlyVotersCount(
-                    currentEvent,
-                    _votes.documents as VoteDocument[],
-                  )
-
-                  setVotes(() => [votedOption, notVotedOption])
-                  console.log('voted', votes)
-                } else {
-                  setVotes(() => _votes.documents.reverse())
-                }
+                setVotes(_votes.documents.reverse())
 
                 // TODO
                 // в зависимости от ивента (update, create, delete) обновляем список голосов
@@ -328,24 +305,23 @@ const Realtime = ({
               {!poll.start_at && <p>Голосование не начато.</p>}
             </div>
 
-            {(!poll.show_only_voters_count || poll.is_finished) &&
-              Array.from(new Set([votes.map((vote) => vote.vote), ...poll.poll_options])) && (
-                <>
-                  <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
-                  <BarChart
-                    data={Array.from(
-                      new Set([...poll.poll_options, ...votes.map((vote) => vote.vote)]),
-                    ).map((option) => ({
-                      name: option,
-                      votes: votes.filter((vote) => vote.vote === option).length,
-                    }))}
-                  />
-                </>
-              )}
+            {(!poll.show_only_voters_count || poll.is_finished) && (
+              <>
+                <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
+                <BarChart
+                  data={Array.from(
+                    new Set([...poll.poll_options, ...votes.map((vote) => vote.vote)]),
+                  ).map((option) => ({
+                    name: option,
+                    votes: votes.filter((vote) => vote.vote === option).length,
+                  }))}
+                />
+              </>
+            )}
             {poll.show_only_voters_count && !poll.is_finished && (
               <>
                 <h2 className='mb-2 text-lg font-bold text-gray-900'>{poll.name}</h2>
-                <BarChart data={votes as { name: string; votes: number }[]} />
+                <BarChart data={getOnlyVotersCount(currentEvent, votes)} />
               </>
             )}
           </div>
