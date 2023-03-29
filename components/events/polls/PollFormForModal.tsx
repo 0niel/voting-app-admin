@@ -66,7 +66,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
       </div>
       <div className='p-2'>
         <label className='mb-2 block text-sm font-medium text-neutral'>Варианты выбора</label>
-        <div className='h-56 overflow-y-scroll pr-3'>
+        <div className='h-56 overflow-y-scroll pr-6'>
           {props.pollOptions.map((pollOption, index) => {
             return (
               <div key={index} className='flex pb-2'>
