@@ -82,15 +82,18 @@ export default function ShowNotVotedParticipants() {
         )}
       </div>
       <div className='h-56 overflow-y-scroll'>
-        {loading &&
-          [1, 2, 3, 4, 5].map((_, index) => (
-            <React.Fragment key={index}>
-              <UserPlaceholder />
-              {index !== notVotedParticipants!.length - 1 && (
-                <hr className='my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50' />
-              )}
-            </React.Fragment>
-          ))}
+        {loading && (
+          <div className='max-w-sm animate-pulse'>
+            {[1, 2, 3, 4, 5].map((_, index) => (
+              <React.Fragment key={index}>
+                <UserPlaceholder />
+                {index !== notVotedParticipants!.length - 1 && (
+                  <hr className='my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50' />
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+        )}
         {!loading &&
           notVotedParticipants.map((userName, index) => (
             <React.Fragment key={index}>

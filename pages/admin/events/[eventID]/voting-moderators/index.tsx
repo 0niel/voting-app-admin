@@ -8,6 +8,7 @@ import CreateVotingModeratorModal from '@/components/events/voting-moderators/Cr
 import DeleteVotingModeratorModal from '@/components/events/voting-moderators/DeleteVotingModeratorModal'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import Table, { Cell } from '@/components/Table'
+import TableTitleWithSkeleton from '@/components/TableTitleWithSkeleton'
 import {
   appwriteEventsCollection,
   appwriteListMembershipsLimit,
@@ -87,11 +88,11 @@ const VotingModerators = () => {
       </div>
       <Table
         title={
-          event?.name ? (
-            `Список модераторов голосования ${event.name}`
-          ) : (
-            <div className='mt-2 h-5 w-96 rounded-full bg-gray-200' />
-          )
+          <TableTitleWithSkeleton
+            title={`Список модераторов голосования ${event?.name}`}
+            isLoading={event?.name === undefined}
+            skeletonSize={96}
+          />
         }
         description='Модераторы голосования могут создавать новые голосования.'
         action='Пригласить модер. голос.'

@@ -22,6 +22,7 @@ import UpdatePollModal from '@/components/events/polls/UpdatePollModal'
 import TeamsNavigation from '@/components/events/TeamsNavigation'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import Table, { Cell, Column } from '@/components/Table'
+import TableTitleWithSkeleton from '@/components/TableTitleWithSkeleton'
 import Tooltip from '@/components/Tooltip'
 import {
   appwriteEventsCollection,
@@ -311,11 +312,11 @@ const PollList = () => {
       </div>
       <Table
         title={
-          event?.name ? (
-            `Список голосований ${event.name}`
-          ) : (
-            <div className='mt-2 h-5 w-64 rounded-full bg-gray-200' />
-          )
+          <TableTitleWithSkeleton
+            title={`Список голосований ${event?.name}`}
+            isLoading={event?.name === undefined}
+            skeletonSize={64}
+          />
         }
         description='Создайте новое голосование, чтобы участники мероприятия смогли оставить свой голос.'
         action='Создать голосование'

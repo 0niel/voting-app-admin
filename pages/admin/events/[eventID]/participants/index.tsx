@@ -8,6 +8,7 @@ import DeleteParticipantsModal from '@/components/events/participants/DeletePart
 import TeamsNavigation from '@/components/events/TeamsNavigation'
 import LayoutWithDrawer from '@/components/LayoutWithDrawer'
 import Table, { Cell } from '@/components/Table'
+import TableTitleWithSkeleton from '@/components/TableTitleWithSkeleton'
 import {
   appwriteEventsCollection,
   appwriteListMembershipsLimit,
@@ -94,11 +95,11 @@ const Participants = () => {
       </div>
       <Table
         title={
-          event?.name ? (
-            `Список участников ${event.name}`
-          ) : (
-            <div className='mt-2 h-5 w-64 rounded-full bg-gray-200' />
-          )
+          <TableTitleWithSkeleton
+            title={`Список участников ${event?.name}`}
+            isLoading={event?.name === undefined}
+            skeletonSize={64}
+          />
         }
         description='Участники могут принимать участие в голосованиях.'
         action='Пригласить участника'
