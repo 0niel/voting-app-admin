@@ -82,9 +82,17 @@ const VotingModerators = () => {
 
   return (
     <>
-      {event && <TeamsNavigation className='place-item-center col-span-4' event={event} />}
+      <div className='min-h-12'>
+        {event && <TeamsNavigation className='place-item-center col-span-4' event={event} />}
+      </div>
       <Table
-        title={`Список модераторов голосования ${event?.name}`}
+        title={
+          event?.name ? (
+            `Список модераторов голосования ${event.name}`
+          ) : (
+            <div className='mt-2 h-5 w-96 rounded-full bg-gray-200' />
+          )
+        }
         description='Модераторы голосования могут создавать новые голосования.'
         action='Пригласить модер. голос.'
         columns={membershipColumns}

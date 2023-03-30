@@ -15,7 +15,7 @@ export interface Cell {
 }
 
 export interface TableProps {
-  title: string
+  title: string | JSX.Element
   description: string
   action?: string
   onActionClick?: () => void

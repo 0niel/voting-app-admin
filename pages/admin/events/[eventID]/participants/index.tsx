@@ -89,9 +89,17 @@ const Participants = () => {
 
   return (
     <>
-      {event && <TeamsNavigation className='place-item-center col-span-4' event={event} />}
+      <div className='min-h-12'>
+        {event && <TeamsNavigation className='place-item-center col-span-4' event={event} />}
+      </div>
       <Table
-        title={`Список участников ${event?.name}`}
+        title={
+          event?.name ? (
+            `Список участников ${event.name}`
+          ) : (
+            <div className='mt-2 h-5 w-64 rounded-full bg-gray-200' />
+          )
+        }
         description='Участники могут принимать участие в голосованиях.'
         action='Пригласить участника'
         columns={membershipColumns}

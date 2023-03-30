@@ -82,9 +82,17 @@ const AccessModerators = () => {
 
   return (
     <>
-      {event && <TeamsNavigation className='place-item-center col-span-4' event={event} />}
+      <div className='min-h-12'>
+        {event && <TeamsNavigation className='place-item-center col-span-4' event={event} />}
+      </div>
       <Table
-        title={`Список модераторов доступа ${event?.name}`}
+        title={
+          event?.name ? (
+            `Список модераторов доступа ${event.name}`
+          ) : (
+            <div className='mt-2 h-5 w-96 rounded-full bg-gray-200' />
+          )
+        }
         description='Модераторы доступа могут приглашать новых участников в мероприятие.'
         action='Пригласить модер. дост.'
         columns={membershipColumns}

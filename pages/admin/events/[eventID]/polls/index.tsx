@@ -306,9 +306,17 @@ const PollList = () => {
 
   return (
     <>
-      {event && <TeamsNavigation className='place-item-center col-span-4' event={event} />}
+      <div className='min-h-12'>
+        {event && <TeamsNavigation className='place-item-center col-span-4' event={event} />}
+      </div>
       <Table
-        title={`Список голосований ${event?.name}`}
+        title={
+          event?.name ? (
+            `Список голосований ${event.name}`
+          ) : (
+            <div className='mt-2 h-5 w-64 rounded-full bg-gray-200' />
+          )
+        }
         description='Создайте новое голосование, чтобы участники мероприятия смогли оставить свой голос.'
         action='Создать голосование'
         columns={columns}
