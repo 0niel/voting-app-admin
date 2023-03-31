@@ -1,8 +1,8 @@
 import { HandRaisedIcon } from '@heroicons/react/24/outline'
 import { Databases, Query } from 'appwrite'
-import { ArcElement, Chart, Legend, Tooltip } from 'chart.js'
+import dynamic from 'next/dynamic'
+import { Data } from 'plotly.js'
 import React, { useEffect, useState } from 'react'
-import { Pie } from 'react-chartjs-2'
 import { toast } from 'react-hot-toast'
 
 import Modal from '@/components/modal/Modal'
@@ -14,19 +14,24 @@ import {
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
 import { VoteDocument } from '@/lib/models/VoteDocument'
+import { pluralForm } from '@/lib/pluralForm'
 
-Chart.register(ArcElement, Tooltip, Legend)
+const Plot = dynamic(() => import('react-plotly.js'), { ssr: false })
 
 export default function ShowPollResultsModal() {
   const { pollIdToShowResults, setPollIdToShowResults } = usePoll()
   const [votes, setVotes] = useState<Map<string, number>>(new Map())
-  const [pieData, setPieData] = useState<object>()
+  const [barData, setBarData] = useState<Data[]>([])
+  const [loading, setLoading] = useState(true)
+  const [simpleMajority, setSimpleMajority] = useState<number>()
+  const [votesSum, setVotesSum] = useState<number>()
   const { client } = useAppwrite()
   const databases = new Databases(client)
 
   useEffect(() => {
     const votesMap = new Map<string, number>()
     const fetchVotes = async () => {
+      setLoading(true)
       ;(
         (
           await databases.listDocuments(appwriteVotingDatabase, appwriteVotesCollection, [
@@ -38,34 +43,20 @@ export default function ShowPollResultsModal() {
         votesMap.set(vote.vote, (votesMap.get(vote.vote) || 0) + 1)
       })
       setVotes(votesMap)
-      setPieData({
-        labels: Array.from(votesMap.keys()),
-        datasets: [
-          {
-            label: 'голосов',
-            data: Array.from(votesMap.values()),
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(255, 206, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-              'rgba(153, 102, 255, 0.2)',
-              'rgba(255, 159, 64, 0.2)',
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)',
-            ],
-            borderWidth: 1,
-          },
-        ],
-      })
-    }
 
+      const votesSum = Array.from(votesMap.values()).reduce((partialSum, a) => partialSum + a, 0)
+      setVotesSum(votesSum)
+      setSimpleMajority(Math.ceil(votesSum / 2))
+
+      setBarData([
+        {
+          y: Array.from(votesMap.values()),
+          x: Array.from(votesMap.keys()),
+          type: 'bar',
+        },
+      ])
+      setLoading(false)
+    }
     if (pollIdToShowResults !== undefined) {
       fetchVotes().catch((error: any) => toast.error(error.message))
     }
@@ -90,20 +81,61 @@ export default function ShowPollResultsModal() {
               <React.Fragment key={voteOption}>
                 <div className='my-2 flex'>
                   <HandRaisedIcon className='mt-1 mr-1 h-4 w-4' />
-                  {voteOption} — <span className='mx-1 font-semibold'>{count}</span> гол.
+                  {voteOption} — <span className='mx-1 font-semibold'>{count}</span>
+                  {pluralForm(count, ['голос', 'голоса', 'голосов'])}
                 </div>
-                {index !== Array.from(votes.values()).length - 1 && (
-                  <hr className='my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50' />
-                )}
+                <hr className='my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100' />
+                {/*{index !== Array.from(votes.values()).length - 1 && (*/}
+                {/*  <hr className='my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100' />*/}
+                {/*)}*/}
               </React.Fragment>
             ))}
           </div>
         )}
-        {pieData && (
-          <Pie
-            className='h-9 w-9 pt-2' // @ts-ignore
-            data={pieData}
+        {!loading ? (
+          <Plot
+            data={barData}
+            layout={{
+              height: 300,
+              width: 400,
+              uirevision: 'true',
+              shapes: [
+                {
+                  type: 'line',
+                  xref: 'paper',
+                  x0: 0,
+                  y0: simpleMajority,
+                  x1: 1,
+                  y1: simpleMajority,
+                  line: {
+                    color: 'rgb(255, 0, 0)',
+                    width: 2,
+                    dash: 'solid',
+                  },
+                },
+              ],
+            }}
+            config={{ displaylogo: false }}
           />
+        ) : (
+          <div className='m-auto my-20 h-36 w-60 animate-pulse rounded-xl bg-gray-200' />
+        )}
+      </div>
+      <hr className='my-3 h-0.5 border-t-0 bg-neutral-100 opacity-100' />
+      <div className='flex'>
+        Всего голосов:
+        {loading ? (
+          <div className='mt-1.5 ml-1 h-3.5 w-5 items-center justify-between rounded-full bg-gray-200' />
+        ) : (
+          <span className='ml-1 font-semibold'>{votesSum}</span>
+        )}
+      </div>
+      <div className='flex'>
+        Простое большинство:
+        {loading ? (
+          <div className='mt-1.5 ml-1 h-3.5 w-5 items-center justify-between rounded-full bg-gray-200' />
+        ) : (
+          <span className='ml-1 font-semibold'>{simpleMajority}</span>
         )}
       </div>
     </Modal>

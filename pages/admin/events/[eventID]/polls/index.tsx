@@ -1,6 +1,6 @@
 import {
   ArrowPathIcon,
-  ChartPieIcon,
+  ChartBarIcon,
   DocumentDuplicateIcon,
   NoSymbolIcon,
   PencilIcon,
@@ -270,7 +270,7 @@ const PollList = () => {
               onClick={() => setPollIdToShowResults(poll.$id)}
               disabled={!poll.is_finished}
             >
-              <ChartPieIcon className='h-6 w-6' />
+              <ChartBarIcon className='h-6 w-6' />
             </button>
           </Tooltip>
           <Tooltip text='изменить'>
