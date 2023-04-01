@@ -150,6 +150,22 @@ export default function ShowPollResultsModal() {
                     size: 12,
                   },
                 },
+                xaxis: {
+                  title: {
+                    text: 'Варианты голосования',
+                    font: {
+                      size: 12,
+                    },
+                  },
+                },
+                yaxis: {
+                  title: {
+                    text: 'Голоса',
+                    font: {
+                      size: 12,
+                    },
+                  },
+                },
                 height: 300,
                 width: 400,
                 margin: {
