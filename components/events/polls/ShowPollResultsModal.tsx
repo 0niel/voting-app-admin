@@ -69,11 +69,13 @@ export default function ShowPollResultsModal() {
 
       const votesCount = Array.from(votesMap.values()).reduce((partialSum, a) => partialSum + a, 0)
       setVotesCount(votesCount)
+      let simpleMajority: number
       if (votesCount > 1 && votesCount % 2 === 0) {
-        setSimpleMajority(Math.ceil(votesCount / 2) + 1)
+        simpleMajority = Math.ceil(votesCount / 2) + 1
       } else {
-        setSimpleMajority(Math.ceil(votesCount / 2))
+        simpleMajority = Math.ceil(votesCount / 2)
       }
+      setSimpleMajority(simpleMajority)
 
       setBarData([
         {
@@ -141,7 +143,7 @@ export default function ShowPollResultsModal() {
               layout={{
                 title: {
                   text: wrap(`Голосование ${event?.name.trim()}\n«${poll?.question.trim()}»`, {
-                    width: 40,
+                    width: 45,
                     newline: '<br>',
                   }),
                   font: {
