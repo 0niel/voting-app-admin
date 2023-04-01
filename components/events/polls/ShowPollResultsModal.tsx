@@ -1,6 +1,5 @@
 import { HandRaisedIcon } from '@heroicons/react/24/outline'
 import { Databases, Query } from 'appwrite'
-import { formatTime } from 'jest-util'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { Data } from 'plotly.js'
@@ -18,7 +17,6 @@ import {
 } from '@/constants/constants'
 import { useAppwrite } from '@/context/AppwriteContext'
 import { usePoll } from '@/context/PollContext'
-import { formatDate } from '@/lib/formatDate'
 import { EventDocument } from '@/lib/models/EventDocument'
 import { PollDocument } from '@/lib/models/PollDocument'
 import { VoteDocument } from '@/lib/models/VoteDocument'
@@ -36,7 +34,7 @@ export default function ShowPollResultsModal() {
   const [barData, setBarData] = useState<Data[]>([])
   const [loading, setLoading] = useState(true)
   const [simpleMajority, setSimpleMajority] = useState<number>()
-  const [votesSum, setVotesSum] = useState<number>()
+  const [votesCount, setVotesCount] = useState<number>()
   const { client } = useAppwrite()
   const databases = new Databases(client)
 
@@ -69,12 +67,12 @@ export default function ShowPollResultsModal() {
       })
       setVotes(votesMap)
 
-      const votesSum = Array.from(votesMap.values()).reduce((partialSum, a) => partialSum + a, 0)
-      setVotesSum(votesSum)
-      if (votesSum > 1 && votesSum % 2 === 0) {
-        setSimpleMajority(Math.ceil(votesSum / 2) + 1)
+      const votesCount = Array.from(votesMap.values()).reduce((partialSum, a) => partialSum + a, 0)
+      setVotesCount(votesCount)
+      if (votesCount > 1 && votesCount % 2 === 0) {
+        setSimpleMajority(Math.ceil(votesCount / 2) + 1)
       } else {
-        setSimpleMajority(Math.ceil(votesSum / 2))
+        setSimpleMajority(Math.ceil(votesCount / 2))
       }
 
       setBarData([
@@ -84,7 +82,9 @@ export default function ShowPollResultsModal() {
           text: Array.from(votesMap.values()).map(String),
           type: 'bar',
           marker: {
-            color: 'rgb(79, 70, 229)',
+            color: Array.from(votesMap.values()).map((vote) =>
+              vote >= simpleMajority! ? 'rgb(94, 234, 212)' : 'rgb(79, 70, 229)',
+            ),
           },
         },
       ])
@@ -111,7 +111,7 @@ export default function ShowPollResultsModal() {
             'Голосов нет.'
           ) : (
             <div>
-              {Array.from(votes, ([voteOption, count], index) => (
+              {Array.from(votes, ([voteOption, count]) => (
                 <React.Fragment key={voteOption}>
                   <div className='my-2 flex'>
                     <HandRaisedIcon className='mt-1 mr-1 h-4 w-4' />
@@ -173,7 +173,14 @@ export default function ShowPollResultsModal() {
                   },
                 ],
               }}
-              config={{ displaylogo: false }}
+              config={{
+                displaylogo: false,
+                toImageButtonOptions: {
+                  filename: `Гист. голос. ${poll?.question.trim()}`,
+                  height: 600,
+                  width: 800,
+                },
+              }}
             />
           ) : (
             <div className='mx-auto my-10 h-44 w-80 animate-pulse rounded-xl bg-gray-200' />
@@ -186,7 +193,7 @@ export default function ShowPollResultsModal() {
         {loading ? (
           <div className='mt-1.5 ml-1 h-3.5 w-5 items-center justify-between rounded-full bg-gray-200' />
         ) : (
-          <span className='ml-1 font-semibold'>{votesSum}</span>
+          <span className='ml-1 font-semibold'>{votesCount}</span>
         )}
       </div>
       <div className='flex'>
