@@ -140,19 +140,22 @@ export default function ShowPollResultsModal() {
               data={barData}
               layout={{
                 title: {
-                  text: wrap(
-                    `Гистограмма голосования ${event?.name.trim()}\n«${poll?.question.trim()}»`,
-                    {
-                      width: 40,
-                      newline: '<br>',
-                    },
-                  ),
+                  text: wrap(`Голосование ${event?.name.trim()}\n«${poll?.question.trim()}»`, {
+                    width: 40,
+                    newline: '<br>',
+                  }),
                   font: {
                     size: 12,
                   },
                 },
                 height: 300,
                 width: 400,
+                margin: {
+                  t: 90,
+                  b: 90,
+                  l: 40,
+                  r: 40,
+                },
                 uirevision: 'true',
                 shapes: [
                   {
@@ -173,11 +176,11 @@ export default function ShowPollResultsModal() {
               config={{ displaylogo: false }}
             />
           ) : (
-            <div className='m-auto my-20 h-36 w-60 animate-pulse rounded-xl bg-gray-200' />
+            <div className='mx-auto my-10 h-44 w-80 animate-pulse rounded-xl bg-gray-200' />
           )}
         </div>
       </div>
-      <hr className='my-3 h-0.5 border-t-0 bg-neutral-100 opacity-100' />
+      <hr className='my-2 h-0.5 border-t-0 bg-neutral-100 opacity-100' />
       <div className='flex'>
         Всего голосов:
         {loading ? (
