@@ -4,15 +4,29 @@ import { Account, Client, Databases, ID, Permission, Query, Role, Teams } from '
 import {
   appwriteEndpoint,
   appwriteEventsCollection,
+  appwriteInitialPollsCollection,
+  appwriteListInitialPollsLimit,
   appwriteListMembershipsLimit,
+  appwritePollsCollection,
   appwriteProjectId,
   appwriteSuperUsersTeam,
   appwriteVotingDatabase,
 } from '@/constants/constants'
 import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
+import { InitialPollDocument } from '@/lib/models/InitialPollDocument'
+import { PollDocument } from '@/lib/models/PollDocument'
 
 export default async function create(req: NextApiRequest, res: NextApiResponse) {
-  const { eventName, startAtDateTime, jwt } = req.body
+  const { eventName, startAtDateTime, addInitialPolls, jwt } = req.body
+
+  if (eventName === undefined) {
+    res.status(500).json({ message: 'Укажите название мероприятия.' })
+    return
+  }
+  if (startAtDateTime === undefined) {
+    res.status(500).json({ message: 'Укажите дату и время начала мероприятия.' })
+    return
+  }
   try {
     const client = new Client()
       .setEndpoint(appwriteEndpoint)
@@ -66,7 +80,7 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
         }),
       )
 
-      await serverDatabases.createDocument(
+      const createdEvent = await serverDatabases.createDocument(
         appwriteVotingDatabase,
         appwriteEventsCollection,
         ID.unique(),
@@ -86,9 +100,44 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
         ],
       )
 
+      if (addInitialPolls) {
+        const initialPolls = (
+          await serverDatabases.listDocuments(
+            appwriteVotingDatabase,
+            appwriteInitialPollsCollection,
+            [Query.limit(appwriteListInitialPollsLimit)],
+          )
+        ).documents as InitialPollDocument[]
+        for (const poll of initialPolls) {
+          await serverDatabases.createDocument(
+            appwriteVotingDatabase,
+            appwritePollsCollection,
+            ID.unique(),
+            {
+              question: poll.question,
+              creator_id: accountID,
+              start_at: undefined,
+              end_at: undefined,
+              duration: poll.duration,
+              event_id: createdEvent.$id,
+              poll_options: poll.poll_options,
+              is_finished: false,
+              show_only_voters_count: true,
+            } as PollDocument,
+            [
+              Permission.read(Role.team(participantsTeamID)),
+              Permission.read(Role.team(votingModeratorsTeamID)),
+              Permission.update(Role.team(votingModeratorsTeamID)),
+            ],
+          )
+        }
+      }
+
       res.status(200).json({ message: 'ok' })
     } else {
-      res.status(403).json({ message: 'Client is not superuser.' })
+      res
+        .status(403)
+        .json({ message: 'Вы не являетесь суперпользователем, чтобы создать мероприятие.' })
     }
   } catch (error) {
     res.status(500).json({ message: mapAppwriteErrorToMessage((error as Error).message) })

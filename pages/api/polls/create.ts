@@ -49,8 +49,9 @@ async function createPoll(req: NextApiRequest, res: NextApiResponse) {
         .setEndpoint(appwriteEndpoint)
         .setProject(appwriteProjectId)
         .setKey(process.env.APPWRITE_API_KEY!)
+      const serverDatabases = new Databases(server)
 
-      await new Databases(server).createDocument(
+      await serverDatabases.createDocument(
         appwriteVotingDatabase,
         appwritePollsCollection,
         ID.unique(),

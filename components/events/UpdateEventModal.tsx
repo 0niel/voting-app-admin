@@ -75,7 +75,7 @@ export default function UpdateEventModal() {
       onCancel={() => setEventIdToUpdate(undefined)}
       title={`Обновить мероприятие ${eventToUpdate?.name}`}
     >
-      <div className='form-control w-full pt-5'>
+      <div className='p-2'>
         <label className='label'>
           <span className='label-text'>Название</span>
         </label>
@@ -86,10 +86,12 @@ export default function UpdateEventModal() {
           onChange={(e) => setEventNewName(() => e.target.value)}
           className='block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
         />
+      </div>
+      <div className='p-2'>
         <label className='label'>
           <span className='label-text'>Дата начала</span>
         </label>
-        <div className='mt-1'>
+        <div>
           <ReactDatePicker
             selected={eventNewStartAtDateTime}
             onChange={(date) => date && setEventNewStartAtDateTime(date)}

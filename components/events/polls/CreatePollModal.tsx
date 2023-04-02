@@ -20,8 +20,8 @@ import { EventDocument } from '@/lib/models/EventDocument'
 
 const initialQuestion = ''
 const initialPollOptions = ['За', 'Против', 'Воздержусь']
-const initialDuration = 0
-const initialshowOnlyVotersCount = false
+const initialDuration = 180
+const initialShowOnlyVotersCount = true
 
 export default function CreatePollModal() {
   const router = useRouter()
@@ -32,7 +32,7 @@ export default function CreatePollModal() {
   const [question, setQuestion] = useState(initialQuestion)
   const [duration, setDuration] = useState<number>(initialDuration)
   const [pollOptions, setPollOptions] = useState<string[]>(initialPollOptions)
-  const [showOnlyVotersCount, setShowOnlyVotersCount] = useState(initialshowOnlyVotersCount)
+  const [showOnlyVotersCount, setShowOnlyVotersCount] = useState(initialShowOnlyVotersCount)
   const [event, setEvent] = useState<EventDocument>()
   const account = new Account(client)
 
@@ -40,7 +40,7 @@ export default function CreatePollModal() {
     setQuestion(initialQuestion)
     setPollOptions(initialPollOptions)
     setDuration(initialDuration)
-    setShowOnlyVotersCount(initialshowOnlyVotersCount)
+    setShowOnlyVotersCount(initialShowOnlyVotersCount)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createPoll])
 

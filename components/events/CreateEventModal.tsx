@@ -1,7 +1,7 @@
 import 'react-datepicker/dist/react-datepicker.css'
 
 import { Account } from 'appwrite'
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDatePicker from 'react-datepicker'
 import { toast } from 'react-hot-toast'
 
@@ -10,33 +10,49 @@ import { useAppwrite } from '@/context/AppwriteContext'
 import { useEvent } from '@/context/EventContext'
 import fetchJson from '@/lib/fetchJson'
 
+const initialNewEventName = ''
+const initialStartAtDateTime = undefined
+const initialAddInitialPolls = false
+
 export default function CreateEventModal() {
   const { createEvent, setCreateEvent } = useEvent()
-  const [newEventName, setNewEventName] = useState('')
-  const [startAtDateTime, setStartAtDateTime] = useState<Date>()
+  const [newEventName, setNewEventName] = useState(initialNewEventName)
+  const [startAtDateTime, setStartAtDateTime] = useState<Date | undefined>(initialStartAtDateTime)
+  const [addInitialPolls, setAddInitialPolls] = useState(initialAddInitialPolls)
   const { client } = useAppwrite()
   const account = new Account(client)
+
+  useEffect(() => {
+    if (createEvent) {
+      setNewEventName(initialNewEventName)
+      setStartAtDateTime(initialStartAtDateTime)
+      setAddInitialPolls(initialAddInitialPolls)
+    }
+  }, [createEvent])
 
   async function addEventToDatabase() {
     try {
       const eventName = newEventName?.trim()
-      if (eventName && eventName.length > 0) {
-        const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
-        await fetchJson('/api/events/create', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            eventName: eventName,
-            startAtDateTime: startAtDateTime?.toISOString(),
-            jwt,
-          }),
-        })
-        setStartAtDateTime(undefined)
-        setNewEventName('')
-        setCreateEvent(false)
-      } else {
+      if (!eventName && eventName.length <= 0) {
         toast.error('Введите название мероприятия.')
+        return
       }
+      if (startAtDateTime === undefined) {
+        toast.error('Введите дату и время начала мероприятия.')
+        return
+      }
+      const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
+      await fetchJson('/api/events/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventName: eventName,
+          startAtDateTime: startAtDateTime?.toISOString(),
+          addInitialPolls,
+          jwt,
+        }),
+      })
+      setCreateEvent(false)
     } catch (error: any) {
       toast.error(error.message)
     }
@@ -50,7 +66,7 @@ export default function CreateEventModal() {
       onCancel={() => setCreateEvent(false)}
       title='Создать мероприятие'
     >
-      <div className='form-control w-full max-w-xs pt-5'>
+      <div className='p-2'>
         <label className='label'>
           <span className='label-text'>Название</span>
         </label>
@@ -60,10 +76,12 @@ export default function CreateEventModal() {
           onChange={(e) => setNewEventName(e.target.value)}
           className='block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
         />
+      </div>
+      <div className='p-2'>
         <label className='label'>
           <span className='label-text'>Дата начала</span>
         </label>
-        <div className='mt-1'>
+        <div>
           <ReactDatePicker
             selected={startAtDateTime}
             onChange={(date) => date && setStartAtDateTime(date)}
@@ -76,6 +94,17 @@ export default function CreateEventModal() {
             locale='ru'
           />
         </div>
+      </div>
+      <div className='p-2'>
+        <label className='label cursor-pointer'>
+          <span className='label-text'>Добавить голосования начала конференции</span>
+          <input
+            type='checkbox'
+            checked={addInitialPolls}
+            onChange={(event) => setAddInitialPolls(event.target.checked)}
+            className='checkbox-primary checkbox'
+          />
+        </label>
       </div>
     </Modal>
   )
