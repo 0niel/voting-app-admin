@@ -54,7 +54,7 @@ const schema = z.object({
 
 type SchemaValues = z.infer<typeof schema>
 
-export default function CreateResourceDialogButton({
+export default function CreateOrUpdateResourceForm({
   resource = null,
   update = false,
 }: {
