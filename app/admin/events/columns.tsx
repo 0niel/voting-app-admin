@@ -1,15 +1,15 @@
 'use client'
 
-import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
 import { ColumnDef } from '@tanstack/react-table'
-import { Badge, CheckIcon } from 'lucide-react'
-import { Database } from '@/lib/supabase/db-types'
-import { EventsTableRowActions } from './EventsTableRowActions'
-import { LinkIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-
+import { Badge, CheckIcon, LinkIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+
+import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Database } from '@/lib/supabase/db-types'
+
+import { EventsTableRowActions } from './EventsTableRowActions'
 
 export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = [
   {

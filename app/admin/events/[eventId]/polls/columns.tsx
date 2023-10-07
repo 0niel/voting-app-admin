@@ -1,18 +1,17 @@
 'use client'
 
-import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
 import { ColumnDef } from '@tanstack/react-table'
-import { CheckIcon } from 'lucide-react'
-import { Database } from '@/lib/supabase/db-types'
-import { LinkIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-
+import { CheckIcon, LinkIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { PollDisplayMode } from '@/lib/PollDisplayMode'
-import { formatDate } from '@/lib/formatDate'
-import { Badge } from '@/components/ui/badge'
+
 import CountDown from '@/components/events/polls/CountDown'
+import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { formatDate } from '@/lib/formatDate'
+import { PollDisplayMode } from '@/lib/PollDisplayMode'
+import { Database } from '@/lib/supabase/db-types'
 
 type Option = Database['ovk']['Tables']['answer_options']['Row']
 

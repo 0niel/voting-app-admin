@@ -1,13 +1,13 @@
+import { redirect } from 'next/navigation'
+
+import { DataTable } from '@/components/table/DataTable'
+import { Button } from '@/components/ui/button'
 import {
   getEvents,
   getSession,
   getSuperusers,
   getUsersPermissions,
 } from '@/lib/supabase/supabase-server'
-import { redirect } from 'next/navigation'
-import { DataTable } from '@/components/table/DataTable'
-import { Button } from '@/components/ui/button'
-
 
 export default async function Participants() {
   const [session, events, superusers, usersPermissions] = await Promise.all([
@@ -52,7 +52,6 @@ export default async function Participants() {
           проводятся голосования
         </p>
       </div>
- 
     </div>
   )
 }

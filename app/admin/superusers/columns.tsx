@@ -1,8 +1,10 @@
 'use client'
 
-import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
 import { ColumnDef } from '@tanstack/react-table'
+
+import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
 import { UserToView } from '@/lib/supabase/supabase-server'
+
 import { SuperusersTableRowActios } from './SuperusersTableRowActios'
 
 export const columns: ColumnDef<UserToView>[] = [

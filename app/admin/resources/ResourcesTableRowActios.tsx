@@ -2,8 +2,10 @@
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
+import toast from 'react-hot-toast'
 
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,10 +13,9 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useSupabase } from '@/lib/supabase/supabase-provider'
 import { Database } from '@/lib/supabase/db-types'
-import toast from 'react-hot-toast'
-import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import { useSupabase } from '@/lib/supabase/supabase-provider'
+
 import UpdateResourceDialogContent from './UpdateResourceDialogContent'
 
 interface ResourcesTableRowActiosProps<TData> {

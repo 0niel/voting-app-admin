@@ -19,9 +19,9 @@ export default function PollFormForModal(props: PollFormForModalProps) {
   return (
     <>
       <div className='p-2'>
-        <label className='mb-2 block text-sm font-medium text-neutral'>Вопрос</label>
+        <label className='text-neutral mb-2 block text-sm font-medium'>Вопрос</label>
         <input
-          className=' block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className=' border-base-200 text-neutral block h-auto w-full cursor-pointer rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary'
           placeholder='Захватывать ли РАНХиГС дронами?'
           value={props.question}
           required
@@ -29,20 +29,20 @@ export default function PollFormForModal(props: PollFormForModalProps) {
         />
       </div>
       <div className='p-2'>
-        <label className='mb-2 block text-sm font-medium text-neutral'>
+        <label className='text-neutral mb-2 block text-sm font-medium'>
           Длительность голосования (в секундах)
         </label>
         <input
           type='text'
           min={0}
-          className=' block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className=' border-base-200 text-neutral block h-auto w-full cursor-pointer rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary'
           value={props.duration}
           required
           onChange={(event) =>
             props.setDuration(event.target.value === '' ? 0 : parseInt(event.target.value))
           }
         />
-        <label className='mb-2 block text-sm font-medium text-neutral'>
+        <label className='text-neutral mb-2 block text-sm font-medium'>
           {Math.floor(props.duration / 60)}{' '}
           {pluralForm(Math.floor(props.duration / 60), ['минута', 'минуты', 'минут'])}{' '}
           {Math.floor(props.duration % 60)}{' '}
@@ -65,7 +65,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
         </div>
       </div>
       <div className='p-2'>
-        <label className='mb-2 block text-sm font-medium text-neutral'>Варианты выбора</label>
+        <label className='text-neutral mb-2 block text-sm font-medium'>Варианты выбора</label>
         <div className='h-56 overflow-y-scroll pr-6'>
           {props.pollOptions.map((pollOption, index) => {
             return (
@@ -73,7 +73,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
                 <input
                   className={`block h-auto w-full cursor-pointer rounded-lg border bg-gray-50 ${
                     pollOption.length !== 0 ? 'border-base-200' : 'border-warning'
-                  } p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary`}
+                  } text-neutral p-2.5 text-sm focus:border-secondary focus:ring-secondary`}
                   value={pollOption}
                   onChange={(event) => {
                     const options = props.pollOptions.slice()
@@ -95,7 +95,7 @@ export default function PollFormForModal(props: PollFormForModalProps) {
             )
           })}
         </div>
-        <label className='mb-2 block text-sm font-medium text-neutral'>
+        <label className='text-neutral mb-2 block text-sm font-medium'>
           Уникальных значений:{' '}
           <span className='font-semibold'>
             {new Set(props.pollOptions.filter((value) => value !== '')).size}

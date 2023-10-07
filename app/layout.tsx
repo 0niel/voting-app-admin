@@ -3,14 +3,14 @@
 import 'styles/global.css'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import ru from 'date-fns/locale/ru'
 import React from 'react'
+import { registerLocale, setDefaultLocale } from 'react-datepicker'
 import { Toaster } from 'react-hot-toast'
 
-import SupabaseProvider from '../lib/supabase/supabase-provider'
 import AdminPanelHead from '@/components/Head'
 
-import { registerLocale, setDefaultLocale } from 'react-datepicker'
-import ru from 'date-fns/locale/ru'
+import SupabaseProvider from '../lib/supabase/supabase-provider'
 
 registerLocale('ru', ru)
 setDefaultLocale('ru')

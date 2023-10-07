@@ -12,7 +12,7 @@ function User(props: { userName: string }) {
   return (
     <div className='my-2'>
       <div className='placeholder avatar'>
-        <div className='mr-3 w-5 rounded-full bg-accent-focus text-neutral-content'>
+        <div className='bg-accent-focus text-neutral-content mr-3 w-5 rounded-full'>
           <span>{props.userName[0]}</span>
         </div>
       </div>

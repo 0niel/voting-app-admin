@@ -1,10 +1,4 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export interface Database {
   graphql_public: {
@@ -58,17 +52,17 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "answer_options_creator_id_fkey"
-            columns: ["creator_id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            foreignKeyName: 'answer_options_creator_id_fkey'
+            columns: ['creator_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "answer_options_poll_id_fkey"
-            columns: ["poll_id"]
-            referencedRelation: "polls"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'answer_options_poll_id_fkey'
+            columns: ['poll_id']
+            referencedRelation: 'polls'
+            referencedColumns: ['id']
+          },
         ]
       }
       answers: {
@@ -95,17 +89,17 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "answers_poll_id_fkey"
-            columns: ["poll_id"]
-            referencedRelation: "polls"
-            referencedColumns: ["id"]
+            foreignKeyName: 'answers_poll_id_fkey'
+            columns: ['poll_id']
+            referencedRelation: 'polls'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "answers_user_id_fkey"
-            columns: ["user_id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'answers_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
       events: {
@@ -162,17 +156,17 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "participants_event_id_fkey"
-            columns: ["event_id"]
-            referencedRelation: "events"
-            referencedColumns: ["id"]
+            foreignKeyName: 'participants_event_id_fkey'
+            columns: ['event_id']
+            referencedRelation: 'events'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "participants_user_id_fkey"
-            columns: ["user_id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'participants_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
       polls: {
@@ -214,17 +208,17 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "polls_creator_id_fkey"
-            columns: ["creator_id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            foreignKeyName: 'polls_creator_id_fkey'
+            columns: ['creator_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "polls_event_id_fkey"
-            columns: ["event_id"]
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'polls_event_id_fkey'
+            columns: ['event_id']
+            referencedRelation: 'events'
+            referencedColumns: ['id']
+          },
         ]
       }
       profiles: {
@@ -263,11 +257,11 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_user_id_fkey"
-            columns: ["user_id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'profiles_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
       resources: {
@@ -297,11 +291,11 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "resources_event_id_fkey"
-            columns: ["event_id"]
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'resources_event_id_fkey'
+            columns: ['event_id']
+            referencedRelation: 'events'
+            referencedColumns: ['id']
+          },
         ]
       }
       superusers: {
@@ -322,11 +316,11 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "superusers_user_id_fkey"
-            columns: ["user_id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'superusers_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
       users_permissions: {
@@ -356,17 +350,17 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "users_permissions_event_id_fkey"
-            columns: ["event_id"]
-            referencedRelation: "events"
-            referencedColumns: ["id"]
+            foreignKeyName: 'users_permissions_event_id_fkey'
+            columns: ['event_id']
+            referencedRelation: 'events'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "users_permissions_user_id_fkey"
-            columns: ["user_id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'users_permissions_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
     }
@@ -732,11 +726,11 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "objects_bucketId_fkey"
-            columns: ["bucket_id"]
-            referencedRelation: "buckets"
-            referencedColumns: ["id"]
-          }
+            foreignKeyName: 'objects_bucketId_fkey'
+            columns: ['bucket_id']
+            referencedRelation: 'buckets'
+            referencedColumns: ['id']
+          },
         ]
       }
     }

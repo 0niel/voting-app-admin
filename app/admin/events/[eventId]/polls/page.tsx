@@ -1,15 +1,8 @@
-import {
-  getAnswerOptionsByPoll,
-  getEvents,
-  getPollsByEvent,
-  getSession,
-  getSuperusers,
-  getUsersPermissions,
-} from '@/lib/supabase/supabase-server'
+import { Label } from '@radix-ui/react-dropdown-menu'
 import { redirect } from 'next/navigation'
+
 import { DataTable } from '@/components/table/DataTable'
 import { Button } from '@/components/ui/button'
-import { Poll, columns } from './columns'
 import {
   Card,
   CardContent,
@@ -18,7 +11,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Label } from '@radix-ui/react-dropdown-menu'
+import {
+  getAnswerOptionsByPoll,
+  getEvents,
+  getPollsByEvent,
+  getSession,
+  getSuperusers,
+  getUsersPermissions,
+} from '@/lib/supabase/supabase-server'
+
+import { columns, Poll } from './columns'
 
 export default async function Polls({ params: { eventId } }: { params: { eventId: number } }) {
   const [session, polls, superusers, usersPermissions] = await Promise.all([

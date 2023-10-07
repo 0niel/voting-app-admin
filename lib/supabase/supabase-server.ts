@@ -1,8 +1,8 @@
-import { User, createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerComponentClient, User } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { cache } from 'react'
-import { Database } from './db-types'
 
+import { Database } from './db-types'
 
 export const createServerSupabaseClient = cache(() =>
   createServerComponentClient<Database>({ cookies }),
@@ -35,10 +35,7 @@ export async function getUserDetails() {
 export async function getEvents() {
   const supabase = createServerSupabaseClient()
   try {
-    const { data: events } = await supabase.schema('ovk')
-      .from('events')
-      .select('*')
-      .throwOnError()
+    const { data: events } = await supabase.schema('ovk').from('events').select('*').throwOnError()
     return events
   } catch (error) {
     console.error('Error:', error)
@@ -49,7 +46,8 @@ export async function getEvents() {
 export async function getEventParticipants(eventId: number) {
   const supabase = createServerSupabaseClient()
   try {
-    const { data: eventParticipants } = await supabase.schema('ovk')
+    const { data: eventParticipants } = await supabase
+      .schema('ovk')
       .from('participants')
       .select('*')
       .eq('event_id', eventId)
@@ -65,7 +63,8 @@ export async function getEventParticipants(eventId: number) {
 export async function getSuperusers() {
   const supabase = createServerSupabaseClient()
   try {
-    const { data: superusers } = await supabase.schema('ovk')
+    const { data: superusers } = await supabase
+      .schema('ovk')
       .from('superusers')
       .select('*')
       .throwOnError()
@@ -76,11 +75,11 @@ export async function getSuperusers() {
   }
 }
 
-
 export async function getUsersPermissions() {
   const supabase = createServerSupabaseClient()
   try {
-    const { data: usersPermissions } = await supabase.schema('ovk')
+    const { data: usersPermissions } = await supabase
+      .schema('ovk')
       .from('users_permissions')
       .select('*')
       .throwOnError()
@@ -94,7 +93,10 @@ export async function getUsersPermissions() {
 export type UserToView = Pick<User, 'id' | 'email' | 'created_at'>
 
 export async function getUsers() {
-  const supabase = createServerComponentClient({ cookies }, { supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY })
+  const supabase = createServerComponentClient(
+    { cookies },
+    { supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY },
+  )
   try {
     const { error, data: users } = await supabase.auth.admin.listUsers()
     if (error) throw error
@@ -105,11 +107,14 @@ export async function getUsers() {
   }
 }
 
-
 export async function getResourses() {
   const supabase = createServerSupabaseClient()
   try {
-    const { data: resources } = await supabase.schema('ovk').from('resources').select('*').throwOnError()
+    const { data: resources } = await supabase
+      .schema('ovk')
+      .from('resources')
+      .select('*')
+      .throwOnError()
     return resources
   } catch (error) {
     console.error('Error:', error)
@@ -120,7 +125,8 @@ export async function getResourses() {
 export async function getPollsByEvent(id: number) {
   const supabase = createServerSupabaseClient()
   try {
-    const { data: polls } = await supabase.schema('ovk')
+    const { data: polls } = await supabase
+      .schema('ovk')
       .from('polls')
       .select('*')
       .eq('event_id', id)
@@ -135,7 +141,8 @@ export async function getPollsByEvent(id: number) {
 export async function getAnswerOptionsByPoll(id: number) {
   const supabase = createServerSupabaseClient()
   try {
-    const { data: answerOptions } = await supabase.schema('ovk')
+    const { data: answerOptions } = await supabase
+      .schema('ovk')
       .from('answer_options')
       .select('*')
       .eq('poll_id', id)
