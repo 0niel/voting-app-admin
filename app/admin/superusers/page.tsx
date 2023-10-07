@@ -1,15 +1,17 @@
+import { redirect } from 'next/navigation'
+
+import { DataTable } from '@/components/table/DataTable'
+import { Button } from '@/components/ui/button'
 import {
-  UserToView,
   getEvents,
   getSession,
   getSuperusers,
   getUsers,
   getUsersPermissions,
+  UserToView,
 } from '@/lib/supabase/supabase-server'
-import { redirect } from 'next/navigation'
-import { DataTable } from '@/components/table/DataTable'
+
 import { columns } from './columns'
-import { Button } from '@/components/ui/button'
 import CreateSuperuserDialogButton from './CreateSuperuserDialog'
 
 export const dynamic = 'force-dynamic'

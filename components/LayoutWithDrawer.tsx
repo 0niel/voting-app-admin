@@ -1,8 +1,7 @@
 'use client'
 
-import { useRouter, usePathname } from 'next/navigation'
-import React, { FormEvent } from 'react'
-
+import { CaretSortIcon } from '@radix-ui/react-icons'
+import { Session } from '@supabase/supabase-js'
 import {
   CalendarIcon,
   DownloadCloudIcon,
@@ -11,10 +10,10 @@ import {
   MenuIcon,
   ShieldCheckIcon,
 } from 'lucide-react'
-import { useSupabase } from '@/lib/supabase/supabase-provider'
-import { Session } from '@supabase/supabase-js'
-import { Button } from './ui/button'
-import { Database } from '@/lib/supabase/db-types'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import React, { FormEvent } from 'react'
+
 import {
   Sheet,
   SheetContent,
@@ -23,8 +22,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { CaretSortIcon } from '@radix-ui/react-icons'
-import Link from 'next/link'
+import { Database } from '@/lib/supabase/db-types'
+import { useSupabase } from '@/lib/supabase/supabase-provider'
+
+import { Button } from './ui/button'
 
 export interface LayoutProps {
   children: React.ReactNode

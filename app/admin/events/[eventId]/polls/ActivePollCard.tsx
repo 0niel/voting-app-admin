@@ -1,3 +1,5 @@
+import { Label } from '@radix-ui/react-dropdown-menu'
+
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -7,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Label } from '@radix-ui/react-dropdown-menu'
 
 export default function ActivePollCard() {
   return (

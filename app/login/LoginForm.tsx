@@ -1,8 +1,12 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Unlock } from 'lucide-react'
+import Image from 'next/image'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import * as z from 'zod'
+
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -13,12 +17,10 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { Unlock } from 'lucide-react'
-import Messages from './Message'
 import { Input } from '@/components/ui/input'
 import { useSupabase } from '@/lib/supabase/supabase-provider'
-import Image from 'next/image'
-import toast from 'react-hot-toast'
+
+import Messages from './Message'
 
 const formSchema = z.object({
   email: z.string().email({

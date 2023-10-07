@@ -1,7 +1,8 @@
+import { X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import { X } from 'lucide-react'
+
 import MNLogo from '@/components/logos/MNLogo'
 import SuMireaLogo from '@/components/logos/SuMireaLogo'
 import { mireaNinjaURL, studentUnionURL } from '@/constants/constants'

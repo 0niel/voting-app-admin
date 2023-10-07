@@ -1,13 +1,15 @@
 'use client'
 
 import 'react-datepicker/dist/react-datepicker.css'
+
+import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import ReactDatePicker from 'react-datepicker'
 import { toast } from 'react-hot-toast'
+import { v4 as uuid } from 'uuid'
 
-import { Input } from '@/components/ui/input'
-import { Database } from '@/lib/supabase/db-types'
-import { useSupabase } from '@/lib/supabase/supabase-provider'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -16,12 +18,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
-import { v4 as uuid } from 'uuid'
-import Image from 'next/image'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Database } from '@/lib/supabase/db-types'
+import { useSupabase } from '@/lib/supabase/supabase-provider'
 
 type Events = Database['ovk']['Tables']['events']['Row']
 

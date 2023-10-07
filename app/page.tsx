@@ -1,11 +1,11 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import AdminPanelHead from '@/components/Head'
-import { getSession } from '@/lib/supabase/supabase-server'
-import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { getSession } from '@/lib/supabase/supabase-server'
 
 export const dynamic = 'force-dynamic'
 

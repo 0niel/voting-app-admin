@@ -1,13 +1,15 @@
+import { redirect } from 'next/navigation'
+
+import { DataTable } from '@/components/table/DataTable'
+import { Button } from '@/components/ui/button'
 import {
   getEvents,
   getSession,
   getSuperusers,
   getUsersPermissions,
 } from '@/lib/supabase/supabase-server'
-import { redirect } from 'next/navigation'
-import { DataTable } from '@/components/table/DataTable'
+
 import { columns } from './columns'
-import { Button } from '@/components/ui/button'
 import CreateEventDialogButton from './CreateEventDialog'
 
 export default async function Events() {

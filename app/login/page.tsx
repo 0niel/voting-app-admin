@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 
 import NinjaXUnion from '@/components/NinjaXUnion'
 import { getSession } from '@/lib/supabase/supabase-server'
+
 import { LoginForm } from './LoginForm'
 
 export default async function Login() {

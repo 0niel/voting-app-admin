@@ -9,6 +9,7 @@ import {
   getUsers,
   getUsersPermissions,
 } from '@/lib/supabase/supabase-server'
+
 import CreateMemberDialogButton from './CreateMemberDialogButton'
 
 export default async function Participants({

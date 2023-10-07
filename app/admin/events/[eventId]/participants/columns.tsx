@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
 import { Database } from '@/lib/supabase/db-types'
+
 import { ParticipantsTableRowActions } from './ParticipantsTableRowActions'
 
 export const columns: ColumnDef<Database['ovk']['Tables']['participants']['Row']>[] = [

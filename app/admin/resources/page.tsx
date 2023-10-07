@@ -1,7 +1,9 @@
-import { getEvents, getResourses, getSession, getSuperusers } from '@/lib/supabase/supabase-server'
 import { redirect } from 'next/navigation'
+
 import { DataTable } from '@/components/table/DataTable'
 import { Button } from '@/components/ui/button'
+import { getEvents, getResourses, getSession, getSuperusers } from '@/lib/supabase/supabase-server'
+
 import { columns } from './columns'
 import CreateResourceDialogButton from './CreateResourceDialog'
 

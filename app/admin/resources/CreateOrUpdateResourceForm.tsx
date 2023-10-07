@@ -3,13 +3,24 @@
 'use client'
 
 import 'react-datepicker/dist/react-datepicker.css'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useQuery } from '@tanstack/react-query'
+import { ChevronsUpDown, Search } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import ReactDatePicker from 'react-datepicker'
+import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
+import { z, ZodError } from 'zod'
 
-import { Input } from '@/components/ui/input'
-import { Database } from '@/lib/supabase/db-types'
-import { useSupabase } from '@/lib/supabase/supabase-provider'
+import { Button } from '@/components/ui/button'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/components/ui/command'
 import {
   Dialog,
   DialogContent,
@@ -18,8 +29,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -29,20 +38,12 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/components/ui/command'
-import { ChevronsUpDown, Search } from 'lucide-react'
-import { ZodError, z } from 'zod'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useQuery } from '@tanstack/react-query'
+import { Database } from '@/lib/supabase/db-types'
+import { useSupabase } from '@/lib/supabase/supabase-provider'
 
 const schema = z.object({
   name: z.string().min(1, 'Название не может быть пустым'),

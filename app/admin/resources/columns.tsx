@@ -1,12 +1,14 @@
 'use client'
 
-import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
 import { ColumnDef } from '@tanstack/react-table'
-import { UserToView } from '@/lib/supabase/supabase-server'
-import { Database } from '@/lib/supabase/db-types'
-import { Button } from '@/components/ui/button'
 import { LinkIcon } from 'lucide-react'
+
+import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
 import { Avatar } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Database } from '@/lib/supabase/db-types'
+import { UserToView } from '@/lib/supabase/supabase-server'
+
 import { ResourcesTableRowActios } from './ResourcesTableRowActios'
 
 const feather = require('feather-icons')
