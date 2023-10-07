@@ -1,8 +1,7 @@
-import { XMarkIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-
+import { X } from 'lucide-react'
 import MNLogo from '@/components/logos/MNLogo'
 import SuMireaLogo from '@/components/logos/SuMireaLogo'
 import { mireaNinjaURL, studentUnionURL } from '@/constants/constants'
@@ -13,7 +12,7 @@ interface NinjaXUnionProps {
 
 export default function NinjaXUnion(props: NinjaXUnionProps) {
   return (
-    <div className='inline-block flex items-center'>
+    <div className='flex items-center'>
       {props.withLinks ? (
         <Link target='_blank' href={mireaNinjaURL}>
           <MNLogo className='w-100 h-100' />
@@ -21,7 +20,7 @@ export default function NinjaXUnion(props: NinjaXUnionProps) {
       ) : (
         <MNLogo className='w-30 h-30' />
       )}
-      <XMarkIcon className='h-7 w-7 px-1 text-neutral dark:text-slate-400' />
+      <X className='text-neutral h-7 w-7 px-1 dark:text-slate-400' />
       {props.withLinks ? (
         <Link target='_blank' href={studentUnionURL}>
           <SuMireaLogo className='w-100 h-100' />

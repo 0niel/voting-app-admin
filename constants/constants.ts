@@ -1,7 +1,5 @@
 export const appName = 'ОВК админ-панель'
-export const shortAppName = 'ОВК'
-export const appDescription =
-  'Админ-панель отчётно-выборных конференций студенческого союза РТУ МИРЭА'
+
 export const mireaNinjaURL = 'https://mirea.ninja/'
 export const studentUnionURL = 'https://sumirea.ru/'
 export const appwriteEndpoint = 'https://appwrite.mirea.ninja/v1'

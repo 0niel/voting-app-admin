@@ -1,4 +1,6 @@
-import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+'use client'
+
+import { ChevronLeftIcon, ChevronRightIcon, SearchIcon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 
 export interface Column {
@@ -100,7 +102,7 @@ export default function Table(props: TableProps) {
           </div>
           <div className='relative'>
             <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
-              <MagnifyingGlassIcon className='h-5 w-5 text-gray-400' />
+              <SearchIcon className='h-5 w-5 text-gray-400' />
             </div>
             <input
               type='text'
