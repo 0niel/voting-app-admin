@@ -1,4 +1,9 @@
+'use client'
+
 import { Label } from '@radix-ui/react-dropdown-menu'
+import { useQuery } from '@tanstack/react-query'
+import { getTime } from 'date-fns'
+import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -9,9 +14,40 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { getActivePoll } from '@/lib/getActivePoll'
+import { Database } from '@/lib/supabase/db-types'
+import { useSupabase } from '@/lib/supabase/supabase-provider'
 
-export default function ActivePollCard() {
-  return (
+type Poll = Database['ovk']['Tables']['polls']['Row']
+
+export default function ActivePollCard({ polls }: { polls: Poll[] }) {
+  const { supabase } = useSupabase()
+
+  const [realtimePolls, setRealtimePolls] = useState(polls)
+
+  const [activePoll, setActivePoll] = useState<Poll | null>(null)
+
+  const changes = supabase
+    .channel('table-db-changes')
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'ovk',
+        table: 'polls',
+      },
+      (payload) => {
+        console.log('Payload: ', payload)
+      },
+    )
+    .subscribe()
+
+  useEffect(() => {
+    setActivePoll(getActivePoll(realtimePolls))
+    console.log(realtimePolls)
+  }, [realtimePolls])
+
+  return activePoll ? (
     <Card>
       <CardHeader className='space-y-1'>
         <CardTitle className='text-2xl'>Идёт голосование!</CardTitle>
@@ -35,5 +71,7 @@ export default function ActivePollCard() {
         <Button className='w-full'>Create account</Button>
       </CardFooter>
     </Card>
+  ) : (
+    <></>
   )
 }

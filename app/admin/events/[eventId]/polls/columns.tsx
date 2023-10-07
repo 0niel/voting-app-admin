@@ -6,12 +6,12 @@ import { useRouter } from 'next/navigation'
 
 import CountDown from '@/components/events/polls/CountDown'
 import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/formatDate'
 import { PollDisplayMode } from '@/lib/PollDisplayMode'
 import { Database } from '@/lib/supabase/db-types'
+
+import { PollsTableRowActions } from './TableRowActions'
 
 type Option = Database['ovk']['Tables']['answer_options']['Row']
 
@@ -23,7 +23,7 @@ export const columns: ColumnDef<Poll>[] = [
   {
     accessorKey: 'id',
     header: ({ column }) => <DataTableColumnHeader column={column} title='Id' />,
-    cell: ({ row }) => <div className='w-[80px]'>{row.getValue('id')}</div>,
+    cell: ({ row }) => <div className='w-[50px]'>{row.getValue('id')}</div>,
     enableSorting: false,
     enableHiding: false,
   },
@@ -56,27 +56,33 @@ export const columns: ColumnDef<Poll>[] = [
       <DataTableColumnHeader column={column} title='Изначальная длительность (сек.)' />
     ),
     cell: ({ row }) => {
-      ;<div className='flex w-[100px] items-center'>
-        <span>{row.getValue('duration')}</span>
-      </div>
+      return (
+        <div className='flex w-[100px] items-center'>
+          <span>{row.getValue('duration')}</span>
+        </div>
+      )
     },
   },
   {
     accessorKey: 'start_at',
     header: ({ column }) => <DataTableColumnHeader column={column} title='Начало' />,
     cell: ({ row }) => {
-      ;<div className='flex w-[100px] items-center'>
-        <span>{row.getValue('start_at') ? formatDate(row.getValue('start_at')) : 'нет'}</span>
-      </div>
+      return (
+        <div className='flex w-[100px] items-center'>
+          <span>{row.getValue('start_at') ? formatDate(row.getValue('start_at')) : 'нет'}</span>
+        </div>
+      )
     },
   },
   {
     accessorKey: 'end_at',
     header: ({ column }) => <DataTableColumnHeader column={column} title='Конец' />,
     cell: ({ row }) => {
-      ;<div className='flex w-[100px] items-center'>
-        <span>{row.getValue('end_at') ? formatDate(row.getValue('end_at')) : 'нет'}</span>
-      </div>
+      return (
+        <div className='flex w-[100px] items-center'>
+          <span>{row.getValue('end_at') ? formatDate(row.getValue('end_at')) : 'нет'}</span>
+        </div>
+      )
     },
   },
   {
@@ -85,7 +91,7 @@ export const columns: ColumnDef<Poll>[] = [
     cell: ({ row }) => {
       const options = row.getValue('options') as Option[]
       return (
-        <div className='flex w-[100px] items-center'>
+        <div className='flex w-[150px] flex-wrap gap-1'>
           {options.map((option) => (
             <Badge key={option.id} className='mr-2' variant='outline'>
               {option.text}
@@ -99,11 +105,11 @@ export const columns: ColumnDef<Poll>[] = [
     accessorKey: 'is_finished',
     header: ({ column }) => <DataTableColumnHeader column={column} title='Голоса' />,
     cell: ({ row }) => {
-      ;<span>{row.getValue('is_finished') ? '✅Подсчитаны' : '❌Промежуточные'}</span>
+      return <span>{row.getValue('is_finished') ? '✅Подсчитаны' : '❌Промежуточные'}</span>
     },
   },
-  // {
-  //   id: 'actions',
-  //   cell: ({ row }) => <EventsTableRowActions row={row} />,
-  // },
+  {
+    id: 'actions',
+    cell: ({ row }) => <PollsTableRowActions row={row} />,
+  },
 ]
