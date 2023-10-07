@@ -2,6 +2,7 @@
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
+import { useParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 
 import { Button } from '@/components/ui/button'
@@ -24,6 +25,7 @@ export function VotingModeratorsTableRowActions<TData>({
   row,
 }: VotingModeratorsTableRowActionsProps<TData>) {
   const { supabase } = useSupabase()
+  const { eventId } = useParams()
 
   const handleDeleteVotingModerator = async () => {
     if (!confirm('Вы уверены, что хотите удалить модератора голосования?')) {
@@ -33,12 +35,14 @@ export function VotingModeratorsTableRowActions<TData>({
     try {
       await supabase
         .from('users_permissions')
-        .upsert({
-          user_id: (row.original as Database['ovk']['Tables']['users_permissions']['Row']).user_id,
-          event_id: (row.original as Database['ovk']['Tables']['users_permissions']['Row'])
-            .event_id,
+        .update({
           is_voting_moderator: false,
         })
+        .eq(
+          'user_id',
+          (row.original as Database['ovk']['Tables']['users_permissions']['Row']).user_id,
+        )
+        .eq('event_id', eventId)
         .throwOnError()
 
       toast.success('Модератор голосования успешно удален из мероприятия.')

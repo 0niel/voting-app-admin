@@ -1,10 +1,7 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { CheckIcon, LinkIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-
-import CountDown from '@/components/events/polls/CountDown'
+import { CheckIcon, XIcon } from 'lucide-react'
 import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/formatDate'
@@ -105,7 +102,16 @@ export const columns: ColumnDef<Poll>[] = [
     accessorKey: 'is_finished',
     header: ({ column }) => <DataTableColumnHeader column={column} title='Голоса' />,
     cell: ({ row }) => {
-      return <span>{row.getValue('is_finished') ? '✅Подсчитаны' : '❌Промежуточные'}</span>
+      return (
+        <div className='flex w-[150px] items-center'>
+          {row.getValue('is_finished') ? (
+            <CheckIcon className='mr-2 h-4 w-4 text-green-400' />
+          ) : (
+            <XIcon className='mr-2 h-4 w-4 text-red-400' />
+          )}
+          <span>{row.getValue('is_finished') ? 'Подсчитаны' : 'Промежуточные'}</span>
+        </div>
+      )
     },
   },
   {

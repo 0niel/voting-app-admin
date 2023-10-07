@@ -35,7 +35,7 @@ export function ParticipantsTableRowActions<TData>({
       await supabase
         .from('participants')
         .delete()
-        .match({ id: (row.original as Database['ovk']['Tables']['events']['Row']).id })
+        .match({ id: row.getValue('id') })
         .throwOnError()
 
       toast.success('Участник успешно удален из мероприятия.')

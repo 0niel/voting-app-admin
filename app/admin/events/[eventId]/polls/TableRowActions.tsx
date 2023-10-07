@@ -49,7 +49,7 @@ export function PollsTableRowActions<TData>({ row }: PollsTableRowActionsProps<T
       await supabase
         .from('polls')
         .delete()
-        .match({ id: (row.original as Database['ovk']['Tables']['polls']['Row']).id })
+        .match({ id: row.getValue('id') })
         .throwOnError()
 
       toast.success('Голосование успешно удалено.')

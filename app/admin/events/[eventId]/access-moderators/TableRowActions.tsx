@@ -2,6 +2,7 @@
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
+import { useParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 
 import { Button } from '@/components/ui/button'
@@ -24,6 +25,7 @@ export function AccessModeratorsTableRowActions<TData>({
   row,
 }: AccessModeratorsTableRowActionsProps<TData>) {
   const { supabase } = useSupabase()
+  const { eventId } = useParams()
 
   const handleDeleteAccessModerator = async () => {
     if (!confirm('Вы уверены, что хотите удалить модератора доступа?')) {
@@ -33,12 +35,11 @@ export function AccessModeratorsTableRowActions<TData>({
     try {
       await supabase
         .from('users_permissions')
-        .upsert({
-          user_id: (row.original as Database['ovk']['Tables']['users_permissions']['Row']).user_id,
-          event_id: (row.original as Database['ovk']['Tables']['users_permissions']['Row'])
-            .event_id,
+        .update({
           is_access_moderator: false,
         })
+        .eq('user_id', row.getValue('user_id'))
+        .eq('event_id', eventId)
         .throwOnError()
 
       toast.success('Модератор доступа успешно удален из мероприятия.')
