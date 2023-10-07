@@ -8,9 +8,10 @@ import {
   getSuperusers,
   getUsers,
   getUsersPermissions,
+  UserToView,
 } from '@/lib/supabase/supabase-server'
 
-import CreateMemberDialogButton from './CreateMemberDialogButton'
+import CreateVotingModeratorDialogButton from './CreateVotingModeratorDialogButton'
 
 export default async function Participants({
   params: { eventId },
@@ -51,17 +52,23 @@ export default async function Participants({
     return redirect('/')
   }
 
+  const votingModerators = users
+    ?.map((realUser) => {
+      return users?.find((user) => user.id === realUser.id)
+    })
+    .filter((user) => user !== undefined) as UserToView[]
+
   return (
     <div className='space-y-4'>
       <div className='flex flex-col space-y-2'>
-        <h2 className='text-2xl font-bold tracking-tight'>Список участников</h2>
+        <h2 className='text-2xl font-bold tracking-tight'>Список модераторов голосования</h2>
         <p className='text-muted-foreground'>
-          Список всех участников зарегистрированных на меропритие. Участники могут принимать
-          участние в голосованиях
+          Список всех модераторов голосования меропрития. Модераторы голосования могут создавать
+          новые голосования
         </p>
       </div>
-      <CreateMemberDialogButton users={users ?? []} eventId={eventId} />
-      <DataTable data={participants ?? []} columns={columns} filterColumn='question' />
+      <CreateVotingModeratorDialogButton users={users ?? []} eventId={eventId} />
+      <DataTable data={votingModerators ?? []} columns={columns} filterColumn='question' />
     </div>
   )
 }

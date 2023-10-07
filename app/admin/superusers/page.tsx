@@ -47,7 +47,7 @@ export default async function Events() {
   return (
     <div className='space-y-4'>
       <div className='flex flex-col space-y-2'>
-        <h2 className='text-2xl font-bold tracking-tight'>Суперпользватели</h2>
+        <h2 className='text-2xl font-bold tracking-tight'>Супепользователи</h2>
         <p className='text-muted-foreground'>
           Супепользователи обладают всеми правами и могут создавать мероприятия и голосования,
           добавлять модераторов доступа, участников

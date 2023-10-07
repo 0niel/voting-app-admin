@@ -23,7 +23,6 @@ export default function CreateEventDialogButton() {
         <DialogHeader>
           <DialogTitle>Создание мероприятия</DialogTitle>
         </DialogHeader>
-
         <CreateOrUpdateEventForm />
       </DialogContent>
     </Dialog>

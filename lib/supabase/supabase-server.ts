@@ -49,7 +49,7 @@ export async function getEventParticipants(eventId: number) {
     const { data: eventParticipants } = await supabase
       .schema('ovk')
       .from('participants')
-      .select('*')
+      .select(`*`)
       .eq('event_id', eventId)
       .throwOnError()
 

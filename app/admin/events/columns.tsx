@@ -58,6 +58,7 @@ export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = 
     accessorKey: 'access_moderators',
     header: ({ column }) => <DataTableColumnHeader column={column} title='Мод. доступа' />,
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const router = useRouter()
 
       const event = row.original
@@ -80,6 +81,7 @@ export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = 
     accessorKey: 'voting_moderators',
     header: ({ column }) => <DataTableColumnHeader column={column} title='Мод. голосований' />,
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const router = useRouter()
 
       const event = row.original
@@ -102,6 +104,7 @@ export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = 
     accessorKey: 'participants',
     header: ({ column }) => <DataTableColumnHeader column={column} title='Участники' />,
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const router = useRouter()
 
       const event = row.original
@@ -124,6 +127,7 @@ export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = 
     accessorKey: 'polls',
     header: ({ column }) => <DataTableColumnHeader column={column} title='Голосования' />,
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const router = useRouter()
 
       const event = row.original
