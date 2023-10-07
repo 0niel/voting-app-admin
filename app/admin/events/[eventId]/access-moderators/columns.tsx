@@ -15,6 +15,21 @@ export const columns: ColumnDef<Database['ovk']['Tables']['participants']['Row']
       return <span className='max-w-[500px] truncate font-medium'>{row.getValue('user_id')}</span>
     },
   },
+
+  {
+    accessorKey: 'full_name',
+    header: ({ column }) => <DataTableColumnHeader column={column} title='ФИО' />,
+    cell: ({ row }) => {
+      return <span className='max-w-[500px] truncate font-medium'>{row.getValue('full_name')}</span>
+    },
+  },
+  {
+    accessorKey: 'email',
+    header: ({ column }) => <DataTableColumnHeader column={column} title='Почта' />,
+    cell: ({ row }) => {
+      return <span className='max-w-[500px] truncate font-medium'>{row.getValue('email')}</span>
+    },
+  },
   {
     accessorKey: 'created_at',
     header: ({ column }) => <DataTableColumnHeader column={column} title='Создан' />,

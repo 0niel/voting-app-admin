@@ -1,9 +1,7 @@
 import { redirect } from 'next/navigation'
 
-import { columns } from '@/app/admin/events/[eventId]/participants/columns'
 import { DataTable } from '@/components/table/DataTable'
 import {
-  getEventParticipants,
   getSession,
   getSuperusers,
   getUsers,
@@ -11,6 +9,7 @@ import {
   UserToView,
 } from '@/lib/supabase/supabase-server'
 
+import { columns } from './columns'
 import CreateVotingModeratorDialogButton from './DialogCreate'
 
 export default async function VotingModerators({
@@ -67,7 +66,7 @@ export default async function VotingModerators({
         </p>
       </div>
       <CreateVotingModeratorDialogButton users={users ?? []} eventId={eventId} />
-      <DataTable data={votingModerators ?? []} columns={columns} filterColumn='id' />
+      <DataTable data={votingModerators ?? []} columns={columns} filterColumn='full_name' />
     </div>
   )
 }

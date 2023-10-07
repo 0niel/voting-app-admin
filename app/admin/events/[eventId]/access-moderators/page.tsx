@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation'
 
-import { columns } from '@/app/admin/events/[eventId]/participants/columns'
 import { DataTable } from '@/components/table/DataTable'
 import {
   getSession,
@@ -10,6 +9,7 @@ import {
   UserToView,
 } from '@/lib/supabase/supabase-server'
 
+import { columns } from './columns'
 import CreateAccessModeratorDialogButton from './DialogCreate'
 
 export default async function AccessModerators({
@@ -50,8 +50,14 @@ export default async function AccessModerators({
     return redirect('/')
   }
 
-  // @ts-ignore
-  const accessModerators = []
+  const accessModerators = [
+    {
+      user_id: '4fdfa192-44d1-4cf3-ab98-2528ca1ef1ce',
+      full_name: 'Тест тест тет',
+      email: 'mock@mirea.ru',
+      created_at: '2023-10-07 19:42:43.633949+00',
+    },
+  ]
 
   return (
     <div className='space-y-4'>
@@ -63,7 +69,7 @@ export default async function AccessModerators({
         </p>
       </div>
       <CreateAccessModeratorDialogButton users={users ?? []} eventId={eventId} />
-      <DataTable data={accessModerators ?? []} columns={columns} filterColumn='id' />
+      <DataTable data={accessModerators ?? []} columns={columns} filterColumn='full_name' />
     </div>
   )
 }

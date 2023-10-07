@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation'
 
-import { columns } from '@/app/admin/events/[eventId]/participants/columns'
 import { DataTable } from '@/components/table/DataTable'
 import {
   getEventParticipants,
@@ -10,6 +9,7 @@ import {
   getUsersPermissions,
 } from '@/lib/supabase/supabase-server'
 
+import { columns } from './columns'
 import CreateParticipantDialogButton from './DialogCreate'
 
 export default async function Participants({
@@ -61,7 +61,7 @@ export default async function Participants({
         </p>
       </div>
       <CreateParticipantDialogButton users={users ?? []} eventId={eventId} />
-      <DataTable data={participants ?? []} columns={columns} filterColumn='id' />
+      <DataTable data={participants ?? []} columns={columns} filterColumn='full_name' />
     </div>
   )
 }
