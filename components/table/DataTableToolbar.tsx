@@ -5,6 +5,7 @@ import { Table } from '@tanstack/react-table'
 
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
+import { DataTableFacetedFilter } from './DataTableFacetedFilter'
 import { DataTableViewOptions } from './DataTableViewOptions'
 
 interface DataTableToolbarProps<TData> {
