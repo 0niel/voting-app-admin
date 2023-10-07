@@ -35,7 +35,8 @@ export function VotingModeratorsTableRowActions<TData>({
         .from('users_permissions')
         .upsert({
           user_id: (row.original as Database['ovk']['Tables']['users_permissions']['Row']).user_id,
-          event_id: (row.original as Database['ovk']['Tables']['users_permissions']['Row']).event_id,
+          event_id: (row.original as Database['ovk']['Tables']['users_permissions']['Row'])
+            .event_id,
           is_voting_moderator: false,
         })
         .throwOnError()

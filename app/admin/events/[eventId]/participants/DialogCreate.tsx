@@ -23,7 +23,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useSupabase } from '@/lib/supabase/supabase-provider'
 import { UserToView } from '@/lib/supabase/supabase-server'
 
-
 export default function CreateParticipantDialogButton({
   users,
   eventId,
