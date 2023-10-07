@@ -10,7 +10,7 @@ import {
 } from '@/lib/supabase/supabase-server'
 
 import { columns } from './columns'
-import CreateEventDialogButton from './CreateEventDialog'
+import CreateEventDialogButton from './DialogCreate'
 
 export default async function Events() {
   const [session, events, superusers, usersPermissions] = await Promise.all([

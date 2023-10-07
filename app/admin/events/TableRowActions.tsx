@@ -3,6 +3,7 @@
 import { DialogTrigger } from '@radix-ui/react-dialog'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
 
 import { Button } from '@/components/ui/button'
@@ -30,7 +31,8 @@ import {
 import { Database } from '@/lib/supabase/db-types'
 import { useSupabase } from '@/lib/supabase/supabase-provider'
 
-import UpdateEventDialogContent from './UpdateEventDialogContent'
+import CopyEventDialog from './DialogCopy'
+import UpdateEventDialog from './DialogUpdate'
 
 interface EventsTableRowActionsProps<TData> {
   row: Row<TData>
@@ -59,33 +61,11 @@ export function EventsTableRowActions<TData>({ row }: EventsTableRowActionsProps
     }
   }
 
-  const handleCopyEvent = async () => {
-    try {
-      const { data: event } = await supabase
-        .from('events')
-        .select()
-        .match({ id: (row.original as Database['ovk']['Tables']['events']['Row']).id })
-        .throwOnError()
-
-      await supabase
-        .from('events')
-        .insert({
-          name: event?.[0].name,
-          start_at: event?.[0].start_at,
-          is_active: event?.[0].is_active,
-          logo_url: event?.[0].logo_url,
-        })
-        .throwOnError()
-
-      toast.success('Мероприятие успешно скопировано.')
-      window.location.reload()
-    } catch (error: any) {
-      toast.error('Произошла ошибка при копировании мероприятия.')
-    }
-  }
+  const [updateDialogOpen, setUpdateDialogOpen] = useState(false)
+  const [copyDialogOpen, setCopyDialogOpen] = useState(false)
 
   return (
-    <Dialog>
+    <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'>
@@ -94,10 +74,11 @@ export function EventsTableRowActions<TData>({ row }: EventsTableRowActionsProps
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='w-[160px]'>
-          <DialogTrigger asChild>
-            <DropdownMenuItem>Редактировать</DropdownMenuItem>
-          </DialogTrigger>
-          <DropdownMenuItem onClick={handleCopyEvent}>Копия</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setUpdateDialogOpen(true)}>
+            Редактировать
+          </DropdownMenuItem>
+
+          <DropdownMenuItem onClick={() => setCopyDialogOpen(true)}>Копия</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleDeleteEvent}>
             Удалить
@@ -105,7 +86,18 @@ export function EventsTableRowActions<TData>({ row }: EventsTableRowActionsProps
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <UpdateEventDialogContent event={row.original as any} />
-    </Dialog>
+
+      <UpdateEventDialog
+        event={row.original as any}
+        open={updateDialogOpen}
+        setOpen={setUpdateDialogOpen}
+      />
+
+      <CopyEventDialog
+        event={row.original as any}
+        open={copyDialogOpen}
+        setOpen={setCopyDialogOpen}
+      />
+    </>
   )
 }

@@ -4,14 +4,13 @@ import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Database } from '@/lib/supabase/db-types'
+import { FormMode } from '@/lib/FormMode'
 
-import CreateOrUpdateEventForm from './CreateOrUpdateEventForm'
+import CreateOrUpdateEventForm from './Form'
 
 export default function CreateEventDialogButton() {
   return (
@@ -23,7 +22,7 @@ export default function CreateEventDialogButton() {
         <DialogHeader>
           <DialogTitle>Создание мероприятия</DialogTitle>
         </DialogHeader>
-        <CreateOrUpdateEventForm />
+        <CreateOrUpdateEventForm formMode={FormMode.create} />
       </DialogContent>
     </Dialog>
   )

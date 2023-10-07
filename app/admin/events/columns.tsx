@@ -2,6 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import { Badge, CheckIcon, LinkIcon } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
@@ -9,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Database } from '@/lib/supabase/db-types'
 
-import { EventsTableRowActions } from './EventsTableRowActions'
+import { EventsTableRowActions } from './TableRowActions'
 
 export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = [
   {
@@ -58,21 +59,15 @@ export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = 
     accessorKey: 'access_moderators',
     header: ({ column }) => <DataTableColumnHeader column={column} title='Мод. доступа' />,
     cell: ({ row }) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const router = useRouter()
-
       const event = row.original
       return (
         <div className='flex w-[100px] items-center'>
-          <Button
-            variant='link'
-            onClick={() => {
-              router.push(`/admin/events/${event.id}/access-moderators`)
-            }}
-          >
-            Перейти
-            <LinkIcon className='ml-2 h-4 w-4' />
-          </Button>
+          <Link href={`/admin/events/${event.id}/access-moderators`}>
+            <Button variant='link'>
+              Перейти
+              <LinkIcon className='ml-2 h-4 w-4' />
+            </Button>
+          </Link>
         </div>
       )
     },

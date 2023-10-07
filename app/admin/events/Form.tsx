@@ -39,6 +39,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
+import { FormMode } from '@/lib/FormMode'
 import { Database } from '@/lib/supabase/db-types'
 import { useSupabase } from '@/lib/supabase/supabase-provider'
 
@@ -53,10 +54,10 @@ type SchemaValues = z.infer<typeof schema>
 
 export default function CreateOrUpdateEventForm({
   event = null,
-  update = false,
+  formMode = FormMode.create,
 }: {
   event?: Database['ovk']['Tables']['events']['Row'] | null
-  update?: boolean
+  formMode?: FormMode
 }) {
   const { supabase } = useSupabase()
 
@@ -108,7 +109,7 @@ export default function CreateOrUpdateEventForm({
   }
 
   const onSubmit = async (data: SchemaValues) => {
-    if (update) {
+    if (formMode === FormMode.edit) {
       await updateEvent(data)
     } else {
       await createEvent(data)
@@ -159,7 +160,11 @@ export default function CreateOrUpdateEventForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
         <DialogHeader>
-          <DialogTitle>Создание нового ресуса</DialogTitle>
+          <DialogTitle>
+            {formMode === FormMode.create && 'Создание нового мероприятия'}
+            {formMode === FormMode.edit && 'Редактирование мероприятия'}
+            {formMode === FormMode.copy && 'Копирование мероприятия'}
+          </DialogTitle>
         </DialogHeader>
 
         <FormField
