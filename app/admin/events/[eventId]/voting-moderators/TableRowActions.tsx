@@ -16,32 +16,35 @@ import {
 import { Database } from '@/lib/supabase/db-types'
 import { useSupabase } from '@/lib/supabase/supabase-provider'
 
-interface ParticipantsTableRowActionsProps<TData> {
+interface VotingModeratorsTableRowActionsProps<TData> {
   row: Row<TData>
 }
 
-export function ParticipantsTableRowActions<TData>({
+export function VotingModeratorsTableRowActions<TData>({
   row,
-}: ParticipantsTableRowActionsProps<TData>) {
+}: VotingModeratorsTableRowActionsProps<TData>) {
   const { supabase } = useSupabase()
 
-  const handleDeleteParticipant = async () => {
-    if (!confirm('Вы уверены, что хотите удалить участника?')) {
+  const handleDeleteVotingModerator = async () => {
+    if (!confirm('Вы уверены, что хотите удалить модератора голосования?')) {
       return
     }
 
     try {
       await supabase
-        .from('participants')
-        .delete()
-        .match({ id: (row.original as Database['ovk']['Tables']['events']['Row']).id })
+        .from('users_permissions')
+        .upsert({
+          user_id: (row.original as Database['ovk']['Tables']['users_permissions']['Row']).user_id,
+          event_id: (row.original as Database['ovk']['Tables']['users_permissions']['Row']).event_id,
+          is_voting_moderator: false,
+        })
         .throwOnError()
 
-      toast.success('Участник успешно удален из мероприятия.')
+      toast.success('Модератор голосования успешно удален из мероприятия.')
       window.location.reload()
     } catch (error: any) {
       console.error(error)
-      toast.error('Произошла ошибка при удалении участника мероприятия.')
+      toast.error('Произошла ошибка при удалении модератора голосования.')
     }
   }
 
@@ -55,7 +58,7 @@ export function ParticipantsTableRowActions<TData>({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='w-[160px]'>
-          <DropdownMenuItem onClick={handleDeleteParticipant}>
+          <DropdownMenuItem onClick={handleDeleteVotingModerator}>
             Удалить
             <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
           </DropdownMenuItem>

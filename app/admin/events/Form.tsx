@@ -159,14 +159,6 @@ export default function CreateOrUpdateEventForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-        <DialogHeader>
-          <DialogTitle>
-            {formMode === FormMode.create && 'Создание нового мероприятия'}
-            {formMode === FormMode.edit && 'Редактирование мероприятия'}
-            {formMode === FormMode.copy && 'Копирование мероприятия'}
-          </DialogTitle>
-        </DialogHeader>
-
         <FormField
           control={form.control}
           name='name'

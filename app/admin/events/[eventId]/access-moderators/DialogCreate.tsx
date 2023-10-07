@@ -3,13 +3,8 @@
 import 'react-datepicker/dist/react-datepicker.css'
 
 import { ChevronsUpDown } from 'lucide-react'
-import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
-import ReactDatePicker from 'react-datepicker'
+import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { v4 as uuid } from 'uuid'
-
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -26,15 +21,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Switch } from '@/components/ui/switch'
-import { Database } from '@/lib/supabase/db-types'
 import { useSupabase } from '@/lib/supabase/supabase-provider'
 import { UserToView } from '@/lib/supabase/supabase-server'
 
-export default function CreateVotingModeratorDialogButton({
+export default function CreateAccessModeratorDialogButton({
   users,
   eventId,
 }: {
@@ -45,7 +36,6 @@ export default function CreateVotingModeratorDialogButton({
 
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState('')
-  const [role, setRole] = useState('')
 
   const handleAddMember = async () => {
     const user = users.find((user) => user.email === email)
@@ -56,19 +46,20 @@ export default function CreateVotingModeratorDialogButton({
 
     try {
       await supabase
-        .from('participants')
-        .insert({
+        .from('users_permissions')
+        .upsert({
           user_id: user.id,
           event_id: eventId,
-          role: role,
+          is_access_moderator: true,
         })
         .throwOnError()
 
-      toast.success('Пользователь успешно добавлен в голосование.')
+      toast.success('Пользователь успешно добавлен в модераторы доступа.')
       window.location.reload()
     } catch (error: any) {
+      console.log(error)
       toast.error(
-        'Не удалось добавить пользователя в голосование. Возможно, он уже находится в списке участников.',
+        'Не удалось добавить пользователя в модераторы доступа. Возможно, он уже находится в списке модераторов доступа.',
       )
     }
   }
@@ -76,11 +67,11 @@ export default function CreateVotingModeratorDialogButton({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Добавить</Button>
+        <Button>Назначение</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Добавить участника</DialogTitle>
+          <DialogTitle>Назначить модератором доступа</DialogTitle>
         </DialogHeader>
         <div className='space-y-2'>
           <Popover open={open} onOpenChange={setOpen}>
@@ -117,16 +108,6 @@ export default function CreateVotingModeratorDialogButton({
               </Command>
             </PopoverContent>
           </Popover>
-        </div>
-        <div>
-          <Label htmlFor='role'>Роль</Label>
-          <Input
-            id='role'
-            type='text'
-            placeholder={role}
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-          />
         </div>
         <DialogFooter>
           <Button type='submit' onClick={handleAddMember}>

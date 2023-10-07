@@ -3,13 +3,9 @@
 import 'react-datepicker/dist/react-datepicker.css'
 
 import { ChevronsUpDown } from 'lucide-react'
-import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
-import ReactDatePicker from 'react-datepicker'
+import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { v4 as uuid } from 'uuid'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -34,7 +30,7 @@ import { Database } from '@/lib/supabase/db-types'
 import { useSupabase } from '@/lib/supabase/supabase-provider'
 import { UserToView } from '@/lib/supabase/supabase-server'
 
-export default function CreateAccessModeratorDialogButton({
+export default function CreateVotingModeratorDialogButton({
   users,
   eventId,
 }: {
@@ -45,7 +41,6 @@ export default function CreateAccessModeratorDialogButton({
 
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState('')
-  const [role, setRole] = useState('')
 
   const handleAddMember = async () => {
     const user = users.find((user) => user.email === email)
@@ -56,11 +51,11 @@ export default function CreateAccessModeratorDialogButton({
 
     try {
       await supabase
-        .from('participants')
-        .insert({
+        .from('users_permissions')
+        .upsert({
           user_id: user.id,
           event_id: eventId,
-          role: role,
+          is_voting_moderator: true,
         })
         .throwOnError()
 
@@ -76,11 +71,11 @@ export default function CreateAccessModeratorDialogButton({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Добавить</Button>
+        <Button>Назначение</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Добавить участника</DialogTitle>
+          <DialogTitle>Назначить модератором голосования</DialogTitle>
         </DialogHeader>
         <div className='space-y-2'>
           <Popover open={open} onOpenChange={setOpen}>
@@ -117,16 +112,6 @@ export default function CreateAccessModeratorDialogButton({
               </Command>
             </PopoverContent>
           </Popover>
-        </div>
-        <div>
-          <Label htmlFor='role'>Роль</Label>
-          <Input
-            id='role'
-            type='text'
-            placeholder={role}
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-          />
         </div>
         <DialogFooter>
           <Button type='submit' onClick={handleAddMember}>

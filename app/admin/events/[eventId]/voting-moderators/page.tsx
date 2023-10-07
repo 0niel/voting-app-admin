@@ -11,16 +11,15 @@ import {
   UserToView,
 } from '@/lib/supabase/supabase-server'
 
-import CreateVotingModeratorDialogButton from './CreateVotingModeratorDialogButton'
+import CreateVotingModeratorDialogButton from './DialogCreate'
 
-export default async function Participants({
+export default async function VotingModerators({
   params: { eventId },
 }: {
   params: { eventId: number }
 }) {
-  const [session, participants, superusers, users, usersPermissions] = await Promise.all([
+  const [session, superusers, users, usersPermissions] = await Promise.all([
     getSession(),
-    getEventParticipants(eventId),
     getSuperusers(),
     getUsers(),
     getUsersPermissions(),
@@ -68,7 +67,7 @@ export default async function Participants({
         </p>
       </div>
       <CreateVotingModeratorDialogButton users={users ?? []} eventId={eventId} />
-      <DataTable data={votingModerators ?? []} columns={columns} filterColumn='question' />
+      <DataTable data={votingModerators ?? []} columns={columns} filterColumn='id' />
     </div>
   )
 }

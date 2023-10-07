@@ -2,23 +2,10 @@
 
 import 'react-datepicker/dist/react-datepicker.css'
 
-import React, { useState } from 'react'
-import ReactDatePicker from 'react-datepicker'
-import { toast } from 'react-hot-toast'
+import React from 'react'
 
-import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Database } from '@/lib/supabase/db-types'
-import { useSupabase } from '@/lib/supabase/supabase-provider'
 
 import CreateOrUpdateResourceForm from './Form'
 

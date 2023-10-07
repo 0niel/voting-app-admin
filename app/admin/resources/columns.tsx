@@ -4,10 +4,8 @@ import { ColumnDef } from '@tanstack/react-table'
 import { LinkIcon } from 'lucide-react'
 
 import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
-import { Avatar } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Database } from '@/lib/supabase/db-types'
-import { UserToView } from '@/lib/supabase/supabase-server'
 
 import { ResourcesTableRowActios } from './TableRowActios'
 

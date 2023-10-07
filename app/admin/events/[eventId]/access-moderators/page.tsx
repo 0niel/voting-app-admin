@@ -10,9 +10,9 @@ import {
   UserToView,
 } from '@/lib/supabase/supabase-server'
 
-import CreateAccessModeratorDialogButton from './CreateAccessModeratorDialogButton'
+import CreateAccessModeratorDialogButton from './DialogCreate'
 
-export default async function Participants({
+export default async function AccessModerators({
   params: { eventId },
 }: {
   params: { eventId: number }
@@ -46,15 +46,12 @@ export default async function Participants({
     )
   }
 
-  if (!isUserHasAllPermissions() && !isUserVotingModerator() && !isUserAccessModerator()) {
+  if (!isUserHasAllPermissions()) {
     return redirect('/')
   }
 
-  const accessModerators = users
-    ?.map((realUser) => {
-      return users?.find((user) => user.id === realUser.id)
-    })
-    .filter((user) => user !== undefined) as UserToView[]
+  // @ts-ignore
+  const accessModerators = []
 
   return (
     <div className='space-y-4'>
@@ -66,7 +63,7 @@ export default async function Participants({
         </p>
       </div>
       <CreateAccessModeratorDialogButton users={users ?? []} eventId={eventId} />
-      <DataTable data={accessModerators ?? []} columns={columns} filterColumn='question' />
+      <DataTable data={accessModerators ?? []} columns={columns} filterColumn='id' />
     </div>
   )
 }

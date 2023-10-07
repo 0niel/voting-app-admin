@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 
 import { DataTable } from '@/components/table/DataTable'
-import { Button } from '@/components/ui/button'
 import {
   getEvents,
   getSession,

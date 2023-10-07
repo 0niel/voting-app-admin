@@ -2,10 +2,10 @@
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
 
 import { Button } from '@/components/ui/button'
-import { Dialog } from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,7 +20,8 @@ interface ParticipantsTableRowActionsProps<TData> {
   row: Row<TData>
 }
 
-export function AccessModeratorsTableRowActions<TData>({
+// id, имя, почта, дата создания, роль
+export function ParticipantsTableRowActions<TData>({
   row,
 }: ParticipantsTableRowActionsProps<TData>) {
   const { supabase } = useSupabase()
@@ -46,7 +47,7 @@ export function AccessModeratorsTableRowActions<TData>({
   }
 
   return (
-    <Dialog>
+    <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'>
@@ -61,6 +62,6 @@ export function AccessModeratorsTableRowActions<TData>({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    </Dialog>
+    </>
   )
 }

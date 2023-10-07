@@ -1,14 +1,11 @@
 'use client'
 
-'use client'
-
 import 'react-datepicker/dist/react-datepicker.css'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
-import { ChevronsUpDown, Search } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
-import ReactDatePicker from 'react-datepicker'
+import { ChevronsUpDown } from 'lucide-react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { z, ZodError } from 'zod'
@@ -21,18 +18,10 @@ import {
   CommandInput,
   CommandItem,
 } from '@/components/ui/command'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+import { DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,

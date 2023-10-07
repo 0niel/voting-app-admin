@@ -12,7 +12,7 @@ export default function NotFound() {
             Возможно, такой станицы не существует или у вас нет прав, чтобы её просматривать.
           </p>
           <Link href='/'>
-            <Button>Попробовать повторить</Button>
+            <Button>Повторить</Button>
           </Link>
         </div>
       </div>

@@ -5,7 +5,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
 import { UserToView } from '@/lib/supabase/supabase-server'
 
-import { SuperusersTableRowActios } from './SuperusersTableRowActios'
+import { SuperusersTableRowActios } from './TableRowActios'
 
 export const columns: ColumnDef<UserToView>[] = [
   {

@@ -5,7 +5,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
 import { Database } from '@/lib/supabase/db-types'
 
-import { VotingModeratorsTableRowActions } from './VotingModeratorsTableRowActions'
+import { VotingModeratorsTableRowActions } from './TableRowActions'
 
 export const columns: ColumnDef<Database['ovk']['Tables']['participants']['Row']>[] = [
   {

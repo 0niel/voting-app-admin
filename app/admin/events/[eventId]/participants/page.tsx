@@ -10,7 +10,7 @@ import {
   getUsersPermissions,
 } from '@/lib/supabase/supabase-server'
 
-import CreateMemberDialogButton from './CreateMemberDialogButton'
+import CreateParticipantDialogButton from './DialogCreate'
 
 export default async function Participants({
   params: { eventId },
@@ -60,8 +60,8 @@ export default async function Participants({
           участние в голосованиях
         </p>
       </div>
-      <CreateMemberDialogButton users={users ?? []} eventId={eventId} />
-      <DataTable data={participants ?? []} columns={columns} filterColumn='question' />
+      <CreateParticipantDialogButton users={users ?? []} eventId={eventId} />
+      <DataTable data={participants ?? []} columns={columns} filterColumn='id' />
     </div>
   )
 }

@@ -31,6 +31,8 @@ export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = 
         </Avatar>
       )
     },
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: 'name',
@@ -75,6 +77,8 @@ export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = 
         </div>
       )
     },
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: 'voting_moderators',
@@ -98,6 +102,8 @@ export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = 
         </div>
       )
     },
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: 'participants',
@@ -121,6 +127,8 @@ export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = 
         </div>
       )
     },
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: 'polls',
@@ -144,6 +152,8 @@ export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = 
         </div>
       )
     },
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     id: 'actions',

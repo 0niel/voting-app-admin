@@ -5,7 +5,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
 import { Database } from '@/lib/supabase/db-types'
 
-import { AccessModeratorsTableRowActions } from './AccessModeratorsTableRowActions'
+import { AccessModeratorsTableRowActions } from './TableRowActions'
 
 export const columns: ColumnDef<Database['ovk']['Tables']['participants']['Row']>[] = [
   {
@@ -17,18 +17,11 @@ export const columns: ColumnDef<Database['ovk']['Tables']['participants']['Row']
   },
   {
     accessorKey: 'created_at',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Дата создания' />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title='Создан' />,
     cell: ({ row }) => {
       return (
         <span className='max-w-[500px] truncate font-medium'>{row.getValue('created_at')}</span>
       )
-    },
-  },
-  {
-    accessorKey: 'role',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Роль' />,
-    cell: ({ row }) => {
-      return <span className='max-w-[500px] truncate font-medium'>{row.getValue('role')}</span>
     },
   },
   {
