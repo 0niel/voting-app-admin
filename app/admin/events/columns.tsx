@@ -1,7 +1,7 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { Badge, CheckIcon, LinkIcon } from 'lucide-react'
+import { CheckIcon, LinkIcon, XIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -16,7 +16,7 @@ export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = 
   {
     accessorKey: 'id',
     header: ({ column }) => <DataTableColumnHeader column={column} title='Id' />,
-    cell: ({ row }) => <div className='w-[80px]'>{row.getValue('id')}</div>,
+    cell: ({ row }) => <div className='w-[20px]'>{row.getValue('id')}</div>,
     enableSorting: false,
     enableHiding: false,
   },
@@ -46,7 +46,11 @@ export const columns: ColumnDef<Database['ovk']['Tables']['events']['Row']>[] = 
       const event = row.original
       return (
         <div className='flex w-[100px] items-center'>
-          {event.is_active && <CheckIcon className='mr-2 h-4 w-4 text-muted-foreground' />}
+          {event.is_active ? (
+            <CheckIcon className='mr-2 h-4 w-4 text-green-400' />
+          ) : (
+            <XIcon className='mr-2 h-4 w-4 text-red-400' />
+          )}
           <span>{event.is_active ? 'Активно' : 'Неактивно'}</span>
         </div>
       )
