@@ -29,20 +29,13 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Database } from '@/lib/supabase/db-types'
 import { useSupabase } from '@/lib/supabase/supabase-provider'
 
-import CreateOrUpdateResourceForm from './CreateOrUpdateResourceForm'
+import CreateOrUpdateResourceForm from './Form'
 
 export default function CreateResourceDialogButton({
   events,
 }: {
   events: Database['ovk']['Tables']['events']['Row'][]
 }) {
-  const feather = require('feather-icons')
-  const iconNames = Object.keys(feather.icons)
-  const [iconName, setIconName] = useState('')
-  const filteredIcons = iconNames.filter((name) =>
-    name.toLowerCase().includes(iconName.toLowerCase()),
-  )
-
   return (
     <Dialog>
       <DialogTrigger asChild>

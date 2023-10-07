@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { getEvents, getResourses, getSession, getSuperusers } from '@/lib/supabase/supabase-server'
 
 import { columns } from './columns'
-import CreateResourceDialogButton from './CreateResourceDialog'
+import CreateResourceDialogButton from './DialogCreate'
 
 export const dynamic = 'force-dynamic'
 

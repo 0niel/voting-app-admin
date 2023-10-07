@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Database } from '@/lib/supabase/db-types'
 import { UserToView } from '@/lib/supabase/supabase-server'
 
-import { ResourcesTableRowActios } from './ResourcesTableRowActios'
+import { ResourcesTableRowActios } from './TableRowActios'
 
 const feather = require('feather-icons')
 

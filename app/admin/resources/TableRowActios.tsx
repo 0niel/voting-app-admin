@@ -2,6 +2,7 @@
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
 
 import { Button } from '@/components/ui/button'
@@ -16,7 +17,7 @@ import {
 import { Database } from '@/lib/supabase/db-types'
 import { useSupabase } from '@/lib/supabase/supabase-provider'
 
-import UpdateResourceDialogContent from './UpdateResourceDialogContent'
+import UpdateResourceDialogContent from './DialogUpdate'
 
 interface ResourcesTableRowActiosProps<TData> {
   row: Row<TData>
@@ -42,8 +43,10 @@ export function ResourcesTableRowActios<TData>({ row }: ResourcesTableRowActiosP
     }
   }
 
+  const [updateDialogOpen, setUpdateDialogOpen] = useState(false)
+
   return (
-    <Dialog>
+    <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'>
@@ -52,9 +55,10 @@ export function ResourcesTableRowActios<TData>({ row }: ResourcesTableRowActiosP
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='w-[160px]'>
-          <DialogTrigger asChild>
-            <DropdownMenuItem>Редактировать</DropdownMenuItem>
-          </DialogTrigger>
+          <DropdownMenuItem onClick={() => setUpdateDialogOpen(true)}>
+            Редактировать
+          </DropdownMenuItem>
+
           <DropdownMenuItem onClick={handleDeleteSuperuser}>
             Удалить
             <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
@@ -62,7 +66,11 @@ export function ResourcesTableRowActios<TData>({ row }: ResourcesTableRowActiosP
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <UpdateResourceDialogContent resource={row.original as any} />
-    </Dialog>
+      <UpdateResourceDialogContent
+        resource={row.original as any}
+        open={updateDialogOpen}
+        setOpen={setUpdateDialogOpen}
+      />
+    </>
   )
 }
