@@ -1,8 +1,14 @@
-import {redirect} from 'next/navigation'
+import { redirect } from 'next/navigation'
 
-import {columns} from '@/app/admin/events/[eventId]/participants/columns'
-import {DataTable} from '@/components/table/DataTable'
-import {getSession, getSuperusers, getUsers, getUsersPermissions, UserToView,} from '@/lib/supabase/supabase-server'
+import { columns } from '@/app/admin/events/[eventId]/participants/columns'
+import { DataTable } from '@/components/table/DataTable'
+import {
+  getSession,
+  getSuperusers,
+  getUsers,
+  getUsersPermissions,
+  UserToView,
+} from '@/lib/supabase/supabase-server'
 
 import CreateAccessModeratorDialogButton from './CreateAccessModeratorDialogButton'
 
