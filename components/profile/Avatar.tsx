@@ -10,7 +10,7 @@ export default function Avatar(props: AvatarProps) {
   return (
     <div className='placeholder avatar'>
       <div
-        className={`${props.iconSize} rounded-full bg-accent ring-1 ring-secondary duration-200 group-hover:bg-accent-focus group-hover:ring-2`}
+        className={`${props.iconSize} group-hover:bg-accent-focus rounded-full bg-accent ring-1 ring-secondary duration-200 group-hover:ring-2`}
       >
         <span className={`${props.fontSize} text-accent-content`}>
           {user?.userData?.name

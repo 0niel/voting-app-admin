@@ -47,7 +47,7 @@ export default function Modal(props: ModalProps) {
             >
               <Dialog.Panel
                 ref={dialogPanelRef}
-                className='rounded-box w-full max-w-md transform bg-base-100 p-6 text-left align-middle ring-1 ring-secondary transition-all hover:ring-2 hover:ring-secondary-focus'
+                className='rounded-box bg-base-100 hover:ring-secondary-focus w-full max-w-md transform p-6 text-left align-middle ring-1 ring-secondary transition-all hover:ring-2'
               >
                 <Dialog.Title as='h3' className='text-lg font-medium leading-6'>
                   {props.title}

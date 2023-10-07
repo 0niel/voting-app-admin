@@ -1,19 +1,26 @@
+import { redirect } from 'next/navigation'
+
+import { columns } from '@/app/admin/events/[eventId]/participants/columns'
+import { DataTable } from '@/components/table/DataTable'
 import {
-  getEvents,
+  getEventParticipants,
   getSession,
   getSuperusers,
+  getUsers,
   getUsersPermissions,
 } from '@/lib/supabase/supabase-server'
-import { redirect } from 'next/navigation'
-import { DataTable } from '@/components/table/DataTable'
-import { Button } from '@/components/ui/button'
+import CreateMemberDialogButton from './CreateMemberDialogButton'
 
-
-export default async function Participants() {
-  const [session, events, superusers, usersPermissions] = await Promise.all([
+export default async function Participants({
+  params: { eventId },
+}: {
+  params: { eventId: number }
+}) {
+  const [session, participants, superusers, users, usersPermissions] = await Promise.all([
     getSession(),
-    getEvents(),
+    getEventParticipants(eventId),
     getSuperusers(),
+    getUsers(),
     getUsersPermissions(),
   ])
 
@@ -46,13 +53,14 @@ export default async function Participants() {
   return (
     <div className='space-y-4'>
       <div className='flex flex-col space-y-2'>
-        <h2 className='text-2xl font-bold tracking-tight'>Список меоприятий</h2>
+        <h2 className='text-2xl font-bold tracking-tight'>Список участников</h2>
         <p className='text-muted-foreground'>
-          Список всех мероприятий, созданных в системе. Меропрития — это события, в рамках которых
-          проводятся голосования
+          Список всех участников зарегистрированных на меропритие. Участники могут принимать
+          участние в голосованиях
         </p>
       </div>
- 
+      <CreateMemberDialogButton users={users ?? []} eventId={eventId} />
+      <DataTable data={participants ?? []} columns={columns} filterColumn='question' />
     </div>
   )
 }

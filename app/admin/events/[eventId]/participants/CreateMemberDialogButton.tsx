@@ -1,13 +1,23 @@
 'use client'
 
 import 'react-datepicker/dist/react-datepicker.css'
+
+import { ChevronsUpDown } from 'lucide-react'
+import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import ReactDatePicker from 'react-datepicker'
 import { toast } from 'react-hot-toast'
+import { v4 as uuid } from 'uuid'
 
-import { Input } from '@/components/ui/input'
-import { Database } from '@/lib/supabase/db-types'
-import { useSupabase } from '@/lib/supabase/supabase-provider'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/components/ui/command'
 import {
   Dialog,
   DialogContent,
@@ -16,30 +26,28 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
-import { v4 as uuid } from 'uuid'
-import Image from 'next/image'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/components/ui/command'
+import { Switch } from '@/components/ui/switch'
+import { Database } from '@/lib/supabase/db-types'
+import { useSupabase } from '@/lib/supabase/supabase-provider'
 import { UserToView } from '@/lib/supabase/supabase-server'
-import { ChevronsUpDown } from 'lucide-react'
 
-export default function CreateSuperuserDialogButton({ users }: { users: UserToView[] }) {
+export default function CreateMemberDialogButton({
+  users,
+  eventId,
+}: {
+  users: UserToView[]
+  eventId: number
+}) {
   const { supabase } = useSupabase()
 
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState('')
+  const [role, setRole] = useState('')
 
-  const handleCreateSuperuser = async () => {
+  const handleAddMember = async () => {
     const user = users.find((user) => user.email === email)
     if (!user) {
       toast.error('Выберите существующего пользователя')
@@ -48,17 +56,19 @@ export default function CreateSuperuserDialogButton({ users }: { users: UserToVi
 
     try {
       await supabase
-        .from('superusers')
+        .from('participants')
         .insert({
           user_id: user.id,
+          event_id: eventId,
+          role: role,
         })
         .throwOnError()
 
-      toast.success('Пользователь успешно назначен суперпользователем.')
+      toast.success('Пользователь успешно добавлен в голосование.')
       window.location.reload()
     } catch (error: any) {
       toast.error(
-        'Не удалось назначить пользователя суперпользователем. Возможно, он уже им является.',
+        'Не удалось добавить пользователя в голосование. Возможно, он уже находится в списке участников.',
       )
     }
   }
@@ -66,11 +76,11 @@ export default function CreateSuperuserDialogButton({ users }: { users: UserToVi
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Назначение</Button>
+        <Button>Добавить</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Назначить супепользователем</DialogTitle>
+          <DialogTitle>Добавить участника</DialogTitle>
         </DialogHeader>
         <div className='space-y-2'>
           <Popover open={open} onOpenChange={setOpen}>
@@ -108,10 +118,19 @@ export default function CreateSuperuserDialogButton({ users }: { users: UserToVi
             </PopoverContent>
           </Popover>
         </div>
-
+        <div>
+          <Label htmlFor='role'>Роль</Label>
+          <Input
+            id='role'
+            type='text'
+            placeholder={role}
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          />
+        </div>
         <DialogFooter>
-          <Button type='submit' onClick={handleCreateSuperuser}>
-            Сохранить
+          <Button type='submit' onClick={handleAddMember}>
+            Добавить
           </Button>
         </DialogFooter>
       </DialogContent>

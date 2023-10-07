@@ -34,9 +34,13 @@ export default function CreateEventDialogButton() {
   const [startAt, setStartAt] = useState<Date | null>(null)
   const [isActive, setIsActive] = useState(false)
 
-  const handleUpdateEvent = async () => {
-    if (name.length < 3) {
+  const handleCreateEvent = async () => {
+    if (!name) {
       toast.error('Введите название мероприятия')
+      return
+    }
+    if (name.length < 3) {
+      toast.error('Название мероприятия должно быть больше 3 символов')
       return
     }
     if (!startAt) {
@@ -169,7 +173,7 @@ export default function CreateEventDialogButton() {
         </div>
 
         <DialogFooter>
-          <Button type='submit' onClick={handleUpdateEvent}>
+          <Button type='submit' onClick={handleCreateEvent}>
             Сохранить
           </Button>
         </DialogFooter>

@@ -100,7 +100,7 @@ export default function CreateResourceModal() {
           type='text'
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className='block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className='border-base-200 text-neutral block h-auto w-full cursor-pointer rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary'
         />
       </div>
       <div className='form-control w-full pt-5'>
@@ -111,7 +111,7 @@ export default function CreateResourceModal() {
           type='text'
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          className='block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className='border-base-200 text-neutral block h-auto w-full cursor-pointer rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary'
         />
       </div>
       <div className='form-control w-full pt-5'>
@@ -121,7 +121,7 @@ export default function CreateResourceModal() {
         <select
           value={(eventId as string) || ''}
           onChange={(e) => setEventId(e.target.value)}
-          className='block h-auto w-full cursor-pointer rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+          className='border-base-200 text-neutral block h-auto w-full cursor-pointer rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary'
         >
           <option value={''}>Нет</option>
           {events.map((event) => (
@@ -141,14 +141,14 @@ export default function CreateResourceModal() {
             placeholder='Поиск иконки'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className='block h-auto w-full rounded-lg border border-base-200 bg-gray-50 p-2.5 text-sm text-neutral focus:border-secondary focus:ring-secondary'
+            className='border-base-200 text-neutral block h-auto w-full rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary'
           />
           <div className='mt-4 grid grid-cols-4 gap-4'>
             {filteredIcons.map((iconName) => (
               <div
                 key={iconName}
                 className={`${
-                  svgIcon === iconName ? 'bg-secondary text-white' : 'bg-gray-50 text-neutral'
+                  svgIcon === iconName ? 'bg-secondary text-white' : 'text-neutral bg-gray-50'
                 } flex cursor-pointer flex-col items-center justify-center rounded-lg p-2.5`}
                 onClick={() => setSvgIcon(iconName)}
               >
