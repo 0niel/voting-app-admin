@@ -123,7 +123,7 @@ export default function ShowPollResultsModal() {
               {Array.from(votes, ([voteOption, count]) => (
                 <React.Fragment key={voteOption}>
                   <div className="my-2 flex">
-                    <HandRaisedIcon className="mt-1 mr-1 h-4 w-4" />
+                    <HandRaisedIcon className="mr-1 mt-1 h-4 w-4" />
                     {voteOption} —{" "}
                     <span className="mx-1 font-semibold">{count}</span>
                     {pluralForm(count, ["голос", "голоса", "голосов"])}
@@ -220,7 +220,7 @@ export default function ShowPollResultsModal() {
       <div className="flex">
         Всего голосов:
         {loading ? (
-          <div className="mt-1.5 ml-1 h-3.5 w-5 items-center justify-between rounded-full bg-gray-200" />
+          <div className="ml-1 mt-1.5 h-3.5 w-5 items-center justify-between rounded-full bg-gray-200" />
         ) : (
           <span className="ml-1 font-semibold">{votesCount}</span>
         )}
@@ -228,7 +228,7 @@ export default function ShowPollResultsModal() {
       <div className="flex">
         Простое большинство:
         {loading ? (
-          <div className="mt-1.5 ml-1 h-3.5 w-5 items-center justify-between rounded-full bg-gray-200" />
+          <div className="ml-1 mt-1.5 h-3.5 w-5 items-center justify-between rounded-full bg-gray-200" />
         ) : (
           <span className="ml-1 font-semibold">{simpleMajority}</span>
         )}

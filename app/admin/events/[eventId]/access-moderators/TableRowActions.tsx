@@ -38,7 +38,7 @@ export function AccessModeratorsTableRowActions<TData>({
         .update({
           is_access_moderator: false,
         })
-        .eq("user_id", row.getValue("user_id"))
+        .eq("user_id", row.getValue("id"))
         .eq("event_id", eventId)
         .throwOnError()
 

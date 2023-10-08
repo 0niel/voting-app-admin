@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { CaretSortIcon } from "@radix-ui/react-icons"
 import { Session } from "@supabase/supabase-js"
+import { useQuery } from "@tanstack/react-query"
 import {
   CalendarIcon,
   DownloadCloudIcon,
@@ -16,6 +17,7 @@ import {
 
 import { Database } from "@/lib/supabase/db-types"
 import { useSupabase } from "@/lib/supabase/supabase-provider"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   Sheet,
   SheetContent,
@@ -69,6 +71,23 @@ const superuserNavigation: NavigationItemI[] = [
 
 function DrawerContent({ isSuperuser }: { isSuperuser: boolean }) {
   const path = usePathname()
+  const { supabase } = useSupabase()
+  //
+  // const { data } = useQuery(["user"], () => supabase.auth.getUser(), {
+  //   staleTime: Infinity,
+  // })
+  //
+  // const getInitialsName = () => {
+  //   try {
+  //     return (
+  //       data?.data.user?.user_metadata["name"][0] +
+  //       " " +
+  //       data?.data.user?.user_metadata["family_name"][0]
+  //     )
+  //   } catch {
+  //     return ""
+  //   }
+  // }
 
   return (
     <div className="space-y-4 py-4">
@@ -112,6 +131,22 @@ function DrawerContent({ isSuperuser }: { isSuperuser: boolean }) {
           </div>
         </div>
       )}
+      <div className="px-3 py-2">
+        <Button
+          onClick={() => {
+            supabase.auth.signOut().then(() => {
+              window.location.reload()
+            })
+          }}
+        >
+          Выход
+        </Button>
+        {/*<Button variant="ghost" className="relative h-8 w-8 rounded-full">*/}
+        {/*  <Avatar className="h-8 w-8">*/}
+        {/*    <AvatarFallback>{getInitialsName()}</AvatarFallback>*/}
+        {/*  </Avatar>*/}
+        {/*</Button>*/}
+      </div>
     </div>
   )
 }
