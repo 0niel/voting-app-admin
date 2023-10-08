@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 
 import {
   UserToView,
+  getEventVotingModerators,
   getSession,
   getSuperusers,
   getUsers,
@@ -17,12 +18,14 @@ export default async function VotingModerators({
 }: {
   params: { eventId: number }
 }) {
-  const [session, superusers, users, usersPermissions] = await Promise.all([
-    getSession(),
-    getSuperusers(),
-    getUsers(),
-    getUsersPermissions(),
-  ])
+  const [session, superusers, votingModerators, users, usersPermissions] =
+    await Promise.all([
+      getSession(),
+      getSuperusers(),
+      getEventVotingModerators(eventId),
+      getUsers(),
+      getUsersPermissions(),
+    ])
 
   const user = session?.user
 
@@ -56,9 +59,9 @@ export default async function VotingModerators({
     return redirect("/")
   }
 
-  const votingModerators = users
-    ?.map((realUser) => {
-      return users?.find((user) => user.id === realUser.id)
+  const votingModeratorsUsers = votingModerators
+    ?.map((votingModerator) => {
+      return users?.find((user) => user.id === votingModerator.user_id)
     })
     .filter((user) => user !== undefined) as UserToView[]
 
@@ -78,9 +81,9 @@ export default async function VotingModerators({
         eventId={eventId}
       />
       <DataTable
-        data={votingModerators ?? []}
+        data={votingModeratorsUsers ?? []}
         columns={columns}
-        filterColumn="full_name"
+        filterColumn="email"
       />
     </div>
   )

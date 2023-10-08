@@ -2,61 +2,40 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 
-import { Database } from "@/lib/supabase/db-types"
+import { UserToView } from "@/lib/supabase/supabase-server"
 import { DataTableColumnHeader } from "@/components/table/DataTableColumnHeader"
 
 import { VotingModeratorsTableRowActions } from "./TableRowActions"
 
-export const columns: ColumnDef<
-  Database["ovk"]["Tables"]["participants"]["Row"]
->[] = [
+export const columns: ColumnDef<UserToView>[] = [
   {
-    accessorKey: "user_id",
+    accessorKey: "id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Id" />
     ),
-    cell: ({ row }) => {
-      return (
-        <span className="max-w-[500px] truncate font-medium">
-          {row.getValue("user_id")}
-        </span>
-      )
-    },
-  },
-  {
-    accessorKey: "full_name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ФИО" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <span className="max-w-[500px] truncate font-medium">
-          {row.getValue("full_name")}
-        </span>
-      )
-    },
+    cell: ({ row }) => <div className="w-[300px]">{row.getValue("id")}</div>,
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: "email",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Почта" />
+      <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => {
       return (
-        <span className="max-w-[500px] truncate font-medium">
-          {row.getValue("email")}
-        </span>
+        <span className="truncate font-medium">{row.getValue("email")}</span>
       )
     },
   },
   {
     accessorKey: "created_at",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Дата создания" />
+      <DataTableColumnHeader column={column} title="Создан" />
     ),
     cell: ({ row }) => {
       return (
-        <span className="max-w-[500px] truncate font-medium">
+        <span className="truncate font-medium">
           {row.getValue("created_at")}
         </span>
       )

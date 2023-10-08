@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 
 import {
   UserToView,
+  getEventAccessModerators,
   getSession,
   getSuperusers,
   getUsers,
@@ -17,12 +18,14 @@ export default async function AccessModerators({
 }: {
   params: { eventId: number }
 }) {
-  const [session, superusers, users, usersPermissions] = await Promise.all([
-    getSession(),
-    getSuperusers(),
-    getUsers(),
-    getUsersPermissions(),
-  ])
+  const [session, superusers, accessModerators, users, usersPermissions] =
+    await Promise.all([
+      getSession(),
+      getSuperusers(),
+      getEventAccessModerators(eventId),
+      getUsers(),
+      getUsersPermissions(),
+    ])
 
   const user = session?.user
 
@@ -52,14 +55,11 @@ export default async function AccessModerators({
     return redirect("/")
   }
 
-  const accessModerators = [
-    {
-      user_id: "4fdfa192-44d1-4cf3-ab98-2528ca1ef1ce",
-      full_name: "Тест тест тет",
-      email: "mock@mirea.ru",
-      created_at: "2023-10-07 19:42:43.633949+00",
-    },
-  ]
+  const accessModeratorsUsers = accessModerators
+    ?.map((accessModerator) => {
+      return users?.find((user) => user.id === accessModerator.user_id)
+    })
+    .filter((user) => user !== undefined) as UserToView[]
 
   return (
     <div className="space-y-4">
@@ -77,9 +77,9 @@ export default async function AccessModerators({
         eventId={eventId}
       />
       <DataTable
-        data={accessModerators ?? []}
+        data={accessModeratorsUsers ?? []}
         columns={columns}
-        filterColumn="full_name"
+        filterColumn="email"
       />
     </div>
   )

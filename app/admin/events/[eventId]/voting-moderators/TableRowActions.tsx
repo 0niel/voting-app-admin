@@ -38,12 +38,7 @@ export function VotingModeratorsTableRowActions<TData>({
         .update({
           is_voting_moderator: false,
         })
-        .eq(
-          "user_id",
-          (
-            row.original as Database["ovk"]["Tables"]["users_permissions"]["Row"]
-          ).user_id
-        )
+        .eq("user_id", row.getValue("id"))
         .eq("event_id", eventId)
         .throwOnError()
 

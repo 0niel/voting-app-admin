@@ -101,6 +101,41 @@ export async function getUsersPermissions() {
   }
 }
 
+export async function getEventAccessModerators(eventId: number) {
+  const supabase = createServerSupabaseClient()
+  try {
+    const { data: eventParticipants } = await supabase
+      .schema("ovk")
+      .from("users_permissions")
+      .select(`*`)
+      .eq("event_id", eventId)
+      .eq("is_access_moderator", true)
+      .throwOnError()
+
+    return eventParticipants
+  } catch (error) {
+    console.error("Error:", error)
+    return null
+  }
+}
+
+export async function getEventVotingModerators(eventId: number) {
+  const supabase = createServerSupabaseClient()
+  try {
+    const { data: eventParticipants } = await supabase
+      .schema("ovk")
+      .from("users_permissions")
+      .select(`*`)
+      .eq("event_id", eventId)
+      .eq("is_voting_moderator", true)
+      .throwOnError()
+
+    return eventParticipants
+  } catch (error) {
+    console.error("Error:", error)
+    return null
+  }
+}
 export type UserToView = Pick<User, "id" | "email" | "created_at">
 
 export async function getUsers() {
