@@ -264,7 +264,9 @@ export default function CreateOrUpdatePollForm({
               name="duration"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Длительность голосования (в секундах)</FormLabel>
+                  <FormLabel>
+                    Изначальная длительность голосования (в секундах)
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="180"
@@ -279,6 +281,12 @@ export default function CreateOrUpdatePollForm({
                       value={field.value}
                     />
                   </FormControl>
+                  <FormDescription>
+                    Изначальная длительность - это сколько секунд будет идти
+                    голосование сразу после того как вы нажмёте кнопку "Старт".
+                    Но в процессе голосования вы всё равно сможете добавлять
+                    время.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

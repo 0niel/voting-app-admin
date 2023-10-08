@@ -3,8 +3,9 @@ import { redirect } from "next/navigation"
 import {
   getEvents,
   getSession,
-  getSuperusers,
-  getUsersPermissions,
+  isUserAccessModerator,
+  isUserHasAllPermissions,
+  isUserVotingModerator,
 } from "@/lib/supabase/supabase-server"
 import { DataTable } from "@/components/table/DataTable"
 
@@ -12,12 +13,7 @@ import CreateEventDialogButton from "./DialogCreate"
 import { columns } from "./columns"
 
 export default async function Events() {
-  const [session, events, superusers, usersPermissions] = await Promise.all([
-    getSession(),
-    getEvents(),
-    getSuperusers(),
-    getUsersPermissions(),
-  ])
+  const [session, events] = await Promise.all([getSession(), getEvents()])
 
   const user = session?.user
 
@@ -25,28 +21,10 @@ export default async function Events() {
     return redirect("/404")
   }
 
-  const isUserHasAllPermissions = () => {
-    return superusers?.some((superuser) => superuser.user_id === user?.id)
-  }
-
-  const isUserVotingModerator = () => {
-    return usersPermissions?.some(
-      (permission) =>
-        permission.user_id === user?.id && permission.is_voting_moderator
-    )
-  }
-
-  const isUserAccessModerator = () => {
-    return usersPermissions?.some(
-      (permission) =>
-        permission.user_id === user?.id && permission.is_access_moderator
-    )
-  }
-
   if (
-    !isUserHasAllPermissions() &&
-    !isUserVotingModerator() &&
-    !isUserAccessModerator()
+    !isUserHasAllPermissions(user.id) &&
+    !isUserVotingModerator(user.id) &&
+    !isUserAccessModerator(user.id)
   ) {
     return redirect("/404")
   }

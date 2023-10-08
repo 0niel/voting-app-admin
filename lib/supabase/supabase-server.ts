@@ -164,3 +164,27 @@ export async function getAnswerOptionsByPoll(id: number) {
     return null
   }
 }
+
+export async function isUserAccessModerator(userId: string) {
+  const usersPermissions = await getUsersPermissions()
+
+  return usersPermissions?.some(
+    (permission) =>
+      permission.user_id === userId && permission.is_access_moderator
+  )
+}
+
+export async function isUserVotingModerator(userId: string) {
+  const usersPermissions = await getUsersPermissions()
+
+  return usersPermissions?.some(
+    (permission) =>
+      permission.user_id === userId && permission.is_voting_moderator
+  )
+}
+
+export async function isUserHasAllPermissions(userId: string) {
+  const superusers = await getSuperusers()
+
+  return superusers?.some((superuser) => superuser.user_id === userId)
+}

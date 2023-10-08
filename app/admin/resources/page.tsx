@@ -5,6 +5,7 @@ import {
   getResourses,
   getSession,
   getSuperusers,
+  isUserHasAllPermissions,
 } from "@/lib/supabase/supabase-server"
 import { DataTable } from "@/components/table/DataTable"
 
@@ -14,10 +15,9 @@ import { columns } from "./columns"
 export const dynamic = "force-dynamic"
 
 export default async function Events() {
-  const [session, resources, superusers, events] = await Promise.all([
+  const [session, resources, events] = await Promise.all([
     getSession(),
     getResourses(),
-    getSuperusers(),
     getEvents(),
   ])
 
@@ -27,11 +27,7 @@ export default async function Events() {
     return redirect("/404")
   }
 
-  const isUserHasAllPermissions = () => {
-    return superusers?.some((superuser) => superuser.user_id === user?.id)
-  }
-
-  if (!isUserHasAllPermissions()) {
+  if (!isUserHasAllPermissions(user.id)) {
     return redirect("/404")
   }
 

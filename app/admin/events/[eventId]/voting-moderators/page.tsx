@@ -6,6 +6,9 @@ import {
   getSuperusers,
   getUsers,
   getUsersPermissions,
+  isUserAccessModerator,
+  isUserHasAllPermissions,
+  isUserVotingModerator,
 } from "@/lib/supabase/supabase-server"
 import { DataTable } from "@/components/table/DataTable"
 
@@ -17,12 +20,7 @@ export default async function VotingModerators({
 }: {
   params: { eventId: number }
 }) {
-  const [session, superusers, users, usersPermissions] = await Promise.all([
-    getSession(),
-    getSuperusers(),
-    getUsers(),
-    getUsersPermissions(),
-  ])
+  const [session, users] = await Promise.all([getSession(), getUsers()])
 
   const user = session?.user
 
@@ -30,28 +28,10 @@ export default async function VotingModerators({
     return redirect("/")
   }
 
-  const isUserHasAllPermissions = () => {
-    return superusers?.some((superuser) => superuser.user_id === user?.id)
-  }
-
-  const isUserVotingModerator = () => {
-    return usersPermissions?.some(
-      (permission) =>
-        permission.user_id === user?.id && permission.is_voting_moderator
-    )
-  }
-
-  const isUserAccessModerator = () => {
-    return usersPermissions?.some(
-      (permission) =>
-        permission.user_id === user?.id && permission.is_access_moderator
-    )
-  }
-
   if (
-    !isUserHasAllPermissions() &&
-    !isUserVotingModerator() &&
-    !isUserAccessModerator()
+    !isUserHasAllPermissions(user.id) &&
+    !isUserVotingModerator(user.id) &&
+    !isUserAccessModerator(user.id)
   ) {
     return redirect("/")
   }

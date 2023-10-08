@@ -61,7 +61,6 @@ export default function CreateAccessModeratorDialogButton({
       toast.success("Пользователь успешно добавлен в модераторы доступа.")
       window.location.reload()
     } catch (error: any) {
-      console.log(error)
       toast.error(
         "Не удалось добавить пользователя в модераторы доступа. Возможно, он уже находится в списке модераторов доступа."
       )

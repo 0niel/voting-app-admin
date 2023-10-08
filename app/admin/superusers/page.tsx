@@ -5,6 +5,7 @@ import {
   getSession,
   getSuperusers,
   getUsers,
+  isUserHasAllPermissions,
 } from "@/lib/supabase/supabase-server"
 import { DataTable } from "@/components/table/DataTable"
 
@@ -26,11 +27,7 @@ export default async function Events() {
     return redirect("/404")
   }
 
-  const isUserHasAllPermissions = () => {
-    return superusers?.some((superuser) => superuser.user_id === user?.id)
-  }
-
-  if (!isUserHasAllPermissions()) {
+  if (!isUserHasAllPermissions(user.id)) {
     return redirect("/404")
   }
 

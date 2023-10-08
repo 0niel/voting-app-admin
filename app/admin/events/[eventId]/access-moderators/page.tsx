@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation"
 
 import {
-  UserToView,
   getSession,
-  getSuperusers,
   getUsers,
   getUsersPermissions,
+  isUserAccessModerator,
+  isUserHasAllPermissions,
 } from "@/lib/supabase/supabase-server"
 import { DataTable } from "@/components/table/DataTable"
 
@@ -17,9 +17,8 @@ export default async function AccessModerators({
 }: {
   params: { eventId: number }
 }) {
-  const [session, superusers, users, usersPermissions] = await Promise.all([
+  const [session, users, permissions] = await Promise.all([
     getSession(),
-    getSuperusers(),
     getUsers(),
     getUsersPermissions(),
   ])
@@ -30,36 +29,9 @@ export default async function AccessModerators({
     return redirect("/")
   }
 
-  const isUserHasAllPermissions = () => {
-    return superusers?.some((superuser) => superuser.user_id === user?.id)
-  }
-
-  const isUserVotingModerator = () => {
-    return usersPermissions?.some(
-      (permission) =>
-        permission.user_id === user?.id && permission.is_voting_moderator
-    )
-  }
-
-  const isUserAccessModerator = () => {
-    return usersPermissions?.some(
-      (permission) =>
-        permission.user_id === user?.id && permission.is_access_moderator
-    )
-  }
-
-  if (!isUserHasAllPermissions()) {
+  if (!isUserHasAllPermissions(user.id) && !isUserAccessModerator(user.id)) {
     return redirect("/")
   }
-
-  const accessModerators = [
-    {
-      user_id: "4fdfa192-44d1-4cf3-ab98-2528ca1ef1ce",
-      full_name: "Тест тест тет",
-      email: "mock@mirea.ru",
-      created_at: "2023-10-07 19:42:43.633949+00",
-    },
-  ]
 
   return (
     <div className="space-y-4">
