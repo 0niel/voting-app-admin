@@ -60,7 +60,6 @@ export default async function Polls({
   const pollsWithAnswerOptions = await Promise.all(
     polls?.map(async (poll) => {
       const options = (await getAnswerOptionsByPoll(poll.id)) ?? []
-      console.log(options)
       return { ...poll, options } as Poll
     }) ?? []
   )
