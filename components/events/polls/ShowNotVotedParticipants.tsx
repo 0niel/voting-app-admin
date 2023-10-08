@@ -84,7 +84,7 @@ export default function ShowNotVotedParticipants() {
       <div className="flex text-sm text-gray-700">
         Всего значений:
         {loading ? (
-          <div className="mt-1.5 ml-1 h-3.5 w-3.5 items-center justify-between rounded-full bg-gray-200" />
+          <div className="ml-1 mt-1.5 h-3.5 w-3.5 items-center justify-between rounded-full bg-gray-200" />
         ) : (
           <span className="ml-1 font-semibold">
             {notVotedParticipants?.length}

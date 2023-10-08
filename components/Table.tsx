@@ -84,7 +84,7 @@ export default function Table(props: TableProps) {
           <p className="mt-2 text-sm text-gray-700">{props.description}</p>
         </div>
         {props.action && (
-          <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+          <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
             <button
               type="button"
               className="hover:bg-primary-700 focus:ring-primary-500 inline-flex items-center justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white
@@ -118,7 +118,7 @@ export default function Table(props: TableProps) {
           </div>
         </div>
 
-        <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
               <table className="min-w-full divide-y divide-gray-300">
