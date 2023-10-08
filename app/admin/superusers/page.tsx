@@ -1,12 +1,17 @@
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation"
 
-import { DataTable } from '@/components/table/DataTable'
-import { getSession, getSuperusers, getUsers, UserToView } from '@/lib/supabase/supabase-server'
+import {
+  UserToView,
+  getSession,
+  getSuperusers,
+  getUsers,
+} from "@/lib/supabase/supabase-server"
+import { DataTable } from "@/components/table/DataTable"
 
-import { columns } from './columns'
-import CreateSuperuserDialogButton from './DialogCreate'
+import CreateSuperuserDialogButton from "./DialogCreate"
+import { columns } from "./columns"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function Events() {
   const [session, superusers, users] = await Promise.all([
@@ -18,7 +23,7 @@ export default async function Events() {
   const user = session?.user
 
   if (!user) {
-    return redirect('/404')
+    return redirect("/404")
   }
 
   const isUserHasAllPermissions = () => {
@@ -26,7 +31,7 @@ export default async function Events() {
   }
 
   if (!isUserHasAllPermissions()) {
-    return redirect('/404')
+    return redirect("/404")
   }
 
   const superusersUsers = superusers
@@ -37,16 +42,20 @@ export default async function Events() {
     .filter((user) => user !== undefined) as UserToView[]
 
   return (
-    <div className='space-y-4'>
-      <div className='flex flex-col space-y-2'>
-        <h2 className='text-2xl font-bold tracking-tight'>Супепользователи</h2>
-        <p className='text-muted-foreground'>
-          Супепользователи обладают всеми правами и могут создавать мероприятия и голосования,
-          добавлять модераторов доступа, участников
+    <div className="space-y-4">
+      <div className="flex flex-col space-y-2">
+        <h2 className="text-2xl font-bold tracking-tight">Супепользователи</h2>
+        <p className="text-muted-foreground">
+          Супепользователи обладают всеми правами и могут создавать мероприятия
+          и голосования, добавлять модераторов доступа, участников
         </p>
       </div>
       <CreateSuperuserDialogButton users={users ?? []} />
-      <DataTable data={superusersUsers ?? []} columns={columns} filterColumn='email' />
+      <DataTable
+        data={superusersUsers ?? []}
+        columns={columns}
+        filterColumn="email"
+      />
     </div>
   )
 }

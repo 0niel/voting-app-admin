@@ -1,12 +1,14 @@
-'use client'
+"use client"
 
-import { DialogTrigger } from '@radix-ui/react-dialog'
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { Row } from '@tanstack/react-table'
-import { useState } from 'react'
-import toast from 'react-hot-toast'
+import { useState } from "react"
+import { DialogTrigger } from "@radix-ui/react-dialog"
+import { DotsHorizontalIcon } from "@radix-ui/react-icons"
+import { Row } from "@tanstack/react-table"
+import toast from "react-hot-toast"
 
-import { Button } from '@/components/ui/button'
+import { Database } from "@/lib/supabase/db-types"
+import { useSupabase } from "@/lib/supabase/supabase-provider"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -14,7 +16,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,36 +29,36 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Database } from '@/lib/supabase/db-types'
-import { useSupabase } from '@/lib/supabase/supabase-provider'
+} from "@/components/ui/dropdown-menu"
 
-import UpdateEventDialog from './DialogUpdate'
+import UpdateEventDialog from "./DialogUpdate"
 
 interface PollsTableRowActionsProps<TData> {
   row: Row<TData>
 }
 
-export function PollsTableRowActions<TData>({ row }: PollsTableRowActionsProps<TData>) {
+export function PollsTableRowActions<TData>({
+  row,
+}: PollsTableRowActionsProps<TData>) {
   const { supabase } = useSupabase()
 
   const handleDeleteEvent = async () => {
-    if (!confirm('Вы уверены, что хотите удалить это голосование?')) {
+    if (!confirm("Вы уверены, что хотите удалить это голосование?")) {
       return
     }
 
     try {
       await supabase
-        .from('polls')
+        .from("polls")
         .delete()
-        .match({ id: row.getValue('id') })
+        .match({ id: row.getValue("id") })
         .throwOnError()
 
-      toast.success('Голосование успешно удалено.')
+      toast.success("Голосование успешно удалено.")
       window.location.reload()
     } catch (error: any) {
       console.error(error)
-      toast.error('Произошла ошибка при удалении голосования.')
+      toast.error("Произошла ошибка при удалении голосования.")
     }
   }
 
@@ -67,17 +69,22 @@ export function PollsTableRowActions<TData>({ row }: PollsTableRowActionsProps<T
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'>
-            <DotsHorizontalIcon className='h-4 w-4' />
-            <span className='sr-only'>Меню</span>
+          <Button
+            variant="ghost"
+            className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+          >
+            <DotsHorizontalIcon className="h-4 w-4" />
+            <span className="sr-only">Меню</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align='end' className='w-[160px]'>
+        <DropdownMenuContent align="end" className="w-[160px]">
           <DropdownMenuItem onClick={() => setUpdateDialogOpen(true)}>
             Редактировать
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => setCopyDialogOpen(true)}>Копия</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setCopyDialogOpen(true)}>
+            Копия
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleDeleteEvent}>
             Удалить

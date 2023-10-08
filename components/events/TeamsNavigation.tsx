@@ -1,12 +1,12 @@
-import { Query, Teams } from 'appwrite'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
+import React, { useEffect, useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/router"
+import { appwriteListTeamsLimit } from "@/constants/constants"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { Query, Teams } from "appwrite"
+import { toast } from "react-hot-toast"
 
-import { appwriteListTeamsLimit } from '@/constants/constants'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { EventDocument } from '@/lib/models/EventDocument'
+import { EventDocument } from "@/lib/models/EventDocument"
 
 interface TeamNavigationProps {
   className?: string
@@ -18,15 +18,22 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
   const { client } = useAppwrite()
   const teams = new Teams(client)
 
-  const [hasAccessToAccessModeratorsTeam, setHasAccessToAccessModeratorsTeam] = useState(false)
-  const [hasAccessToVotingModeratorsTeam, setHasAccessToVotingModeratorsTeam] = useState(false)
-  const [hasAccessToParticipantsTeam, setHasAccessToParticipantsTeam] = useState(false)
+  const [hasAccessToAccessModeratorsTeam, setHasAccessToAccessModeratorsTeam] =
+    useState(false)
+  const [hasAccessToVotingModeratorsTeam, setHasAccessToVotingModeratorsTeam] =
+    useState(false)
+  const [hasAccessToParticipantsTeam, setHasAccessToParticipantsTeam] =
+    useState(false)
   const [hasAccessToPolls, setHasAccessToPolls] = useState(false)
 
   useEffect(() => {
     const fetchTeam = async function (teamID: string) {
-      return (await teams.list([Query.equal('$id', teamID), Query.limit(appwriteListTeamsLimit)]))
-        .total
+      return (
+        await teams.list([
+          Query.equal("$id", teamID),
+          Query.limit(appwriteListTeamsLimit),
+        ])
+      ).total
     }
     fetchTeam(props.event.access_moderators_team_id)
       .then((count) => {
@@ -47,9 +54,13 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
     <div className={`${props.className} tabs justify-center`}>
       {hasAccessToAccessModeratorsTeam && (
         <Link
-          href={props.event?.$id ? `/admin/events/${props.event.$id}/access-moderators` : ''}
+          href={
+            props.event?.$id
+              ? `/admin/events/${props.event.$id}/access-moderators`
+              : ""
+          }
           className={`tab-bordered tab ${
-            router.pathname.includes('access-moderators') && 'tab-active'
+            router.pathname.includes("access-moderators") && "tab-active"
           }`}
         >
           Модераторы доступа
@@ -57,9 +68,13 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
       )}
       {hasAccessToVotingModeratorsTeam && (
         <Link
-          href={props.event?.$id ? `/admin/events/${props.event.$id}/voting-moderators` : ''}
+          href={
+            props.event?.$id
+              ? `/admin/events/${props.event.$id}/voting-moderators`
+              : ""
+          }
           className={`tab-bordered tab ${
-            router.pathname.includes('voting-moderators') && 'tab-active'
+            router.pathname.includes("voting-moderators") && "tab-active"
           }`}
         >
           Модераторы голосования
@@ -67,16 +82,26 @@ export default function TeamsNavigation(props: TeamNavigationProps) {
       )}
       {hasAccessToParticipantsTeam && (
         <Link
-          href={props.event?.$id ? `/admin/events/${props.event.$id}/participants` : ''}
-          className={`tab-bordered tab ${router.pathname.includes('participants') && 'tab-active'}`}
+          href={
+            props.event?.$id
+              ? `/admin/events/${props.event.$id}/participants`
+              : ""
+          }
+          className={`tab-bordered tab ${
+            router.pathname.includes("participants") && "tab-active"
+          }`}
         >
           Участники
         </Link>
       )}
       {hasAccessToPolls && (
         <Link
-          href={props.event?.$id ? `/admin/events/${props.event.$id}/polls` : ''}
-          className={`tab-bordered tab ${router.pathname.includes('polls') && 'tab-active'}`}
+          href={
+            props.event?.$id ? `/admin/events/${props.event.$id}/polls` : ""
+          }
+          className={`tab-bordered tab ${
+            router.pathname.includes("polls") && "tab-active"
+          }`}
         >
           Голосования
         </Link>

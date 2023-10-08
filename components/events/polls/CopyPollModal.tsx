@@ -1,14 +1,17 @@
-import { Account, Databases } from 'appwrite'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
+import { useEffect, useState } from "react"
+import { useRouter } from "next/router"
+import {
+  appwritePollsCollection,
+  appwriteVotingDatabase,
+} from "@/constants/constants"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { usePoll } from "@/context/PollContext"
+import { Account, Databases } from "appwrite"
+import { toast } from "react-hot-toast"
 
-import Modal from '@/components/modal/Modal'
-import { appwritePollsCollection, appwriteVotingDatabase } from '@/constants/constants'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { usePoll } from '@/context/PollContext'
-import fetchJson from '@/lib/fetchJson'
-import { PollDocument } from '@/lib/models/PollDocument'
+import fetchJson from "@/lib/fetchJson"
+import { PollDocument } from "@/lib/models/PollDocument"
+import Modal from "@/components/modal/Modal"
 
 export default function CopyPollModal() {
   const { pollIdToCopy, setPollIdToCopy } = usePoll()
@@ -27,7 +30,7 @@ export default function CopyPollModal() {
       const poll = (await databases.getDocument(
         appwriteVotingDatabase,
         appwritePollsCollection,
-        pollIdToCopy!,
+        pollIdToCopy!
       )) as PollDocument
       setQuestion(poll.question)
       setDuration(poll.duration)
@@ -42,11 +45,11 @@ export default function CopyPollModal() {
   }, [pollIdToCopy])
   async function copyPoll() {
     const jwt = (await account.createJWT()).jwt
-    await fetchJson('/api/polls/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetchJson("/api/polls/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        question: question + ' (копия)',
+        question: question + " (копия)",
         startAt: null,
         endAt: null,
         duration,
@@ -64,9 +67,9 @@ export default function CopyPollModal() {
     <Modal
       isOpen={pollIdToCopy !== undefined}
       onAccept={copyPoll}
-      acceptButtonName='Скопировать'
+      acceptButtonName="Скопировать"
       onCancel={() => setPollIdToCopy(undefined)}
-      title='Скопировать голосование'
+      title="Скопировать голосование"
     />
   )
 }

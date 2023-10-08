@@ -1,7 +1,6 @@
-import { Account, Client, Databases, Models } from 'appwrite'
-import React, { createContext, useState } from 'react'
-
-import { appwriteEndpoint, appwriteProjectId } from '@/constants/constants'
+import React, { createContext, useState } from "react"
+import { appwriteEndpoint, appwriteProjectId } from "@/constants/constants"
+import { Account, Client, Databases, Models } from "appwrite"
 
 interface AppwriteContextI {
   client: Client
@@ -9,7 +8,9 @@ interface AppwriteContextI {
 }
 
 const AppwriteContext = createContext<AppwriteContextI>({
-  client: new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId),
+  client: new Client()
+    .setEndpoint(appwriteEndpoint)
+    .setProject(appwriteProjectId),
   setClient: (_appwrite: Models.Session, _databases: Databases) => null,
 })
 
@@ -17,10 +18,12 @@ export const useAppwrite = () => React.useContext(AppwriteContext)
 
 export function AppwriteProvider({ children }: any) {
   const [client, setClient] = useState<Client>(
-    new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId),
+    new Client().setEndpoint(appwriteEndpoint).setProject(appwriteProjectId)
   )
 
   return (
-    <AppwriteContext.Provider value={{ client, setClient }}>{children}</AppwriteContext.Provider>
+    <AppwriteContext.Provider value={{ client, setClient }}>
+      {children}
+    </AppwriteContext.Provider>
   )
 }

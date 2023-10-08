@@ -1,33 +1,41 @@
-'use client'
+"use client"
 
-import { ColumnDef } from '@tanstack/react-table'
-import { LinkIcon } from 'lucide-react'
+import { ColumnDef } from "@tanstack/react-table"
+import { LinkIcon } from "lucide-react"
 
-import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
-import { Button } from '@/components/ui/button'
-import { Database } from '@/lib/supabase/db-types'
+import { Database } from "@/lib/supabase/db-types"
+import { Button } from "@/components/ui/button"
+import { DataTableColumnHeader } from "@/components/table/DataTableColumnHeader"
 
-import { ResourcesTableRowActios } from './TableRowActios'
+import { ResourcesTableRowActios } from "./TableRowActios"
 
-const feather = require('feather-icons')
+const feather = require("feather-icons")
 
-export const columns: ColumnDef<Database['ovk']['Tables']['resources']['Row']>[] = [
+export const columns: ColumnDef<
+  Database["ovk"]["Tables"]["resources"]["Row"]
+>[] = [
   {
-    accessorKey: 'id',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Id' />,
-    cell: ({ row }) => <div className='w-[100px]'>{row.getValue('id')}</div>,
+    accessorKey: "id",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Id" />
+    ),
+    cell: ({ row }) => <div className="w-[100px]">{row.getValue("id")}</div>,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'svg_icon',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Иконка' />,
+    accessorKey: "svg_icon",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Иконка" />
+    ),
     cell: ({ row }) => {
       return (
-        <div className='flex w-[100px] items-center'>
+        <div className="flex w-[100px] items-center">
           <div
-            dangerouslySetInnerHTML={{ __html: feather.icons[row.original.svg_icon].toSvg() }}
-            className='h-8 w-8'
+            dangerouslySetInnerHTML={{
+              __html: feather.icons[row.original.svg_icon].toSvg(),
+            }}
+            className="h-8 w-8"
           />
         </div>
       )
@@ -35,33 +43,41 @@ export const columns: ColumnDef<Database['ovk']['Tables']['resources']['Row']>[]
     enableSorting: false,
   },
   {
-    accessorKey: 'name',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Название' />,
+    accessorKey: "name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Название" />
+    ),
     cell: ({ row }) => {
-      return <span className='max-w-[500px] truncate font-medium'>{row.getValue('name')}</span>
+      return (
+        <span className="max-w-[500px] truncate font-medium">
+          {row.getValue("name")}
+        </span>
+      )
     },
   },
   {
-    accessorKey: 'url',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Ссылка' />,
+    accessorKey: "url",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Ссылка" />
+    ),
     cell: ({ row }) => {
       return (
-        <div className='flex w-[100px] items-center'>
+        <div className="flex w-[100px] items-center">
           <Button
-            variant='link'
+            variant="link"
             onClick={() => {
               window.open(row.original.url)
             }}
           >
             Перейти
-            <LinkIcon className='ml-2 h-4 w-4' />
+            <LinkIcon className="ml-2 h-4 w-4" />
           </Button>
         </div>
       )
     },
   },
   {
-    id: 'actions',
+    id: "actions",
     cell: ({ row }) => <ResourcesTableRowActios row={row} />,
   },
 ]

@@ -1,34 +1,33 @@
-import 'react-datepicker/dist/react-datepicker.css'
-
-import { Account, Databases, ID, Query } from 'appwrite'
-import { useEffect, useState } from 'react'
-import ReactDatePicker from 'react-datepicker'
-import { toast } from 'react-hot-toast'
-
-import Modal from '@/components/modal/Modal'
+import "react-datepicker/dist/react-datepicker.css"
+import { useEffect, useState } from "react"
 import {
   appwriteEventsCollection,
   appwriteListEventsLimit,
   appwritePollsCollection,
   appwriteResourcesCollection,
   appwriteVotingDatabase,
-} from '@/constants/constants'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { useResource } from '@/context/ResourceContext'
-import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
-import fetchJson from '@/lib/fetchJson'
-import { isValidPoll } from '@/lib/isValidPoll'
-import { isValidResource } from '@/lib/isValidResource'
-import { EventDocument } from '@/lib/models/EventDocument'
-import { PollDocument } from '@/lib/models/PollDocument'
-import { ResourceDocument } from '@/lib/models/ResourceDocument'
+} from "@/constants/constants"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { useResource } from "@/context/ResourceContext"
+import { Account, Databases, ID, Query } from "appwrite"
+import ReactDatePicker from "react-datepicker"
+import { toast } from "react-hot-toast"
+
+import { mapAppwriteErrorToMessage } from "@/lib/errorMessages"
+import fetchJson from "@/lib/fetchJson"
+import { isValidPoll } from "@/lib/isValidPoll"
+import { isValidResource } from "@/lib/isValidResource"
+import { EventDocument } from "@/lib/models/EventDocument"
+import { PollDocument } from "@/lib/models/PollDocument"
+import { ResourceDocument } from "@/lib/models/ResourceDocument"
+import Modal from "@/components/modal/Modal"
 
 export default function UpdateResourceModal() {
   const { resourceIdToUpdate, setResourceIdToUpdate } = useResource()
-  const [name, setName] = useState('')
-  const [url, setUrl] = useState('')
+  const [name, setName] = useState("")
+  const [url, setUrl] = useState("")
   const [eventId, setEventId] = useState<string | null>(null)
-  const [svgIcon, setSvgIcon] = useState('')
+  const [svgIcon, setSvgIcon] = useState("")
 
   const [events, setEvents] = useState<EventDocument[]>([])
 
@@ -36,7 +35,7 @@ export default function UpdateResourceModal() {
   const databases = new Databases(client)
   const account = new Account(client)
 
-  const feather = require('feather-icons')
+  const feather = require("feather-icons")
   const iconNames = Object.keys(feather.icons)
 
   useEffect(() => {
@@ -44,7 +43,7 @@ export default function UpdateResourceModal() {
       const _events = await databases.listDocuments(
         appwriteVotingDatabase,
         appwriteEventsCollection,
-        [Query.limit(appwriteListEventsLimit)],
+        [Query.limit(appwriteListEventsLimit)]
       )
 
       setEvents(_events.documents as EventDocument[])
@@ -55,14 +54,18 @@ export default function UpdateResourceModal() {
       const resource = (await databases.getDocument(
         appwriteVotingDatabase,
         appwriteResourcesCollection,
-        resourceIdToUpdate!,
+        resourceIdToUpdate!
       )) as ResourceDocument
       setName(resource.name)
       setUrl(resource.url)
       setEventId(resource.event_id)
       const icon =
         // @ts-ignore
-        feather.icons[iconNames.find((icon) => feather.icons[icon].toSvg() === resource.svg_icon)]
+        feather.icons[
+          iconNames.find(
+            (icon) => feather.icons[icon].toSvg() === resource.svg_icon
+          )
+        ]
       setSvgIcon(icon.name)
     }
 
@@ -79,9 +82,9 @@ export default function UpdateResourceModal() {
     const event = events.find((event) => event.$id === eventId)
 
     const jwt = (await account.createJWT()).jwt
-    await fetchJson('/api/resources/update', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetchJson("/api/resources/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: name,
         url: url,
@@ -94,52 +97,52 @@ export default function UpdateResourceModal() {
     setResourceIdToUpdate(undefined)
   }
 
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState("")
 
   const filteredIcons = iconNames.filter((iconName) =>
-    iconName.toLowerCase().includes(searchTerm.toLowerCase()),
+    iconName.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   return (
     <Modal
       isOpen={resourceIdToUpdate !== undefined}
       onAccept={updateResourceInDatabase}
-      acceptButtonName='Обновить'
+      acceptButtonName="Обновить"
       onCancel={() => setResourceIdToUpdate(undefined)}
-      title='Обновить ресурс'
+      title="Обновить ресурс"
     >
-      <div className='form-control w-full pt-5'>
-        <label className='label'>
-          <span className='label-text'>Название</span>
+      <div className="form-control w-full pt-5">
+        <label className="label">
+          <span className="label-text">Название</span>
         </label>
         <input
-          type='text'
+          type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className='border-base-200 text-neutral block h-auto w-full cursor-pointer rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary'
+          className="border-base-200 text-neutral block h-auto w-full cursor-pointer rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary"
         />
       </div>
-      <div className='form-control w-full pt-5'>
-        <label className='label'>
-          <span className='label-text'>Ссылка</span>
+      <div className="form-control w-full pt-5">
+        <label className="label">
+          <span className="label-text">Ссылка</span>
         </label>
         <input
-          type='text'
+          type="text"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          className='border-base-200 text-neutral block h-auto w-full cursor-pointer rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary'
+          className="border-base-200 text-neutral block h-auto w-full cursor-pointer rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary"
         />
       </div>
-      <div className='form-control w-full pt-5'>
-        <label className='label'>
-          <span className='label-text'>Мероприятие</span>
+      <div className="form-control w-full pt-5">
+        <label className="label">
+          <span className="label-text">Мероприятие</span>
         </label>
         <select
-          value={(eventId as string) || ''}
+          value={(eventId as string) || ""}
           onChange={(e) => setEventId(e.target.value)}
-          className='border-base-200 text-neutral block h-auto w-full cursor-pointer rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary'
+          className="border-base-200 text-neutral block h-auto w-full cursor-pointer rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary"
         >
-          <option value={''}>Нет</option>
+          <option value={""}>Нет</option>
           {events.map((event) => (
             <option key={event.$id} value={event.$id}>
               {event.name}
@@ -147,36 +150,38 @@ export default function UpdateResourceModal() {
           ))}
         </select>
       </div>
-      <div className='form-control w-full pt-5'>
-        <label className='label'>
-          <span className='label-text'>Иконка</span>
+      <div className="form-control w-full pt-5">
+        <label className="label">
+          <span className="label-text">Иконка</span>
         </label>
-        <div className='h-64 overflow-y-scroll'>
+        <div className="h-64 overflow-y-scroll">
           <input
-            type='text'
-            placeholder='Поиск иконки'
+            type="text"
+            placeholder="Поиск иконки"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className='border-base-200 text-neutral block h-auto w-full rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary'
+            className="border-base-200 text-neutral block h-auto w-full rounded-lg border bg-gray-50 p-2.5 text-sm focus:border-secondary focus:ring-secondary"
           />
-          <div className='mt-4 grid grid-cols-4 gap-4'>
+          <div className="mt-4 grid grid-cols-4 gap-4">
             {filteredIcons.map((iconName) => (
               <div
                 key={iconName}
                 className={`${
-                  svgIcon === iconName ? 'bg-secondary text-white' : 'text-neutral bg-gray-50'
+                  svgIcon === iconName
+                    ? "bg-secondary text-white"
+                    : "text-neutral bg-gray-50"
                 } flex cursor-pointer flex-col items-center justify-center rounded-lg p-2.5`}
                 onClick={() => setSvgIcon(iconName)}
               >
                 <div
-                  className='h-8 w-8'
+                  className="h-8 w-8"
                   dangerouslySetInnerHTML={{
                     __html: feather.icons[iconName].toSvg({
-                      class: 'w-full h-full',
+                      class: "w-full h-full",
                     }),
                   }}
                 />
-                <div className='text-xs'>{iconName}</div>
+                <div className="text-xs">{iconName}</div>
               </div>
             ))}
           </div>

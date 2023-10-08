@@ -1,12 +1,17 @@
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation"
 
-import { DataTable } from '@/components/table/DataTable'
-import { getEvents, getResourses, getSession, getSuperusers } from '@/lib/supabase/supabase-server'
+import {
+  getEvents,
+  getResourses,
+  getSession,
+  getSuperusers,
+} from "@/lib/supabase/supabase-server"
+import { DataTable } from "@/components/table/DataTable"
 
-import { columns } from './columns'
-import CreateResourceDialogButton from './DialogCreate'
+import CreateResourceDialogButton from "./DialogCreate"
+import { columns } from "./columns"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function Events() {
   const [session, resources, superusers, events] = await Promise.all([
@@ -19,7 +24,7 @@ export default async function Events() {
   const user = session?.user
 
   if (!user) {
-    return redirect('/404')
+    return redirect("/404")
   }
 
   const isUserHasAllPermissions = () => {
@@ -27,20 +32,21 @@ export default async function Events() {
   }
 
   if (!isUserHasAllPermissions()) {
-    return redirect('/404')
+    return redirect("/404")
   }
 
   return (
-    <div className='space-y-4'>
-      <div className='flex flex-col space-y-2'>
-        <h2 className='text-2xl font-bold tracking-tight'>Ресусы</h2>
-        <p className='text-muted-foreground'>
-          Ресурсы - это ссылки на внешние ресурсы, которые могут быть полезными для участников
-          мероприятия. Они отображаются в выдвижной панели мобильного приложения
+    <div className="space-y-4">
+      <div className="flex flex-col space-y-2">
+        <h2 className="text-2xl font-bold tracking-tight">Ресусы</h2>
+        <p className="text-muted-foreground">
+          Ресурсы - это ссылки на внешние ресурсы, которые могут быть полезными
+          для участников мероприятия. Они отображаются в выдвижной панели
+          мобильного приложения
         </p>
       </div>
       <CreateResourceDialogButton events={events ?? []} />
-      <DataTable data={resources ?? []} columns={columns} filterColumn='name' />
+      <DataTable data={resources ?? []} columns={columns} filterColumn="name" />
     </div>
   )
 }

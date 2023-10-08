@@ -1,11 +1,13 @@
-'use client'
+"use client"
 
-import type { SupabaseClient } from '@supabase/auth-helpers-nextjs'
-import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import {
+  createPagesBrowserClient,
+  type SupabaseClient,
+} from "@supabase/auth-helpers-nextjs"
 
-import { Database } from './db-types'
+import { Database } from "./db-types"
 
 type SupabaseContext = {
   supabase: SupabaseClient<Database>
@@ -13,9 +15,13 @@ type SupabaseContext = {
 
 const Context = createContext<SupabaseContext | undefined>(undefined)
 
-export default function SupabaseProvider({ children }: { children: React.ReactNode }) {
+export default function SupabaseProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const [supabase] = useState(() =>
-    createPagesBrowserClient({ options: { db: { schema: 'ovk' } } }),
+    createPagesBrowserClient({ options: { db: { schema: "ovk" } } })
   )
   const router = useRouter()
 
@@ -23,7 +29,7 @@ export default function SupabaseProvider({ children }: { children: React.ReactNo
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_IN') router.refresh()
+      if (event === "SIGNED_IN") router.refresh()
     })
 
     return () => {
@@ -42,7 +48,7 @@ export const useSupabase = () => {
   const context = useContext(Context)
 
   if (context === undefined) {
-    throw new Error('useSupabase must be used inside SupabaseProvider')
+    throw new Error("useSupabase must be used inside SupabaseProvider")
   }
 
   return context

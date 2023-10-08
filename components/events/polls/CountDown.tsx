@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react"
 
-import { pluralForm } from '@/lib/pluralForm'
+import { pluralForm } from "@/lib/pluralForm"
 
 interface CountDownInterface {
   pollId: string
@@ -52,34 +52,34 @@ export default function CountDown(props: CountDownInterface) {
   }
 
   return (
-    <div className='flex flex-col items-center'>
-      <div className='flex items-center'>
+    <div className="flex flex-col items-center">
+      <div className="flex items-center">
         {days > 0 && (
           <>
-            {days} {pluralForm(days, ['день', 'дня', 'дней'])}{' '}
+            {days} {pluralForm(days, ["день", "дня", "дней"])}{" "}
           </>
         )}
         {hours > 0 && (
           <>
-            {hours} {pluralForm(hours, ['час', 'часа', 'часов'])}{' '}
+            {hours} {pluralForm(hours, ["час", "часа", "часов"])}{" "}
           </>
         )}
         {minutes > 0 && (
           <>
-            {minutes} {pluralForm(minutes, ['минута', 'минуты', 'минут'])}{' '}
+            {minutes} {pluralForm(minutes, ["минута", "минуты", "минут"])}{" "}
           </>
         )}
         {seconds > 0 && (
           <>
-            {seconds} {pluralForm(seconds, ['секунда', 'секунды', 'секунд'])}{' '}
+            {seconds} {pluralForm(seconds, ["секунда", "секунды", "секунд"])}{" "}
           </>
         )}
       </div>
-      <div className='flex-col items-center'>
-        <ul className='flex'>
+      <div className="flex-col items-center">
+        <ul className="flex">
           <li>
             <button
-              className='btn-ghost btn m-0.5'
+              className="btn-ghost btn m-0.5"
               disabled={!props.isStarted || props.isFinished}
               onClick={() => handleAddTime(5)}
             >
@@ -88,7 +88,7 @@ export default function CountDown(props: CountDownInterface) {
           </li>
           <li>
             <button
-              className='btn-ghost btn m-0.5'
+              className="btn-ghost btn m-0.5"
               disabled={!props.isStarted || props.isFinished}
               onClick={() => handleAddTime(10)}
             >
@@ -97,7 +97,7 @@ export default function CountDown(props: CountDownInterface) {
           </li>
           <li>
             <button
-              className='btn-ghost btn m-0.5'
+              className="btn-ghost btn m-0.5"
               disabled={!props.isStarted || props.isFinished}
               onClick={() => handleAddTime(30)}
             >
@@ -106,7 +106,7 @@ export default function CountDown(props: CountDownInterface) {
           </li>
           <li>
             <button
-              className='btn-ghost btn m-0.5'
+              className="btn-ghost btn m-0.5"
               disabled={!props.isStarted || props.isFinished}
               onClick={() => handleAddTime(60)}
             >
@@ -114,10 +114,10 @@ export default function CountDown(props: CountDownInterface) {
             </button>
           </li>
         </ul>
-        <ul className='flex justify-center'>
+        <ul className="flex justify-center">
           <li>
             <button
-              className='btn-ghost btn m-0.5'
+              className="btn-ghost btn m-0.5"
               disabled={props.isStarted || props.isFinished}
               onClick={() => props.setTimeStart(Date.now(), props.pollId)}
             >
@@ -126,7 +126,7 @@ export default function CountDown(props: CountDownInterface) {
           </li>
           <li>
             <button
-              className='btn-ghost btn m-0.5'
+              className="btn-ghost btn m-0.5"
               disabled={!props.isStarted || props.isFinished}
               onClick={handleStop}
             >
@@ -135,7 +135,7 @@ export default function CountDown(props: CountDownInterface) {
           </li>
           <li>
             <button
-              className='btn-ghost btn m-0.5'
+              className="btn-ghost btn m-0.5"
               disabled={!props.isStarted || props.isFinished}
               onClick={() => props.finishPoll(props.pollId)}
             >

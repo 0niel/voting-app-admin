@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useState } from "react"
 
 interface EventContextI {
   createEvent: boolean
@@ -22,8 +22,12 @@ export const useEvent = () => React.useContext(EventContext)
 
 export function EventProvider({ children }: any) {
   const [createEvent, setCreateEvent] = useState<boolean>(false)
-  const [eventIdToUpdate, setEventIdToUpdate] = useState<string | undefined>(undefined)
-  const [eventIdToDelete, setEventIdToDelete] = useState<string | undefined>(undefined)
+  const [eventIdToUpdate, setEventIdToUpdate] = useState<string | undefined>(
+    undefined
+  )
+  const [eventIdToDelete, setEventIdToDelete] = useState<string | undefined>(
+    undefined
+  )
 
   return (
     <EventContext.Provider

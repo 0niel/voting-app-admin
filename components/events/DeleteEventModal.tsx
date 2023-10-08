@@ -1,14 +1,17 @@
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { Databases, Models, Teams } from 'appwrite'
-import React, { useEffect, useRef, useState } from 'react'
-import { toast } from 'react-hot-toast'
-import { useOnClickOutside } from 'usehooks-ts'
+import React, { useEffect, useRef, useState } from "react"
+import {
+  appwriteEventsCollection,
+  appwriteVotingDatabase,
+} from "@/constants/constants"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { useEvent } from "@/context/EventContext"
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline"
+import { Databases, Models, Teams } from "appwrite"
+import { toast } from "react-hot-toast"
+import { useOnClickOutside } from "usehooks-ts"
 
-import Modal from '@/components/modal/Modal'
-import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { useEvent } from '@/context/EventContext'
-import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
+import { mapAppwriteErrorToMessage } from "@/lib/errorMessages"
+import Modal from "@/components/modal/Modal"
 
 export default function DeleteEventModal() {
   const dialogPanelRef = useRef(null)
@@ -26,7 +29,11 @@ export default function DeleteEventModal() {
     try {
       if (eventIdToDelete != null) {
         databases
-          .getDocument(appwriteVotingDatabase, appwriteEventsCollection, eventIdToDelete)
+          .getDocument(
+            appwriteVotingDatabase,
+            appwriteEventsCollection,
+            eventIdToDelete
+          )
           .then((r) => {
             setEventToDelete(r)
           })
@@ -57,7 +64,7 @@ export default function DeleteEventModal() {
       await databases.deleteDocument(
         appwriteVotingDatabase,
         appwriteEventsCollection,
-        eventIdToDelete!,
+        eventIdToDelete!
       )
       setEventIdToDelete(undefined)
     } catch (error: any) {
@@ -75,17 +82,17 @@ export default function DeleteEventModal() {
     <Modal
       isOpen={eventIdToDelete !== undefined}
       onAccept={deleteEvent}
-      acceptButtonName='Удалить'
+      acceptButtonName="Удалить"
       onCancel={() => setEventIdToDelete(undefined)}
       title={`Удалить мероприятие ${eventToDelete?.name}`}
     >
-      <div className='pt-5'>
-        <div className='alert alert-warning shadow-sm'>
+      <div className="pt-5">
+        <div className="alert alert-warning shadow-sm">
           <div>
-            <ExclamationTriangleIcon className='h-8 w-8' />
+            <ExclamationTriangleIcon className="h-8 w-8" />
             <span>
-              При удалении мероприятия списки модераторов доступа и голосования, участников также
-              будут удалены.
+              При удалении мероприятия списки модераторов доступа и голосования,
+              участников также будут удалены.
             </span>
           </div>
         </div>

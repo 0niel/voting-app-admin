@@ -1,25 +1,25 @@
-import { Account, Databases, Query } from 'appwrite'
-import ru from 'date-fns/locale/ru'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { registerLocale } from 'react-datepicker'
-import { toast } from 'react-hot-toast'
-
-import PollFormForModal from '@/components/events/polls/PollFormForModal'
-import Modal from '@/components/modal/Modal'
+import React, { useEffect, useState } from "react"
+import { useRouter } from "next/router"
 import {
   appwriteEventsCollection,
   appwritePollsCollection,
   appwriteVotingDatabase,
-} from '@/constants/constants'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { usePoll } from '@/context/PollContext'
-import fetchJson from '@/lib/fetchJson'
-import { isValidPoll } from '@/lib/isValidPoll'
-import { EventDocument } from '@/lib/models/EventDocument'
+} from "@/constants/constants"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { usePoll } from "@/context/PollContext"
+import { Account, Databases, Query } from "appwrite"
+import ru from "date-fns/locale/ru"
+import { registerLocale } from "react-datepicker"
+import { toast } from "react-hot-toast"
 
-const initialQuestion = ''
-const initialPollOptions = ['За', 'Против', 'Воздержусь']
+import fetchJson from "@/lib/fetchJson"
+import { isValidPoll } from "@/lib/isValidPoll"
+import { EventDocument } from "@/lib/models/EventDocument"
+import PollFormForModal from "@/components/events/polls/PollFormForModal"
+import Modal from "@/components/modal/Modal"
+
+const initialQuestion = ""
+const initialPollOptions = ["За", "Против", "Воздержусь"]
 const initialDuration = 180
 const initialShowOnlyVotersCount = true
 
@@ -32,7 +32,9 @@ export default function CreatePollModal() {
   const [question, setQuestion] = useState(initialQuestion)
   const [duration, setDuration] = useState<number>(initialDuration)
   const [pollOptions, setPollOptions] = useState<string[]>(initialPollOptions)
-  const [showOnlyVotersCount, setShowOnlyVotersCount] = useState(initialShowOnlyVotersCount)
+  const [showOnlyVotersCount, setShowOnlyVotersCount] = useState(
+    initialShowOnlyVotersCount
+  )
   const [event, setEvent] = useState<EventDocument>()
   const account = new Account(client)
 
@@ -49,12 +51,12 @@ export default function CreatePollModal() {
       const _event = await databases.getDocument(
         appwriteVotingDatabase,
         appwriteEventsCollection,
-        eventID as string,
+        eventID as string
       )
       setEvent(_event as EventDocument)
     }
     if (router.isReady) {
-      registerLocale('ru', ru)
+      registerLocale("ru", ru)
       fetchEvent().catch((error) => toast.error(error.message))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,9 +67,9 @@ export default function CreatePollModal() {
       return
     }
     const jwt = (await account.createJWT()).jwt
-    await fetchJson('/api/polls/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetchJson("/api/polls/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         question: question,
         duration,
@@ -84,9 +86,9 @@ export default function CreatePollModal() {
     <Modal
       isOpen={createPoll!}
       onAccept={addPollToDatabase}
-      acceptButtonName='Создать'
+      acceptButtonName="Создать"
       onCancel={() => setCreatePoll(false)}
-      title='Создать голосование'
+      title="Создать голосование"
     >
       <PollFormForModal
         question={question}

@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useState } from "react"
 
 interface ResourceContextI {
   createResource: boolean
@@ -26,9 +26,15 @@ export const useResource = () => React.useContext(ResourceContext)
 
 export function ResourceProvider({ children }: any) {
   const [createResource, setCreateResource] = useState<boolean>(false)
-  const [resourceIdToUpdate, setResourceIdToUpdate] = useState<string | undefined>(undefined)
-  const [resourceIdToDelete, setResourceIdToDelete] = useState<string | undefined>(undefined)
-  const [resourceIdToCopy, setResourceIdToCopy] = useState<string | undefined>(undefined)
+  const [resourceIdToUpdate, setResourceIdToUpdate] = useState<
+    string | undefined
+  >(undefined)
+  const [resourceIdToDelete, setResourceIdToDelete] = useState<
+    string | undefined
+  >(undefined)
+  const [resourceIdToCopy, setResourceIdToCopy] = useState<string | undefined>(
+    undefined
+  )
 
   return (
     <ResourceContext.Provider

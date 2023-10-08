@@ -1,13 +1,13 @@
-import { moderatorVoterRole, presidencyRole } from '@/constants/constants'
+import { moderatorVoterRole, presidencyRole } from "@/constants/constants"
 
 export function mapRoles(role: string) {
   switch (role) {
-    case 'owner':
-      return 'администратор'
+    case "owner":
+      return "администратор"
     case presidencyRole:
-      return 'председатель'
+      return "председатель"
     case moderatorVoterRole:
-      return 'голосующий модератор'
+      return "голосующий модератор"
     default:
       return role
   }

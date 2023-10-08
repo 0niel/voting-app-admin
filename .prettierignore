@@ -3,3 +3,11 @@ out
 node_modules
 package-lock.json
 __pages
+cache
+.cache
+package.json
+public
+.yarn
+dist
+build
+.contentlayer

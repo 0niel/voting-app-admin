@@ -1,10 +1,10 @@
-'use client'
+"use client"
 
-import 'react-datepicker/dist/react-datepicker.css'
+import "react-datepicker/dist/react-datepicker.css"
+import React from "react"
 
-import React from 'react'
-
-import { Button } from '@/components/ui/button'
+import { Database } from "@/lib/supabase/db-types"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -12,15 +12,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Database } from '@/lib/supabase/db-types'
+} from "@/components/ui/dialog"
 
-import CreateOrUpdateResourceForm from './Form'
+import CreateOrUpdateResourceForm from "./Form"
 
 export default function CreateResourceDialogButton({
   events,
 }: {
-  events: Database['ovk']['Tables']['events']['Row'][]
+  events: Database["ovk"]["Tables"]["events"]["Row"][]
 }) {
   return (
     <Dialog>
@@ -35,7 +34,7 @@ export default function CreateResourceDialogButton({
         <CreateOrUpdateResourceForm />
 
         <DialogFooter>
-          <Button type='submit'>Сохранить</Button>
+          <Button type="submit">Сохранить</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

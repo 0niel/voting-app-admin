@@ -1,18 +1,18 @@
-import { Account } from 'appwrite'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
+import React, { useEffect, useState } from "react"
+import { useRouter } from "next/router"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { usePoll } from "@/context/PollContext"
+import { Account } from "appwrite"
+import { toast } from "react-hot-toast"
 
-import Modal from '@/components/modal/Modal'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { usePoll } from '@/context/PollContext'
-import fetchJson from '@/lib/fetchJson'
+import fetchJson from "@/lib/fetchJson"
+import Modal from "@/components/modal/Modal"
 
 function User(props: { userName: string }) {
   return (
-    <div className='my-2'>
-      <div className='placeholder avatar'>
-        <div className='bg-accent-focus text-neutral-content mr-3 w-5 rounded-full'>
+    <div className="my-2">
+      <div className="placeholder avatar">
+        <div className="bg-accent-focus text-neutral-content mr-3 w-5 rounded-full">
           <span>{props.userName[0]}</span>
         </div>
       </div>
@@ -23,11 +23,11 @@ function User(props: { userName: string }) {
 
 function UserPlaceholder() {
   return (
-    <div className='my-2 flex'>
-      <div className='placeholder avatar'>
-        <div className='mr-2 h-5 w-5 rounded-full bg-gray-200' />
+    <div className="my-2 flex">
+      <div className="placeholder avatar">
+        <div className="mr-2 h-5 w-5 rounded-full bg-gray-200" />
       </div>
-      <div className='my-0.5 h-5 w-64 rounded-full bg-gray-200' />
+      <div className="my-0.5 h-5 w-64 rounded-full bg-gray-200" />
     </div>
   )
 }
@@ -35,7 +35,10 @@ function UserPlaceholder() {
 export default function ShowNotVotedParticipants() {
   const router = useRouter()
   const { eventID } = router.query
-  const { pollIdToShowNotVotedParticipants, setPollIdToShowNotVotedParticipants } = usePoll()
+  const {
+    pollIdToShowNotVotedParticipants,
+    setPollIdToShowNotVotedParticipants,
+  } = usePoll()
   const [notVotedParticipants, setNotVotedParticipants] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const { client } = useAppwrite()
@@ -44,22 +47,27 @@ export default function ShowNotVotedParticipants() {
   async function fetchNotVotedParticipants() {
     setLoading(true)
     const jwt = (await account.createJWT()).jwt
-    const _notVotedParticipants = await fetchJson<string[]>('/api/polls/not-voted-participants', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        pollID: pollIdToShowNotVotedParticipants,
-        eventID,
-        jwt,
-      }),
-    })
+    const _notVotedParticipants = await fetchJson<string[]>(
+      "/api/polls/not-voted-participants",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pollID: pollIdToShowNotVotedParticipants,
+          eventID,
+          jwt,
+        }),
+      }
+    )
     setNotVotedParticipants(_notVotedParticipants)
     setLoading(false)
   }
 
   useEffect(() => {
     if (pollIdToShowNotVotedParticipants !== undefined) {
-      fetchNotVotedParticipants().catch((error: any) => toast.error(error.message))
+      fetchNotVotedParticipants().catch((error: any) =>
+        toast.error(error.message)
+      )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pollIdToShowNotVotedParticipants])
@@ -68,27 +76,29 @@ export default function ShowNotVotedParticipants() {
     <Modal
       isOpen={pollIdToShowNotVotedParticipants !== undefined}
       onAccept={fetchNotVotedParticipants}
-      acceptButtonName='Обновить'
+      acceptButtonName="Обновить"
       onCancel={() => setPollIdToShowNotVotedParticipants(undefined)}
-      title='Неголосовавшие участники'
-      cancelButtonName='Закрыть'
+      title="Неголосовавшие участники"
+      cancelButtonName="Закрыть"
     >
-      <div className='flex text-sm text-gray-700'>
+      <div className="flex text-sm text-gray-700">
         Всего значений:
         {loading ? (
-          <div className='mt-1.5 ml-1 h-3.5 w-3.5 items-center justify-between rounded-full bg-gray-200' />
+          <div className="mt-1.5 ml-1 h-3.5 w-3.5 items-center justify-between rounded-full bg-gray-200" />
         ) : (
-          <span className='ml-1 font-semibold'>{notVotedParticipants?.length}</span>
+          <span className="ml-1 font-semibold">
+            {notVotedParticipants?.length}
+          </span>
         )}
       </div>
-      <div className='h-56 overflow-y-scroll'>
+      <div className="h-56 overflow-y-scroll">
         {loading && (
-          <div className='max-w-sm animate-pulse'>
+          <div className="max-w-sm animate-pulse">
             {[1, 2, 3, 4, 5].map((_, index) => (
               <React.Fragment key={index}>
                 <UserPlaceholder />
                 {index !== notVotedParticipants!.length - 1 && (
-                  <hr className='my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50' />
+                  <hr className="my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50" />
                 )}
               </React.Fragment>
             ))}
@@ -99,12 +109,14 @@ export default function ShowNotVotedParticipants() {
             <React.Fragment key={index}>
               <User userName={userName} />
               {index !== notVotedParticipants!.length - 1 && (
-                <hr className='my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50' />
+                <hr className="my-1 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50" />
               )}
             </React.Fragment>
           ))}
       </div>
-      <div className='text-sm text-gray-700'>Список не обновляется автоматически.</div>
+      <div className="text-sm text-gray-700">
+        Список не обновляется автоматически.
+      </div>
     </Modal>
   )
 }

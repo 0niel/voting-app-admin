@@ -1,10 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState } from "react"
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { FormMode } from '@/lib/FormMode'
-import { Database } from '@/lib/supabase/db-types'
+import { FormMode } from "@/lib/FormMode"
+import { Database } from "@/lib/supabase/db-types"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
-import CreateOrUpdateEventForm from './Form'
+import CreateOrUpdateEventForm from "./Form"
 
 export default function UpdateEventDialog({
   event,
@@ -13,7 +18,7 @@ export default function UpdateEventDialog({
 }: {
   open: boolean
   setOpen: (open: boolean) => void
-  event: Database['ovk']['Tables']['events']['Row']
+  event: Database["ovk"]["Tables"]["events"]["Row"]
 }) {
   const [eventToUpdate, setEventToUpdate] = useState(event)
 
@@ -24,7 +29,10 @@ export default function UpdateEventDialog({
           <DialogTitle>Редактирование мероприятия</DialogTitle>
         </DialogHeader>
 
-        <CreateOrUpdateEventForm event={eventToUpdate} formMode={FormMode.edit} />
+        <CreateOrUpdateEventForm
+          event={eventToUpdate}
+          formMode={FormMode.edit}
+        />
       </DialogContent>
     </Dialog>
   )

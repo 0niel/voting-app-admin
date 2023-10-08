@@ -1,16 +1,16 @@
-import React from 'react'
+import React from "react"
 
-import { Button } from '@/components/ui/button'
+import { FormMode } from "@/lib/FormMode"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { FormMode } from '@/lib/FormMode'
+} from "@/components/ui/dialog"
 
-import CreateOrUpdatePollForm from './Form'
+import CreateOrUpdatePollForm from "./Form"
 
 export default function CreatePollDialog() {
   return (

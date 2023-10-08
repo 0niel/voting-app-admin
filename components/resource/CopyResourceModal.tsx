@@ -1,15 +1,18 @@
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { Account, Databases, ID, Models, Teams } from 'appwrite'
-import React, { useEffect, useRef, useState } from 'react'
-import { toast } from 'react-hot-toast'
-import { useOnClickOutside } from 'usehooks-ts'
+import React, { useEffect, useRef, useState } from "react"
+import {
+  appwriteResourcesCollection,
+  appwriteVotingDatabase,
+} from "@/constants/constants"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { useResource } from "@/context/ResourceContext"
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline"
+import { Account, Databases, ID, Models, Teams } from "appwrite"
+import { toast } from "react-hot-toast"
+import { useOnClickOutside } from "usehooks-ts"
 
-import Modal from '@/components/modal/Modal'
-import { appwriteResourcesCollection, appwriteVotingDatabase } from '@/constants/constants'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { useResource } from '@/context/ResourceContext'
-import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
-import fetchJson from '@/lib/fetchJson'
+import { mapAppwriteErrorToMessage } from "@/lib/errorMessages"
+import fetchJson from "@/lib/fetchJson"
+import Modal from "@/components/modal/Modal"
 
 export default function CopyResourceModal() {
   const dialogPanelRef = useRef(null)
@@ -27,7 +30,11 @@ export default function CopyResourceModal() {
     try {
       if (resourceIdToCopy != null) {
         databases
-          .getDocument(appwriteVotingDatabase, appwriteResourcesCollection, resourceIdToCopy)
+          .getDocument(
+            appwriteVotingDatabase,
+            appwriteResourcesCollection,
+            resourceIdToCopy
+          )
           .then((r) => {
             setResourceToCopy(r)
           })
@@ -45,11 +52,11 @@ export default function CopyResourceModal() {
         appwriteResourcesCollection,
         ID.unique(),
         {
-          name: resourceToCopy?.name + ' (копия)',
+          name: resourceToCopy?.name + " (копия)",
           url: resourceToCopy?.url,
           event_id: resourceToCopy?.event_id,
           svg_icon: resourceToCopy?.svg_icon,
-        },
+        }
       )
       setResourceIdToCopy(undefined)
     } catch (error: any) {
@@ -61,7 +68,7 @@ export default function CopyResourceModal() {
     <Modal
       isOpen={resourceIdToCopy !== undefined}
       onAccept={copyResource}
-      acceptButtonName='Скопировать'
+      acceptButtonName="Скопировать"
       onCancel={() => setResourceIdToCopy(undefined)}
       title={`Скопировать ресурс ${resourceToCopy?.name}`}
     />

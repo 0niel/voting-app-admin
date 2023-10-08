@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
-const { withSentryConfig } = require('@sentry/nextjs')
+const { withSentryConfig } = require("@sentry/nextjs")
 
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
+  output: "standalone",
   images: {
-    domains: ['cdn.cms.mirea.ninja', 'appwrite.mirea.ninja', 'www.mirea.ru'],
+    domains: ["cdn.cms.mirea.ninja", "appwrite.mirea.ninja", "www.mirea.ru"],
   },
   sentry: {
     hideSourceMaps: true,
@@ -13,8 +13,8 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/admin',
-        destination: '/admin/events',
+        source: "/admin",
+        destination: "/admin/events",
         permanent: false,
       },
     ]

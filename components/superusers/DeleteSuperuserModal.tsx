@@ -1,9 +1,9 @@
-import { Account } from 'appwrite'
+import { useAppwrite } from "@/context/AppwriteContext"
+import { useMembership } from "@/context/MembershipContext"
+import { Account } from "appwrite"
 
-import Modal from '@/components/modal/Modal'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { useMembership } from '@/context/MembershipContext'
-import fetchJson from '@/lib/fetchJson'
+import fetchJson from "@/lib/fetchJson"
+import Modal from "@/components/modal/Modal"
 
 export default function DeleteSuperuserModal() {
   const { membershipIDToDelete, setMembershipIDToDelete } = useMembership()
@@ -12,9 +12,9 @@ export default function DeleteSuperuserModal() {
 
   async function deleteParticipantFromDatabase() {
     const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
-    await fetchJson('/api/teams/delete-superuser', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetchJson("/api/teams/delete-superuser", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userID: membershipIDToDelete,
         jwt,
@@ -27,9 +27,9 @@ export default function DeleteSuperuserModal() {
     <Modal
       isOpen={membershipIDToDelete !== undefined}
       onAccept={deleteParticipantFromDatabase}
-      acceptButtonName='Удалить'
+      acceptButtonName="Удалить"
       onCancel={() => setMembershipIDToDelete(undefined)}
-      title='Удалить суперпользователя'
+      title="Удалить суперпользователя"
     />
   )
 }

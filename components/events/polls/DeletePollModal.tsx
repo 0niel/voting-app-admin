@@ -1,10 +1,10 @@
-import { Account } from 'appwrite'
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { usePoll } from "@/context/PollContext"
+import { Account } from "appwrite"
 
-import Modal from '@/components/modal/Modal'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { usePoll } from '@/context/PollContext'
-import fetchJson from '@/lib/fetchJson'
+import fetchJson from "@/lib/fetchJson"
+import Modal from "@/components/modal/Modal"
 
 export default function DeletePollModal() {
   const { pollIdToDelete, setPollIdToDelete } = usePoll()
@@ -15,9 +15,9 @@ export default function DeletePollModal() {
 
   async function deletePollFromDatabase() {
     const jwt = (await account.createJWT()).jwt
-    await fetchJson('/api/polls/delete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetchJson("/api/polls/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         eventID,
         pollID: pollIdToDelete,
@@ -31,9 +31,9 @@ export default function DeletePollModal() {
     <Modal
       isOpen={pollIdToDelete !== undefined}
       onAccept={deletePollFromDatabase}
-      acceptButtonName='Удалить'
+      acceptButtonName="Удалить"
       onCancel={() => setPollIdToDelete(undefined)}
-      title='Удалить голосование'
+      title="Удалить голосование"
     />
   )
 }

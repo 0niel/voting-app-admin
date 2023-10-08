@@ -1,4 +1,4 @@
-import useUser from '@/lib/useUser'
+import useUser from "@/lib/useUser"
 
 interface AvatarProps {
   iconSize: string
@@ -8,16 +8,16 @@ interface AvatarProps {
 export default function Avatar(props: AvatarProps) {
   const { user } = useUser()
   return (
-    <div className='placeholder avatar'>
+    <div className="placeholder avatar">
       <div
         className={`${props.iconSize} group-hover:bg-accent-focus rounded-full bg-accent ring-1 ring-secondary duration-200 group-hover:ring-2`}
       >
         <span className={`${props.fontSize} text-accent-content`}>
           {user?.userData?.name
-            .split(' ')
+            .split(" ")
             .map((words) => words[0])
             .slice(0, 2)
-            .join('')
+            .join("")
             .toUpperCase()}
         </span>
       </div>

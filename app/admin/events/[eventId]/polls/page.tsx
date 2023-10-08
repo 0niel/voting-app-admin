@@ -1,16 +1,6 @@
-import { Label } from '@radix-ui/react-dropdown-menu'
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation"
+import { Label } from "@radix-ui/react-dropdown-menu"
 
-import { DataTable } from '@/components/table/DataTable'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import {
   getAnswerOptionsByPoll,
   getEvents,
@@ -18,13 +8,27 @@ import {
   getSession,
   getSuperusers,
   getUsersPermissions,
-} from '@/lib/supabase/supabase-server'
+} from "@/lib/supabase/supabase-server"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { DataTable } from "@/components/table/DataTable"
 
-import ActivePollCard from './ActivePollCard'
-import { columns, Poll } from './columns'
-import CreatePollDialog from './DialogCreate'
+import ActivePollCard from "./ActivePollCard"
+import CreatePollDialog from "./DialogCreate"
+import { Poll, columns } from "./columns"
 
-export default async function Polls({ params: { eventId } }: { params: { eventId: number } }) {
+export default async function Polls({
+  params: { eventId },
+}: {
+  params: { eventId: number }
+}) {
   const [session, polls, superusers, usersPermissions] = await Promise.all([
     getSession(),
     getPollsByEvent(eventId),
@@ -35,7 +39,7 @@ export default async function Polls({ params: { eventId } }: { params: { eventId
   const user = session?.user
 
   if (!user) {
-    return redirect('/')
+    return redirect("/")
   }
 
   const isUserHasAllPermissions = () => {
@@ -44,12 +48,13 @@ export default async function Polls({ params: { eventId } }: { params: { eventId
 
   const isUserVotingModerator = () => {
     return usersPermissions?.some(
-      (permission) => permission.user_id === user?.id && permission.is_voting_moderator,
+      (permission) =>
+        permission.user_id === user?.id && permission.is_voting_moderator
     )
   }
 
   if (!isUserHasAllPermissions() && !isUserVotingModerator()) {
-    return redirect('/')
+    return redirect("/")
   }
 
   const pollsWithAnswerOptions = await Promise.all(
@@ -57,21 +62,26 @@ export default async function Polls({ params: { eventId } }: { params: { eventId
       const options = (await getAnswerOptionsByPoll(poll.id)) ?? []
       console.log(options)
       return { ...poll, options } as Poll
-    }) ?? [],
+    }) ?? []
   )
 
   return (
-    <div className='space-y-4'>
-      <div className='flex flex-col space-y-2'>
-        <h2 className='text-2xl font-bold tracking-tight'>Голосования</h2>
-        <p className='text-muted-foreground'>
-          Создайте новое голосование, чтобы участники мероприятия смогли оставить свой голос
+    <div className="space-y-4">
+      <div className="flex flex-col space-y-2">
+        <h2 className="text-2xl font-bold tracking-tight">Голосования</h2>
+        <p className="text-muted-foreground">
+          Создайте новое голосование, чтобы участники мероприятия смогли
+          оставить свой голос
         </p>
       </div>
       <CreatePollDialog />
       <ActivePollCard polls={polls ?? []} />
 
-      <DataTable data={pollsWithAnswerOptions ?? []} columns={columns} filterColumn='question' />
+      <DataTable
+        data={pollsWithAnswerOptions ?? []}
+        columns={columns}
+        filterColumn="question"
+      />
     </div>
   )
 }

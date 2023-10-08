@@ -1,4 +1,4 @@
-import { Models } from 'appwrite'
+import { Models } from "appwrite"
 
 export interface VoteDocument extends Models.Document {
   /**

@@ -1,4 +1,4 @@
-import { Models } from 'appwrite'
+import { Models } from "appwrite"
 
 export interface ResourceDocument extends Models.Document {
   /**

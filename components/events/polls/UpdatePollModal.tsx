@@ -1,22 +1,25 @@
-import { Account, Databases } from 'appwrite'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
+import React, { useEffect, useState } from "react"
+import { useRouter } from "next/router"
+import {
+  appwritePollsCollection,
+  appwriteVotingDatabase,
+} from "@/constants/constants"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { usePoll } from "@/context/PollContext"
+import { Account, Databases } from "appwrite"
+import { toast } from "react-hot-toast"
 
-import PollFormForModal from '@/components/events/polls/PollFormForModal'
-import Modal from '@/components/modal/Modal'
-import { appwritePollsCollection, appwriteVotingDatabase } from '@/constants/constants'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { usePoll } from '@/context/PollContext'
-import fetchJson from '@/lib/fetchJson'
-import { isValidPoll } from '@/lib/isValidPoll'
-import { PollDocument } from '@/lib/models/PollDocument'
+import fetchJson from "@/lib/fetchJson"
+import { isValidPoll } from "@/lib/isValidPoll"
+import { PollDocument } from "@/lib/models/PollDocument"
+import PollFormForModal from "@/components/events/polls/PollFormForModal"
+import Modal from "@/components/modal/Modal"
 
 export default function UpdatePollModal() {
   const router = useRouter()
   const { eventID } = router.query
   const { pollIdToUpdate, setPollIdToUpdate } = usePoll()
-  const [question, setQuestion] = useState<string>('')
+  const [question, setQuestion] = useState<string>("")
   const [duration, setDuration] = useState<number>(0)
   const [pollOptions, setPollOptions] = useState<string[]>([])
   const [showOnlyVotersCount, setShowOnlyVotersCount] = useState(false)
@@ -29,7 +32,7 @@ export default function UpdatePollModal() {
       const poll = (await databases.getDocument(
         appwriteVotingDatabase,
         appwritePollsCollection,
-        pollIdToUpdate!,
+        pollIdToUpdate!
       )) as PollDocument
       setQuestion(poll.question)
       setDuration(poll.duration)
@@ -48,9 +51,9 @@ export default function UpdatePollModal() {
       return
     }
     const jwt = (await account.createJWT()).jwt
-    await fetchJson('/api/polls/update', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetchJson("/api/polls/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         question: question,
         duration,
@@ -69,12 +72,12 @@ export default function UpdatePollModal() {
     <Modal
       isOpen={pollIdToUpdate !== undefined}
       onAccept={updatePollInDatabase}
-      acceptButtonName='Изменить'
+      acceptButtonName="Изменить"
       onCancel={() => setPollIdToUpdate(undefined)}
-      title='Изменить голосование'
+      title="Изменить голосование"
     >
       <PollFormForModal
-        question={question || ''}
+        question={question || ""}
         setQuestion={setQuestion}
         duration={duration}
         setDuration={setDuration}

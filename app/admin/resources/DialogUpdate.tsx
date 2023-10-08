@@ -1,13 +1,12 @@
-'use client'
+"use client"
 
-import 'react-datepicker/dist/react-datepicker.css'
+import "react-datepicker/dist/react-datepicker.css"
+import React from "react"
 
-import React from 'react'
+import { Database } from "@/lib/supabase/db-types"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 
-import { Dialog, DialogContent } from '@/components/ui/dialog'
-import { Database } from '@/lib/supabase/db-types'
-
-import CreateOrUpdateResourceForm from './Form'
+import CreateOrUpdateResourceForm from "./Form"
 
 export default function UpdateResourceDialogContent({
   open,
@@ -16,7 +15,7 @@ export default function UpdateResourceDialogContent({
 }: {
   open: boolean
   setOpen: (open: boolean) => void
-  resource: Database['ovk']['Tables']['resources']['Row']
+  resource: Database["ovk"]["Tables"]["resources"]["Row"]
 }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>

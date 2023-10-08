@@ -1,8 +1,8 @@
-import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
+import { mapAppwriteErrorToMessage } from "@/lib/errorMessages"
 
 export default async function fetchJson<JSON = unknown>(
   input: RequestInfo,
-  init?: RequestInit,
+  init?: RequestInit
 ): Promise<JSON> {
   const response = await fetch(input, init)
 
@@ -46,7 +46,7 @@ export class FetchError extends Error {
       Error.captureStackTrace(this, FetchError)
     }
 
-    this.name = 'FetchError'
+    this.name = "FetchError"
     this.response = response
     this.data = data ?? { message: message }
   }

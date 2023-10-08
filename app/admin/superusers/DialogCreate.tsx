@@ -1,19 +1,20 @@
-'use client'
+"use client"
 
-import 'react-datepicker/dist/react-datepicker.css'
+import "react-datepicker/dist/react-datepicker.css"
+import React, { useState } from "react"
+import { ChevronsUpDown } from "lucide-react"
+import { toast } from "react-hot-toast"
 
-import { ChevronsUpDown } from 'lucide-react'
-import React, { useState } from 'react'
-import { toast } from 'react-hot-toast'
-
-import { Button } from '@/components/ui/button'
+import { useSupabase } from "@/lib/supabase/supabase-provider"
+import { UserToView } from "@/lib/supabase/supabase-server"
+import { Button } from "@/components/ui/button"
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from '@/components/ui/command'
+} from "@/components/ui/command"
 import {
   Dialog,
   DialogContent,
@@ -21,37 +22,43 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { useSupabase } from '@/lib/supabase/supabase-provider'
-import { UserToView } from '@/lib/supabase/supabase-server'
+} from "@/components/ui/dialog"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
-export default function CreateSuperuserDialogButton({ users }: { users: UserToView[] }) {
+export default function CreateSuperuserDialogButton({
+  users,
+}: {
+  users: UserToView[]
+}) {
   const { supabase } = useSupabase()
 
   const [open, setOpen] = useState(false)
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState("")
 
   const handleCreateSuperuser = async () => {
     const user = users.find((user) => user.email === email)
     if (!user) {
-      toast.error('Выберите существующего пользователя')
+      toast.error("Выберите существующего пользователя")
       return
     }
 
     try {
       await supabase
-        .from('superusers')
+        .from("superusers")
         .insert({
           user_id: user.id,
         })
         .throwOnError()
 
-      toast.success('Пользователь успешно назначен суперпользователем.')
+      toast.success("Пользователь успешно назначен суперпользователем.")
       window.location.reload()
     } catch (error: any) {
       toast.error(
-        'Не удалось назначить пользователя суперпользователем. Возможно, он уже им является.',
+        "Не удалось назначить пользователя суперпользователем. Возможно, он уже им является."
       )
     }
   }
@@ -65,23 +72,23 @@ export default function CreateSuperuserDialogButton({ users }: { users: UserToVi
         <DialogHeader>
           <DialogTitle>Назначить супепользователем</DialogTitle>
         </DialogHeader>
-        <div className='space-y-2'>
+        <div className="space-y-2">
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
-                variant='outline'
-                role='combobox'
+                variant="outline"
+                role="combobox"
                 aria-expanded={open}
-                className='w-full justify-between'
+                className="w-full justify-between"
               >
-                <span className='truncate'>{email}</span>
+                <span className="truncate">{email}</span>
 
-                <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className='max-w-[400px] p-0'>
+            <PopoverContent className="max-w-[400px] p-0">
               <Command>
-                <CommandInput placeholder='Поиск...' />
+                <CommandInput placeholder="Поиск..." />
                 <CommandEmpty>Не найдено.</CommandEmpty>
                 <CommandGroup>
                   {users.map((user) => (
@@ -103,7 +110,7 @@ export default function CreateSuperuserDialogButton({ users }: { users: UserToVi
         </div>
 
         <DialogFooter>
-          <Button type='submit' onClick={handleCreateSuperuser}>
+          <Button type="submit" onClick={handleCreateSuperuser}>
             Сохранить
           </Button>
         </DialogFooter>

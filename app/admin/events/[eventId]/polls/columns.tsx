@@ -1,41 +1,52 @@
-'use client'
+"use client"
 
-import { ColumnDef } from '@tanstack/react-table'
-import { CheckIcon, XIcon } from 'lucide-react'
-import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
-import { Badge } from '@/components/ui/badge'
-import { formatDate } from '@/lib/formatDate'
-import { PollDisplayMode } from '@/lib/PollDisplayMode'
-import { Database } from '@/lib/supabase/db-types'
+import { ColumnDef } from "@tanstack/react-table"
+import { CheckIcon, XIcon } from "lucide-react"
 
-import { PollsTableRowActions } from './TableRowActions'
+import { PollDisplayMode } from "@/lib/PollDisplayMode"
+import { formatDate } from "@/lib/formatDate"
+import { Database } from "@/lib/supabase/db-types"
+import { Badge } from "@/components/ui/badge"
+import { DataTableColumnHeader } from "@/components/table/DataTableColumnHeader"
 
-type Option = Database['ovk']['Tables']['answer_options']['Row']
+import { PollsTableRowActions } from "./TableRowActions"
 
-export type Poll = Database['ovk']['Tables']['polls']['Row'] & {
+type Option = Database["ovk"]["Tables"]["answer_options"]["Row"]
+
+export type Poll = Database["ovk"]["Tables"]["polls"]["Row"] & {
   options: Option[]
 }
 
 export const columns: ColumnDef<Poll>[] = [
   {
-    accessorKey: 'id',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Id' />,
-    cell: ({ row }) => <div className='w-[50px]'>{row.getValue('id')}</div>,
+    accessorKey: "id",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Id" />
+    ),
+    cell: ({ row }) => <div className="w-[50px]">{row.getValue("id")}</div>,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'question',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Вопрос' />,
+    accessorKey: "question",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Вопрос" />
+    ),
     cell: ({ row }) => {
-      return <span className='max-w-[500px] truncate font-medium'>{row.getValue('question')}</span>
+      return (
+        <span className="max-w-[500px] truncate font-medium">
+          {row.getValue("question")}
+        </span>
+      )
     },
   },
   {
-    accessorKey: 'display_mode',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Режим отображения' />,
+    accessorKey: "display_mode",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Режим отображения" />
+    ),
     cell: ({ row }) => {
-      switch (row.getValue('display_mode')) {
+      switch (row.getValue("display_mode")) {
         case PollDisplayMode.default:
           return <span>Варианты ответа и кол-во голосов</span>
         case PollDisplayMode.only_votes_count:
@@ -48,49 +59,66 @@ export const columns: ColumnDef<Poll>[] = [
     },
   },
   {
-    accessorKey: 'duration',
+    accessorKey: "duration",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Изначальная длительность (сек.)' />
+      <DataTableColumnHeader
+        column={column}
+        title="Изначальная длительность (сек.)"
+      />
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex w-[100px] items-center'>
-          <span>{row.getValue('duration')}</span>
+        <div className="flex w-[100px] items-center">
+          <span>{row.getValue("duration")}</span>
         </div>
       )
     },
   },
   {
-    accessorKey: 'start_at',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Начало' />,
+    accessorKey: "start_at",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Начало" />
+    ),
     cell: ({ row }) => {
       return (
-        <div className='flex w-[100px] items-center'>
-          <span>{row.getValue('start_at') ? formatDate(row.getValue('start_at')) : 'нет'}</span>
+        <div className="flex w-[100px] items-center">
+          <span>
+            {row.getValue("start_at")
+              ? formatDate(row.getValue("start_at"))
+              : "нет"}
+          </span>
         </div>
       )
     },
   },
   {
-    accessorKey: 'end_at',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Конец' />,
+    accessorKey: "end_at",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Конец" />
+    ),
     cell: ({ row }) => {
       return (
-        <div className='flex w-[100px] items-center'>
-          <span>{row.getValue('end_at') ? formatDate(row.getValue('end_at')) : 'нет'}</span>
+        <div className="flex w-[100px] items-center">
+          <span>
+            {row.getValue("end_at")
+              ? formatDate(row.getValue("end_at"))
+              : "нет"}
+          </span>
         </div>
       )
     },
   },
   {
-    accessorKey: 'options',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Варианты ответа' />,
+    accessorKey: "options",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Варианты ответа" />
+    ),
     cell: ({ row }) => {
-      const options = row.getValue('options') as Option[]
+      const options = row.getValue("options") as Option[]
       return (
-        <div className='flex w-[150px] flex-wrap gap-1'>
+        <div className="flex w-[150px] flex-wrap gap-1">
           {options.map((option) => (
-            <Badge key={option.id} className='mr-2' variant='outline'>
+            <Badge key={option.id} className="mr-2" variant="outline">
               {option.text}
             </Badge>
           ))}
@@ -99,23 +127,27 @@ export const columns: ColumnDef<Poll>[] = [
     },
   },
   {
-    accessorKey: 'is_finished',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Голоса' />,
+    accessorKey: "is_finished",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Голоса" />
+    ),
     cell: ({ row }) => {
       return (
-        <div className='flex w-[150px] items-center'>
-          {row.getValue('is_finished') ? (
-            <CheckIcon className='mr-2 h-4 w-4 text-green-400' />
+        <div className="flex w-[150px] items-center">
+          {row.getValue("is_finished") ? (
+            <CheckIcon className="mr-2 h-4 w-4 text-green-400" />
           ) : (
-            <XIcon className='mr-2 h-4 w-4 text-red-400' />
+            <XIcon className="mr-2 h-4 w-4 text-red-400" />
           )}
-          <span>{row.getValue('is_finished') ? 'Подсчитаны' : 'Промежуточные'}</span>
+          <span>
+            {row.getValue("is_finished") ? "Подсчитаны" : "Промежуточные"}
+          </span>
         </div>
       )
     },
   },
   {
-    id: 'actions',
+    id: "actions",
     cell: ({ row }) => <PollsTableRowActions row={row} />,
   },
 ]

@@ -1,36 +1,48 @@
-'use client'
+"use client"
 
-import { ColumnDef } from '@tanstack/react-table'
+import { ColumnDef } from "@tanstack/react-table"
 
-import { DataTableColumnHeader } from '@/components/table/DataTableColumnHeader'
-import { UserToView } from '@/lib/supabase/supabase-server'
+import { UserToView } from "@/lib/supabase/supabase-server"
+import { DataTableColumnHeader } from "@/components/table/DataTableColumnHeader"
 
-import { SuperusersTableRowActios } from './TableRowActios'
+import { SuperusersTableRowActios } from "./TableRowActios"
 
 export const columns: ColumnDef<UserToView>[] = [
   {
-    accessorKey: 'id',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Id' />,
-    cell: ({ row }) => <div className='w-[300px]'>{row.getValue('id')}</div>,
+    accessorKey: "id",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Id" />
+    ),
+    cell: ({ row }) => <div className="w-[300px]">{row.getValue("id")}</div>,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'email',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Email' />,
+    accessorKey: "email",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
+    ),
     cell: ({ row }) => {
-      return <span className='truncate font-medium'>{row.getValue('email')}</span>
+      return (
+        <span className="truncate font-medium">{row.getValue("email")}</span>
+      )
     },
   },
   {
-    accessorKey: 'created_at',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Создан' />,
+    accessorKey: "created_at",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Создан" />
+    ),
     cell: ({ row }) => {
-      return <span className='truncate font-medium'>{row.getValue('created_at')}</span>
+      return (
+        <span className="truncate font-medium">
+          {row.getValue("created_at")}
+        </span>
+      )
     },
   },
   {
-    id: 'actions',
+    id: "actions",
     cell: ({ row }) => <SuperusersTableRowActios row={row} />,
   },
 ]

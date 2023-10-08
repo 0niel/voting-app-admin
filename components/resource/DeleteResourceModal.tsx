@@ -1,14 +1,17 @@
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { Databases, Models, Teams } from 'appwrite'
-import React, { useEffect, useRef, useState } from 'react'
-import { toast } from 'react-hot-toast'
-import { useOnClickOutside } from 'usehooks-ts'
+import React, { useEffect, useRef, useState } from "react"
+import {
+  appwriteResourcesCollection,
+  appwriteVotingDatabase,
+} from "@/constants/constants"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { useResource } from "@/context/ResourceContext"
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline"
+import { Databases, Models, Teams } from "appwrite"
+import { toast } from "react-hot-toast"
+import { useOnClickOutside } from "usehooks-ts"
 
-import Modal from '@/components/modal/Modal'
-import { appwriteResourcesCollection, appwriteVotingDatabase } from '@/constants/constants'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { useResource } from '@/context/ResourceContext'
-import { mapAppwriteErrorToMessage } from '@/lib/errorMessages'
+import { mapAppwriteErrorToMessage } from "@/lib/errorMessages"
+import Modal from "@/components/modal/Modal"
 
 export default function DeleteResourceModal() {
   const dialogPanelRef = useRef(null)
@@ -25,7 +28,11 @@ export default function DeleteResourceModal() {
     try {
       if (resourceIdToDelete != null) {
         databases
-          .getDocument(appwriteVotingDatabase, appwriteResourcesCollection, resourceIdToDelete)
+          .getDocument(
+            appwriteVotingDatabase,
+            appwriteResourcesCollection,
+            resourceIdToDelete
+          )
           .then((r) => {
             setResourceToDelete(r)
           })
@@ -41,7 +48,7 @@ export default function DeleteResourceModal() {
       await databases.deleteDocument(
         appwriteVotingDatabase,
         appwriteResourcesCollection,
-        resourceIdToDelete!,
+        resourceIdToDelete!
       )
       setResourceIdToDelete(undefined)
     } catch (error: any) {
@@ -53,15 +60,18 @@ export default function DeleteResourceModal() {
     <Modal
       isOpen={resourceIdToDelete !== undefined}
       onAccept={deleteResource}
-      acceptButtonName='Удалить'
+      acceptButtonName="Удалить"
       onCancel={() => setResourceIdToDelete(undefined)}
       title={`Удалить ресурс ${resourceToDelete?.name}`}
     >
-      <div className='pt-5'>
-        <div className='alert alert-warning shadow-sm'>
+      <div className="pt-5">
+        <div className="alert alert-warning shadow-sm">
           <div>
-            <ExclamationTriangleIcon className='h-8 w-8' />
-            <span>При удалении ресурса, ссылка пропадет из бокового меню в приложении.</span>
+            <ExclamationTriangleIcon className="h-8 w-8" />
+            <span>
+              При удалении ресурса, ссылка пропадет из бокового меню в
+              приложении.
+            </span>
           </div>
         </div>
       </div>

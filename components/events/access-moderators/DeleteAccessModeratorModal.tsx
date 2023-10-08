@@ -1,16 +1,16 @@
-import { Databases, Models, Query, Teams } from 'appwrite'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
-
-import Modal from '@/components/modal/Modal'
+import { useEffect, useState } from "react"
+import { useRouter } from "next/router"
 import {
   appwriteEventsCollection,
   appwriteListMembershipsLimit,
   appwriteVotingDatabase,
-} from '@/constants/constants'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { useMembership } from '@/context/MembershipContext'
+} from "@/constants/constants"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { useMembership } from "@/context/MembershipContext"
+import { Databases, Models, Query, Teams } from "appwrite"
+import { toast } from "react-hot-toast"
+
+import Modal from "@/components/modal/Modal"
 
 export default function DeleteAccessModeratorModal() {
   const { membershipIDToDelete, setMembershipIDToDelete } = useMembership()
@@ -27,7 +27,7 @@ export default function DeleteAccessModeratorModal() {
       const _event = await databases.getDocument(
         appwriteVotingDatabase,
         appwriteEventsCollection,
-        eventID as string,
+        eventID as string
       )
       setEvent(_event)
     }
@@ -41,7 +41,7 @@ export default function DeleteAccessModeratorModal() {
     const fetchMembership = async () => {
       const _membership = await teams.getMembership(
         event?.access_moderators_team_id,
-        membershipIDToDelete!,
+        membershipIDToDelete!
       )
       setMembership(_membership)
     }
@@ -51,13 +51,22 @@ export default function DeleteAccessModeratorModal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [membershipIDToDelete])
   async function deleteAccessModeratorFromDatabase() {
-    await teams.deleteMembership(event!.access_moderators_team_id, membershipIDToDelete!)
-    const memberships = await teams.listMemberships(event!.participants_team_id, [
-      Query.equal('userId', membership!.userId),
-      Query.limit(appwriteListMembershipsLimit),
-    ])
+    await teams.deleteMembership(
+      event!.access_moderators_team_id,
+      membershipIDToDelete!
+    )
+    const memberships = await teams.listMemberships(
+      event!.participants_team_id,
+      [
+        Query.equal("userId", membership!.userId),
+        Query.limit(appwriteListMembershipsLimit),
+      ]
+    )
     memberships.memberships.map(async (membership) => {
-      await new Teams(client!).deleteMembership(event!.participants_team_id, membership.$id)
+      await new Teams(client!).deleteMembership(
+        event!.participants_team_id,
+        membership.$id
+      )
     })
     setMembershipIDToDelete(undefined)
   }
@@ -66,9 +75,9 @@ export default function DeleteAccessModeratorModal() {
     <Modal
       isOpen={membershipIDToDelete !== undefined}
       onAccept={deleteAccessModeratorFromDatabase}
-      acceptButtonName='Удалить'
+      acceptButtonName="Удалить"
       onCancel={() => setMembershipIDToDelete(undefined)}
-      title='Удалить модератора доступа'
+      title="Удалить модератора доступа"
     />
   )
 }

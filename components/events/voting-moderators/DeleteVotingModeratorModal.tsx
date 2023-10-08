@@ -1,13 +1,16 @@
-import { Databases, Teams } from 'appwrite'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
+import { useEffect, useState } from "react"
+import { useRouter } from "next/router"
+import {
+  appwriteEventsCollection,
+  appwriteVotingDatabase,
+} from "@/constants/constants"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { useMembership } from "@/context/MembershipContext"
+import { Databases, Teams } from "appwrite"
+import { toast } from "react-hot-toast"
 
-import Modal from '@/components/modal/Modal'
-import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { useMembership } from '@/context/MembershipContext'
-import { EventDocument } from '@/lib/models/EventDocument'
+import { EventDocument } from "@/lib/models/EventDocument"
+import Modal from "@/components/modal/Modal"
 
 export default function DeleteVotingModeratorModal() {
   const { membershipIDToDelete, setMembershipIDToDelete } = useMembership()
@@ -23,7 +26,7 @@ export default function DeleteVotingModeratorModal() {
       const _event = await databases.getDocument(
         appwriteVotingDatabase,
         appwriteEventsCollection,
-        eventID as string,
+        eventID as string
       )
       setEvent(_event as EventDocument)
     }
@@ -34,7 +37,10 @@ export default function DeleteVotingModeratorModal() {
   }, [router.isReady])
 
   async function deleteParticipantFromDatabase() {
-    await teams.deleteMembership(event!.voting_moderators_team_id, membershipIDToDelete!)
+    await teams.deleteMembership(
+      event!.voting_moderators_team_id,
+      membershipIDToDelete!
+    )
     setMembershipIDToDelete(undefined)
   }
 
@@ -42,9 +48,9 @@ export default function DeleteVotingModeratorModal() {
     <Modal
       isOpen={membershipIDToDelete !== undefined}
       onAccept={deleteParticipantFromDatabase}
-      acceptButtonName='Удалить'
+      acceptButtonName="Удалить"
       onCancel={() => setMembershipIDToDelete(undefined)}
-      title='Удалить участника'
+      title="Удалить участника"
     />
   )
 }

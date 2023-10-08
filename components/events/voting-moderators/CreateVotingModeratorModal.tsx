@@ -1,20 +1,23 @@
-import { Account, Databases, Models } from 'appwrite'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
+import { useEffect, useState } from "react"
+import { useRouter } from "next/router"
+import {
+  appwriteEventsCollection,
+  appwriteVotingDatabase,
+} from "@/constants/constants"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { useMembership } from "@/context/MembershipContext"
+import { TeamAppointment } from "@/pages/api/teams/create-membership"
+import { Account, Databases, Models } from "appwrite"
+import { toast } from "react-hot-toast"
 
-import CreateMembershipModalContent from '@/components/modal/CreateMembershipModalContent'
-import Modal from '@/components/modal/Modal'
-import { appwriteEventsCollection, appwriteVotingDatabase } from '@/constants/constants'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { useMembership } from '@/context/MembershipContext'
-import fetchJson from '@/lib/fetchJson'
-import { validateEmail } from '@/lib/validateEmail'
-import { TeamAppointment } from '@/pages/api/teams/create-membership'
+import fetchJson from "@/lib/fetchJson"
+import { validateEmail } from "@/lib/validateEmail"
+import CreateMembershipModalContent from "@/components/modal/CreateMembershipModalContent"
+import Modal from "@/components/modal/Modal"
 
 export default function CreateVotingModeratorModal() {
   const { createMembership, setCreateMembership } = useMembership()
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState("")
   const router = useRouter()
   const { eventID } = router.query
   const [event, setEvent] = useState<Models.Document>()
@@ -27,7 +30,7 @@ export default function CreateVotingModeratorModal() {
       const _event = await databases.getDocument(
         appwriteVotingDatabase,
         appwriteEventsCollection,
-        eventID as string,
+        eventID as string
       )
       setEvent(_event)
     }
@@ -42,9 +45,9 @@ export default function CreateVotingModeratorModal() {
       const newEmail = email?.trim()
       if (validateEmail(newEmail)) {
         const jwt = await account.createJWT().then((jwtModel) => jwtModel.jwt)
-        await fetchJson('/api/teams/create-membership', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        await fetchJson("/api/teams/create-membership", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             teamID: event!.voting_moderators_team_id,
             teamAppointment: TeamAppointment.votingModerators.valueOf(),
@@ -54,10 +57,10 @@ export default function CreateVotingModeratorModal() {
             jwt,
           }),
         })
-        setEmail('')
+        setEmail("")
         setCreateMembership(false)
       } else {
-        toast.error('Укажите действительную почту.')
+        toast.error("Укажите действительную почту.")
       }
     }
     await fetchCreate().catch((error: any) => toast.error(error.message))
@@ -67,11 +70,15 @@ export default function CreateVotingModeratorModal() {
     <Modal
       isOpen={createMembership}
       onAccept={addMembershipToDatabase}
-      acceptButtonName='Пригласить'
+      acceptButtonName="Пригласить"
       onCancel={() => setCreateMembership(false)}
-      title='Пригласить модератора голосования'
+      title="Пригласить модератора голосования"
     >
-      <CreateMembershipModalContent email={email} setEmail={setEmail} eventID={eventID as string} />
+      <CreateMembershipModalContent
+        email={email}
+        setEmail={setEmail}
+        eventID={eventID as string}
+      />
     </Modal>
   )
 }

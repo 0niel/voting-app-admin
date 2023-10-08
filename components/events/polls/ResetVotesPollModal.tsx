@@ -1,13 +1,13 @@
-import { Databases, Query } from 'appwrite'
-
-import Modal from '@/components/modal/Modal'
 import {
   appwriteListVotesLimit,
   appwriteVotesCollection,
   appwriteVotingDatabase,
-} from '@/constants/constants'
-import { useAppwrite } from '@/context/AppwriteContext'
-import { usePoll } from '@/context/PollContext'
+} from "@/constants/constants"
+import { useAppwrite } from "@/context/AppwriteContext"
+import { usePoll } from "@/context/PollContext"
+import { Databases, Query } from "appwrite"
+
+import Modal from "@/components/modal/Modal"
 
 export default function ResetVotesPollModal() {
   const { pollIdToResetVotes, setPollIdToResetVotes } = usePoll()
@@ -18,14 +18,21 @@ export default function ResetVotesPollModal() {
     const response = await databases.listDocuments(
       appwriteVotingDatabase,
       appwriteVotesCollection,
-      [Query.limit(appwriteListVotesLimit), Query.equal('poll_id', pollIdToResetVotes!)],
+      [
+        Query.limit(appwriteListVotesLimit),
+        Query.equal("poll_id", pollIdToResetVotes!),
+      ]
     )
     const votes = response.documents
 
     for (const vote of votes) {
       if (vote.poll_id == pollIdToResetVotes) {
-        console.log('deleting vote: ', vote)
-        await databases.deleteDocument(appwriteVotingDatabase, appwriteVotesCollection, vote.$id)
+        console.log("deleting vote: ", vote)
+        await databases.deleteDocument(
+          appwriteVotingDatabase,
+          appwriteVotesCollection,
+          vote.$id
+        )
       }
     }
 
@@ -36,9 +43,9 @@ export default function ResetVotesPollModal() {
     <Modal
       isOpen={pollIdToResetVotes !== undefined}
       onAccept={deletePollVotesFromDatabase}
-      acceptButtonName='Удалить'
+      acceptButtonName="Удалить"
       onCancel={() => setPollIdToResetVotes(undefined)}
-      title='Удалить все голоса'
+      title="Удалить все голоса"
     />
   )
 }

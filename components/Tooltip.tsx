@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 
 interface TooltipProps {
   text: string
@@ -7,7 +7,7 @@ interface TooltipProps {
 
 export default function Tooltip(props: TooltipProps) {
   return (
-    <div className='tooltip tooltip-secondary' data-tip={props.text}>
+    <div className="tooltip tooltip-secondary" data-tip={props.text}>
       {props.children}
     </div>
   )

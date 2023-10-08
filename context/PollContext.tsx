@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useState } from "react"
 
 interface PollContextI {
   createPoll?: boolean
@@ -43,7 +43,10 @@ export function PollProvider({ children }: any) {
   const [pollIdToResetVotes, setPollIdToResetVotes] = useState<string>()
   const [pollIdToCopy, setPollIdToCopy] = useState<string>()
   const [pollIdToShowResults, setPollIdToShowResults] = useState<string>()
-  const [pollIdToShowNotVotedParticipants, setPollIdToShowNotVotedParticipants] = useState<string>()
+  const [
+    pollIdToShowNotVotedParticipants,
+    setPollIdToShowNotVotedParticipants,
+  ] = useState<string>()
 
   return (
     <PollContext.Provider

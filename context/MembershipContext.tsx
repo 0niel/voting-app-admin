@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useState } from "react"
 
 interface MembershipContextI {
   createMembership: boolean
@@ -18,7 +18,9 @@ export const useMembership = () => React.useContext(MembershipContext)
 
 export function MembershipProvider({ children }: any) {
   const [createMembership, setCreateMembership] = useState(false)
-  const [membershipIDToDelete, setMembershipIDToDelete] = useState<string | undefined>(undefined)
+  const [membershipIDToDelete, setMembershipIDToDelete] = useState<
+    string | undefined
+  >(undefined)
 
   return (
     <MembershipContext.Provider
