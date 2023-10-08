@@ -74,6 +74,7 @@ export default async function Polls({
         </p>
       </div>
       <CreatePollDialog />
+      
       <ActivePollCard polls={polls ?? []} />
 
       <DataTable

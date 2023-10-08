@@ -4,9 +4,10 @@ import {
   UserToView,
   getEventAccessModerators,
   getSession,
-  getSuperusers,
   getUsers,
   getUsersPermissions,
+  isUserAccessModerator,
+  isUserHasAllPermissions,
 } from "@/lib/supabase/supabase-server"
 import { DataTable } from "@/components/table/DataTable"
 
@@ -33,25 +34,7 @@ export default async function AccessModerators({
     return redirect("/")
   }
 
-  const isUserHasAllPermissions = () => {
-    return superusers?.some((superuser) => superuser.user_id === user?.id)
-  }
-
-  const isUserVotingModerator = () => {
-    return usersPermissions?.some(
-      (permission) =>
-        permission.user_id === user?.id && permission.is_voting_moderator
-    )
-  }
-
-  const isUserAccessModerator = () => {
-    return usersPermissions?.some(
-      (permission) =>
-        permission.user_id === user?.id && permission.is_access_moderator
-    )
-  }
-
-  if (!isUserHasAllPermissions()) {
+  if (!isUserHasAllPermissions(user.id) && !isUserAccessModerator(user.id)) {
     return redirect("/")
   }
 
