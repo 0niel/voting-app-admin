@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 
+import { formatDate } from "@/lib/formatDate"
 import { UserToView } from "@/lib/supabase/supabase-server"
 import { DataTableColumnHeader } from "@/components/table/DataTableColumnHeader"
 
@@ -36,7 +37,7 @@ export const columns: ColumnDef<UserToView>[] = [
     cell: ({ row }) => {
       return (
         <span className="truncate font-medium">
-          {row.getValue("created_at")}
+          {formatDate(row.getValue("created_at"))}
         </span>
       )
     },
