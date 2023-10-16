@@ -1,3 +1,7 @@
+# Appwrite
+
+The version using Appwrite is in the [Appwrite branch](https://github.com/mirea-ninja/voting-app-admin/tree/appwrite)
+
 # voting-app-admin
 
 Админ-панель [приложения](https://github.com/mirea-ninja/face-to-face-voting-app) для отчётно-выборных конференций студенческого союза РТУ МИРЭА.
