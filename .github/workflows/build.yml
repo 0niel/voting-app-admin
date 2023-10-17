@@ -10,7 +10,7 @@ env:
   CR_REGISTRY: ${{ secrets.CR_REGISTRY }}
   CR_IMAGE_FRONTEND: ${{ secrets.CR_IMAGE_FRONTEND }}
   CR_IMAGE_FRONTEND_DEV: ${{ secrets.CR_IMAGE_FRONTEND_DEV }}
-  PROD_URL: ${{ secrets.PROD_URL }}
+  NEXT_PUBLIC_REDIRECT_HOSTNAME: ${{ secrets.NEXT_PUBLIC_REDIRECT_HOSTNAME }}
   SENTRY_URL: ${{ secrets.SENTRY_URL }}
   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
   SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
@@ -30,7 +30,7 @@ jobs:
         run: |
           docker build \
           --pull \
-          --build-arg NEXT_PUBLIC_REDIRECT_HOSTNAME=${{ env.PROD_URL }} \
+          --build-arg NEXT_PUBLIC_REDIRECT_HOSTNAME=${{ env.NEXT_PUBLIC_REDIRECT_HOSTNAME }} \
           --build-arg SENTRY_URL=${{ env.SENTRY_URL }} \
           --build-arg SENTRY_ORG=${{ env.SENTRY_ORG }} \
           --build-arg SENTRY_PROJECT=${{ env.SENTRY_PROJECT }} \
